@@ -1,0 +1,9 @@
+tmp
+.DS_Store
+bin/*
+api.log
+backup.sql
+.env
+cert.pem
+key.pem
+coverage.out
