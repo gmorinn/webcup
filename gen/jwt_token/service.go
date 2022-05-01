@@ -21,6 +21,8 @@ type Service interface {
 	Signin(context.Context, *SigninPayload) (res *Sign, err error)
 	// Refresh Token
 	Refresh(context.Context, *RefreshPayload) (res *Sign, err error)
+	// signin for back-office, user needs to be admin
+	SigninBo(context.Context, *SigninBoPayload) (res *Sign, err error)
 }
 
 // Auther defines the authorization functions to be implemented by the service.
@@ -37,7 +39,7 @@ const ServiceName = "jwtToken"
 // MethodNames lists the service method names as defined in the design. These
 // are the same values that are set in the endpoint request contexts under the
 // MethodKey key.
-var MethodNames = [3]string{"signup", "signin", "refresh"}
+var MethodNames = [4]string{"signup", "signin", "refresh", "signinBo"}
 
 // RefreshPayload is the payload type of the jwtToken service refresh method.
 type RefreshPayload struct {
@@ -51,6 +53,15 @@ type Sign struct {
 	AccessToken  string
 	RefreshToken string
 	Success      bool
+}
+
+// SigninBoPayload is the payload type of the jwtToken service signinBo method.
+type SigninBoPayload struct {
+	Email string
+	// Minimum 9 charactères / Chiffre Obligatoire
+	Password string
+	// Use to generate Oauth with /authorization
+	Oauth *string
 }
 
 // SigninPayload is the payload type of the jwtToken service signin method.

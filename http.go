@@ -12,6 +12,8 @@ import (
 	filesclient "webcup/api"
 	"webcup/config"
 	authsvr "webcup/gen/http/auth/server"
+	bosvr "webcup/gen/http/bo/server"
+	bocontactsvr "webcup/gen/http/bo_contact/server"
 	contactssvr "webcup/gen/http/contacts/server"
 	fileapisvr "webcup/gen/http/fileapi/server"
 	filessvr "webcup/gen/http/files/server"
@@ -80,6 +82,8 @@ func handleHTTPServer(ctx context.Context, u *url.URL, api *ApiEndpoints, wg *sy
 		fileapiServer      *fileapisvr.Server      = fileapisvr.New(nil, mux, dec, enc, nil, nil, http.Dir(filePath))
 		oAuthServer        *oauthsvr.Server        = oauthsvr.New(api.oAuthEndpoints, mux, dec, enc, eh, nil)
 		authServer         *authsvr.Server         = authsvr.New(api.authEndpoints, mux, dec, enc, eh, nil)
+		boServer           *bosvr.Server           = bosvr.New(api.boEndpoints, mux, dec, enc, eh, nil)
+		boContactServer    *bocontactsvr.Server    = bocontactsvr.New(api.boContactEndpoints, mux, dec, enc, eh, nil)
 	)
 	{
 		if debug {
@@ -93,6 +97,8 @@ func handleHTTPServer(ctx context.Context, u *url.URL, api *ApiEndpoints, wg *sy
 				jwtTokenServer,
 				authServer,
 				oAuthServer,
+				boServer,
+				boContactServer,
 			}
 			servers.Use(httpmdlwr.Debug(mux, os.Stdout))
 		}
@@ -107,6 +113,8 @@ func handleHTTPServer(ctx context.Context, u *url.URL, api *ApiEndpoints, wg *sy
 	filessvr.Mount(mux, filesServer)
 	jwttokensvr.Mount(mux, jwtTokenServer)
 	oauthsvr.Mount(mux, oAuthServer)
+	bosvr.Mount(mux, boServer)
+	bocontactsvr.Mount(mux, boContactServer)
 
 	// Wrap the multiplexer with additional middlewares. Middlewares mounted
 	// here apply to all the service endpoints.

@@ -79,6 +79,53 @@ func (s *jwtTokensrvc) Signup(ctx context.Context, p *jwttoken.SignupPayload) (r
 	return &response, nil
 }
 
+// signin for back-office, user needs to be admin
+func (s *jwtTokensrvc) SigninBo(ctx context.Context, p *jwttoken.SigninBoPayload) (res *jwttoken.Sign, err error) {
+	if p == nil {
+		return nil, ErrNullPayload
+	}
+	var response jwttoken.Sign
+	err = s.server.Store.ExecTx(ctx, func(q *db.Queries) error {
+		// Request Login
+		arg := db.LoginUserParams{
+			Email: p.Email,
+			Crypt: p.Password,
+		}
+		user, err := q.LoginUser(ctx, arg)
+		if err != nil {
+			return fmt.Errorf("error login: %v", err)
+		}
+		getUser, err := q.GetUserByID(ctx, user.ID)
+		if err != nil {
+			return fmt.Errorf("get user: %v", err)
+		}
+		if getUser.Role != "admin" {
+			return ErrBadRole
+		}
+		t, r, expt, err := s.generateJwtToken(user.ID, string(user.Role))
+		if err != nil {
+			return fmt.Errorf("error token: %v", err)
+		}
+		if err := s.server.StoreRefresh(ctx, r, expt, user.ID); err != nil {
+			return fmt.Errorf("error refresh token: %v", err)
+		}
+		response = jwttoken.Sign{
+			AccessToken:  t,
+			RefreshToken: r,
+			Success:      true,
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, s.errorResponse("TX_SIGNIN_BO", err)
+	}
+	return &jwttoken.Sign{
+		AccessToken:  response.AccessToken,
+		RefreshToken: response.RefreshToken,
+		Success:      true,
+	}, nil
+}
+
 func (s *jwtTokensrvc) Signin(ctx context.Context, p *jwttoken.SigninPayload) (res *jwttoken.Sign, err error) {
 	// Request Login
 	if p == nil {

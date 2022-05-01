@@ -122,3 +122,38 @@ func BuildRefreshPayload(jwtTokenRefreshBody string, jwtTokenRefreshOauth string
 
 	return v, nil
 }
+
+// BuildSigninBoPayload builds the payload for the jwtToken signinBo endpoint
+// from CLI flags.
+func BuildSigninBoPayload(jwtTokenSigninBoBody string, jwtTokenSigninBoOauth string) (*jwttoken.SigninBoPayload, error) {
+	var err error
+	var body SigninBoRequestBody
+	{
+		err = json.Unmarshal([]byte(jwtTokenSigninBoBody), &body)
+		if err != nil {
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"email\": \"guillaume@epitech.eu\",\n      \"password\": \"JeSuisUnTest974\"\n   }'")
+		}
+		err = goa.MergeErrors(err, goa.ValidateFormat("body.email", body.Email, goa.FormatEmail))
+
+		err = goa.MergeErrors(err, goa.ValidatePattern("body.password", body.Password, "\\d"))
+		if utf8.RuneCountInString(body.Password) < 9 {
+			err = goa.MergeErrors(err, goa.InvalidLengthError("body.password", body.Password, utf8.RuneCountInString(body.Password), 9, true))
+		}
+		if err != nil {
+			return nil, err
+		}
+	}
+	var oauth *string
+	{
+		if jwtTokenSigninBoOauth != "" {
+			oauth = &jwtTokenSigninBoOauth
+		}
+	}
+	v := &jwttoken.SigninBoPayload{
+		Email:    body.Email,
+		Password: body.Password,
+	}
+	v.Oauth = oauth
+
+	return v, nil
+}

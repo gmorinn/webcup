@@ -23,7 +23,7 @@ func BuildImportFilePayload(filesImportFileBody string, filesImportFileOauth str
 	{
 		err = json.Unmarshal([]byte(filesImportFileBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"content\": \"SWxsbyBxdW8gYWxpcXVpZCBhbWV0IG5vYmlzLg==\",\n      \"filename\": \"foo.jpg\",\n      \"format\": \"image/jpeg\",\n      \"h\": 3954212567730331431,\n      \"mime\": \"Vel mollitia.\",\n      \"size\": 3028238973827103103,\n      \"url\": \"Autem vero dolorem aperiam cum reprehenderit ad.\",\n      \"w\": 6083434384460884878\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"content\": \"U2ltaWxpcXVlIG9tbmlzIGV4IGFiIHBlcmZlcmVuZGlzLg==\",\n      \"filename\": \"foo.jpg\",\n      \"format\": \"image/jpeg\",\n      \"h\": 4120041173756761915,\n      \"mime\": \"Nihil omnis quia.\",\n      \"size\": 2604187601591124273,\n      \"url\": \"Quo neque.\",\n      \"w\": 5717018036527026994\n   }'")
 		}
 		if body.Content == nil {
 			err = goa.MergeErrors(err, goa.MissingFieldError("content", "body"))

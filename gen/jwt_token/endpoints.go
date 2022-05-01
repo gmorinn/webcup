@@ -16,9 +16,10 @@ import (
 
 // Endpoints wraps the "jwtToken" service endpoints.
 type Endpoints struct {
-	Signup  goa.Endpoint
-	Signin  goa.Endpoint
-	Refresh goa.Endpoint
+	Signup   goa.Endpoint
+	Signin   goa.Endpoint
+	Refresh  goa.Endpoint
+	SigninBo goa.Endpoint
 }
 
 // NewEndpoints wraps the methods of the "jwtToken" service with endpoints.
@@ -26,9 +27,10 @@ func NewEndpoints(s Service) *Endpoints {
 	// Casting service to Auther interface
 	a := s.(Auther)
 	return &Endpoints{
-		Signup:  NewSignupEndpoint(s, a.OAuth2Auth),
-		Signin:  NewSigninEndpoint(s, a.OAuth2Auth),
-		Refresh: NewRefreshEndpoint(s, a.OAuth2Auth),
+		Signup:   NewSignupEndpoint(s, a.OAuth2Auth),
+		Signin:   NewSigninEndpoint(s, a.OAuth2Auth),
+		Refresh:  NewRefreshEndpoint(s, a.OAuth2Auth),
+		SigninBo: NewSigninBoEndpoint(s, a.OAuth2Auth),
 	}
 }
 
@@ -37,6 +39,7 @@ func (e *Endpoints) Use(m func(goa.Endpoint) goa.Endpoint) {
 	e.Signup = m(e.Signup)
 	e.Signin = m(e.Signin)
 	e.Refresh = m(e.Refresh)
+	e.SigninBo = m(e.SigninBo)
 }
 
 // NewSignupEndpoint returns an endpoint function that calls the method
@@ -126,5 +129,35 @@ func NewRefreshEndpoint(s Service, authOAuth2Fn security.AuthOAuth2Func) goa.End
 			return nil, err
 		}
 		return s.Refresh(ctx, p)
+	}
+}
+
+// NewSigninBoEndpoint returns an endpoint function that calls the method
+// "signinBo" of service "jwtToken".
+func NewSigninBoEndpoint(s Service, authOAuth2Fn security.AuthOAuth2Func) goa.Endpoint {
+	return func(ctx context.Context, req interface{}) (interface{}, error) {
+		p := req.(*SigninBoPayload)
+		var err error
+		sc := security.OAuth2Scheme{
+			Name:           "OAuth2",
+			Scopes:         []string{"api:read"},
+			RequiredScopes: []string{},
+			Flows: []*security.OAuthFlow{
+				&security.OAuthFlow{
+					Type:       "client_credentials",
+					TokenURL:   "/authorization",
+					RefreshURL: "/refresh",
+				},
+			},
+		}
+		var token string
+		if p.Oauth != nil {
+			token = *p.Oauth
+		}
+		ctx, err = authOAuth2Fn(ctx, token, &sc)
+		if err != nil {
+			return nil, err
+		}
+		return s.SigninBo(ctx, p)
 	}
 }

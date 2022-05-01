@@ -13,6 +13,8 @@ import (
 	"syscall"
 	"webcup/api"
 	"webcup/gen/auth"
+	bo "webcup/gen/bo"
+	bo_contact "webcup/gen/bo_contact"
 	contacts "webcup/gen/contacts"
 	fileapi "webcup/gen/fileapi"
 	files "webcup/gen/files"
@@ -31,6 +33,8 @@ type ApiEndpoints struct {
 	authEndpoints         *auth.Endpoints
 	jwtTokenEndpoints     *jwttoken.Endpoints
 	oAuthEndpoints        *oauth.Endpoints
+	boEndpoints           *bo.Endpoints
+	boContactEndpoints    *bo_contact.Endpoints
 }
 
 func main() {
@@ -48,12 +52,14 @@ func main() {
 	var (
 		authSvc         auth.Service         = api.NewAuth(logger, server)
 		jwtTokenSvc     jwttoken.Service     = api.NewJWTToken(logger, server)
+		boSvc           bo.Service           = api.NewBo(logger, server)
 		contactsSvc     contacts.Service     = api.NewContacts(logger, server)
 		public_usersSvc public_users.Service = api.NewPublicUsers(logger, server)
 		usersSvc        users.Service        = api.NewUsers(logger, server)
 		fileapiSvc      fileapi.Service      = api.NewFileapi(logger)
 		filesSvc        files.Service        = api.NewFiles(logger, server)
 		oAuthSvc        oauth.Service        = api.NewOAuth(logger, server)
+		boContactSvc    bo_contact.Service   = api.NewBoContact(logger, server)
 	)
 
 	// Wrap the services in endpoints that can be invoked from other services
@@ -68,6 +74,8 @@ func main() {
 			filesEndpoints:        files.NewEndpoints(filesSvc),
 			jwtTokenEndpoints:     jwttoken.NewEndpoints(jwtTokenSvc),
 			oAuthEndpoints:        oauth.NewEndpoints(oAuthSvc),
+			boEndpoints:           bo.NewEndpoints(boSvc),
+			boContactEndpoints:    bo_contact.NewEndpoints(boContactSvc),
 		}
 	)
 	// Define command line flags, add any other flag required to configure the

@@ -13,6 +13,8 @@ import (
 	"net/http"
 	"os"
 	authc "webcup/gen/http/auth/client"
+	boc "webcup/gen/http/bo/client"
+	bocontactc "webcup/gen/http/bo_contact/client"
 	contactsc "webcup/gen/http/contacts/client"
 	filesc "webcup/gen/http/files/client"
 	jwttokenc "webcup/gen/http/jwt_token/client"
@@ -30,10 +32,12 @@ import (
 //
 func UsageCommands() string {
 	return `auth (email-exist|send-confirmation|reset-password)
+bo-contact (get-bo-contact|delete-bo-contact|get-bo-contact-by-id|delete-bo-many-contact)
 contacts add-message
 files (import-file|delete-file)
-jwt-token (signup|signin|refresh)
+jwt-token (signup|signin|refresh|signin-bo)
 o-auth o-auth
+bo (get-bo-users|delete-bo-user|delete-bo-many-users|update-bo-user|get-bo-user)
 public-users (get-user-by-username|list-users|list-users-most-recent)
 users (delete-user|get-user-by-id|update-description)
 `
@@ -43,32 +47,28 @@ users (delete-user|get-user-by-id|update-description)
 func UsageExamples() string {
 	return os.Args[0] + ` auth email-exist --body '{
       "email": "guillaume@gmail.com"
-   }' --oauth "Et mollitia enim vel ipsa nostrum aut."` + "\n" +
+   }' --oauth "Incidunt quis aut dolorem assumenda qui."` + "\n" +
+		os.Args[0] + ` bo-contact get-bo-contact --offset 0 --limit 9 --field "name" --direction "asc" --oauth "Ut necessitatibus fugiat modi dolorem assumenda officiis." --jwt-token "Qui dolorem consequuntur magnam nihil sint quasi."` + "\n" +
 		os.Args[0] + ` contacts add-message --body '{
       "msg": "Je reprends l\'app pour un million",
       "user_id": "5dfb0bf7-597a-4250-b7ad-63a43ff59c25"
-   }' --oauth "Enim delectus." --jwt-token "Quidem totam."` + "\n" +
+   }' --oauth "Voluptatibus occaecati beatae rem qui." --jwt-token "Sit dolorem."` + "\n" +
 		os.Args[0] + ` files import-file --body '{
-      "content": "SWxsbyBxdW8gYWxpcXVpZCBhbWV0IG5vYmlzLg==",
+      "content": "U2ltaWxpcXVlIG9tbmlzIGV4IGFiIHBlcmZlcmVuZGlzLg==",
       "filename": "foo.jpg",
       "format": "image/jpeg",
-      "h": 3954212567730331431,
-      "mime": "Vel mollitia.",
-      "size": 3028238973827103103,
-      "url": "Autem vero dolorem aperiam cum reprehenderit ad.",
-      "w": 6083434384460884878
-   }' --oauth "Aut cumque quibusdam." --jwt-token "Suscipit ipsam quam sint quia."` + "\n" +
+      "h": 4120041173756761915,
+      "mime": "Nihil omnis quia.",
+      "size": 2604187601591124273,
+      "url": "Quo neque.",
+      "w": 5717018036527026994
+   }' --oauth "Enim nisi distinctio cum ullam." --jwt-token "Ut deserunt repudiandae et quis."` + "\n" +
 		os.Args[0] + ` jwt-token signup --body '{
       "confirm_password": "JeSuisUnTest974",
       "email": "guillaume@epitech.eu",
       "password": "JeSuisUnTest974",
       "username": "guillaumemoriin"
-   }' --oauth "Dolor dicta natus assumenda ut et."` + "\n" +
-		os.Args[0] + ` o-auth o-auth --body '{
-      "client_id": "Impedit ut molestiae eveniet omnis omnis.",
-      "client_secret": "Amet est quidem quidem voluptatem.",
-      "grant_type": "Saepe perferendis."
-   }'` + "\n" +
+   }' --oauth "Fugiat accusantium commodi."` + "\n" +
 		""
 }
 
@@ -96,6 +96,31 @@ func ParseEndpoint(
 		authResetPasswordFlags     = flag.NewFlagSet("reset-password", flag.ExitOnError)
 		authResetPasswordBodyFlag  = authResetPasswordFlags.String("body", "REQUIRED", "")
 		authResetPasswordOauthFlag = authResetPasswordFlags.String("oauth", "", "")
+
+		boContactFlags = flag.NewFlagSet("bo-contact", flag.ContinueOnError)
+
+		boContactGetBoContactFlags         = flag.NewFlagSet("get-bo-contact", flag.ExitOnError)
+		boContactGetBoContactOffsetFlag    = boContactGetBoContactFlags.String("offset", "REQUIRED", "Offset for pagination")
+		boContactGetBoContactLimitFlag     = boContactGetBoContactFlags.String("limit", "REQUIRED", "Limit of items listed for pagination")
+		boContactGetBoContactFieldFlag     = boContactGetBoContactFlags.String("field", "name", "")
+		boContactGetBoContactDirectionFlag = boContactGetBoContactFlags.String("direction", "asc", "")
+		boContactGetBoContactOauthFlag     = boContactGetBoContactFlags.String("oauth", "", "")
+		boContactGetBoContactJWTTokenFlag  = boContactGetBoContactFlags.String("jwt-token", "", "")
+
+		boContactDeleteBoContactFlags        = flag.NewFlagSet("delete-bo-contact", flag.ExitOnError)
+		boContactDeleteBoContactIDFlag       = boContactDeleteBoContactFlags.String("id", "REQUIRED", "")
+		boContactDeleteBoContactOauthFlag    = boContactDeleteBoContactFlags.String("oauth", "", "")
+		boContactDeleteBoContactJWTTokenFlag = boContactDeleteBoContactFlags.String("jwt-token", "", "")
+
+		boContactGetBoContactByIDFlags        = flag.NewFlagSet("get-bo-contact-by-id", flag.ExitOnError)
+		boContactGetBoContactByIDIDFlag       = boContactGetBoContactByIDFlags.String("id", "REQUIRED", "")
+		boContactGetBoContactByIDOauthFlag    = boContactGetBoContactByIDFlags.String("oauth", "", "")
+		boContactGetBoContactByIDJWTTokenFlag = boContactGetBoContactByIDFlags.String("jwt-token", "", "")
+
+		boContactDeleteBoManyContactFlags        = flag.NewFlagSet("delete-bo-many-contact", flag.ExitOnError)
+		boContactDeleteBoManyContactBodyFlag     = boContactDeleteBoManyContactFlags.String("body", "REQUIRED", "")
+		boContactDeleteBoManyContactOauthFlag    = boContactDeleteBoManyContactFlags.String("oauth", "", "")
+		boContactDeleteBoManyContactJWTTokenFlag = boContactDeleteBoManyContactFlags.String("jwt-token", "", "")
 
 		contactsFlags = flag.NewFlagSet("contacts", flag.ContinueOnError)
 
@@ -130,10 +155,45 @@ func ParseEndpoint(
 		jwtTokenRefreshBodyFlag  = jwtTokenRefreshFlags.String("body", "REQUIRED", "")
 		jwtTokenRefreshOauthFlag = jwtTokenRefreshFlags.String("oauth", "", "")
 
+		jwtTokenSigninBoFlags     = flag.NewFlagSet("signin-bo", flag.ExitOnError)
+		jwtTokenSigninBoBodyFlag  = jwtTokenSigninBoFlags.String("body", "REQUIRED", "")
+		jwtTokenSigninBoOauthFlag = jwtTokenSigninBoFlags.String("oauth", "", "")
+
 		oAuthFlags = flag.NewFlagSet("o-auth", flag.ContinueOnError)
 
 		oAuthOAuthFlags    = flag.NewFlagSet("o-auth", flag.ExitOnError)
 		oAuthOAuthBodyFlag = oAuthOAuthFlags.String("body", "REQUIRED", "")
+
+		boFlags = flag.NewFlagSet("bo", flag.ContinueOnError)
+
+		boGetBoUsersFlags         = flag.NewFlagSet("get-bo-users", flag.ExitOnError)
+		boGetBoUsersOffsetFlag    = boGetBoUsersFlags.String("offset", "REQUIRED", "Offset for pagination")
+		boGetBoUsersLimitFlag     = boGetBoUsersFlags.String("limit", "REQUIRED", "Limit of items listed for pagination")
+		boGetBoUsersFieldFlag     = boGetBoUsersFlags.String("field", "name", "")
+		boGetBoUsersDirectionFlag = boGetBoUsersFlags.String("direction", "asc", "")
+		boGetBoUsersOauthFlag     = boGetBoUsersFlags.String("oauth", "", "")
+		boGetBoUsersJWTTokenFlag  = boGetBoUsersFlags.String("jwt-token", "", "")
+
+		boDeleteBoUserFlags        = flag.NewFlagSet("delete-bo-user", flag.ExitOnError)
+		boDeleteBoUserIDFlag       = boDeleteBoUserFlags.String("id", "REQUIRED", "")
+		boDeleteBoUserOauthFlag    = boDeleteBoUserFlags.String("oauth", "", "")
+		boDeleteBoUserJWTTokenFlag = boDeleteBoUserFlags.String("jwt-token", "", "")
+
+		boDeleteBoManyUsersFlags        = flag.NewFlagSet("delete-bo-many-users", flag.ExitOnError)
+		boDeleteBoManyUsersBodyFlag     = boDeleteBoManyUsersFlags.String("body", "REQUIRED", "")
+		boDeleteBoManyUsersOauthFlag    = boDeleteBoManyUsersFlags.String("oauth", "", "")
+		boDeleteBoManyUsersJWTTokenFlag = boDeleteBoManyUsersFlags.String("jwt-token", "", "")
+
+		boUpdateBoUserFlags        = flag.NewFlagSet("update-bo-user", flag.ExitOnError)
+		boUpdateBoUserBodyFlag     = boUpdateBoUserFlags.String("body", "REQUIRED", "")
+		boUpdateBoUserIDFlag       = boUpdateBoUserFlags.String("id", "REQUIRED", "")
+		boUpdateBoUserOauthFlag    = boUpdateBoUserFlags.String("oauth", "", "")
+		boUpdateBoUserJWTTokenFlag = boUpdateBoUserFlags.String("jwt-token", "", "")
+
+		boGetBoUserFlags        = flag.NewFlagSet("get-bo-user", flag.ExitOnError)
+		boGetBoUserIDFlag       = boGetBoUserFlags.String("id", "REQUIRED", "Unique ID of the User")
+		boGetBoUserOauthFlag    = boGetBoUserFlags.String("oauth", "", "")
+		boGetBoUserJWTTokenFlag = boGetBoUserFlags.String("jwt-token", "", "")
 
 		publicUsersFlags = flag.NewFlagSet("public-users", flag.ContinueOnError)
 
@@ -172,6 +232,12 @@ func ParseEndpoint(
 	authSendConfirmationFlags.Usage = authSendConfirmationUsage
 	authResetPasswordFlags.Usage = authResetPasswordUsage
 
+	boContactFlags.Usage = boContactUsage
+	boContactGetBoContactFlags.Usage = boContactGetBoContactUsage
+	boContactDeleteBoContactFlags.Usage = boContactDeleteBoContactUsage
+	boContactGetBoContactByIDFlags.Usage = boContactGetBoContactByIDUsage
+	boContactDeleteBoManyContactFlags.Usage = boContactDeleteBoManyContactUsage
+
 	contactsFlags.Usage = contactsUsage
 	contactsAddMessageFlags.Usage = contactsAddMessageUsage
 
@@ -183,9 +249,17 @@ func ParseEndpoint(
 	jwtTokenSignupFlags.Usage = jwtTokenSignupUsage
 	jwtTokenSigninFlags.Usage = jwtTokenSigninUsage
 	jwtTokenRefreshFlags.Usage = jwtTokenRefreshUsage
+	jwtTokenSigninBoFlags.Usage = jwtTokenSigninBoUsage
 
 	oAuthFlags.Usage = oAuthUsage
 	oAuthOAuthFlags.Usage = oAuthOAuthUsage
+
+	boFlags.Usage = boUsage
+	boGetBoUsersFlags.Usage = boGetBoUsersUsage
+	boDeleteBoUserFlags.Usage = boDeleteBoUserUsage
+	boDeleteBoManyUsersFlags.Usage = boDeleteBoManyUsersUsage
+	boUpdateBoUserFlags.Usage = boUpdateBoUserUsage
+	boGetBoUserFlags.Usage = boGetBoUserUsage
 
 	publicUsersFlags.Usage = publicUsersUsage
 	publicUsersGetUserByUsernameFlags.Usage = publicUsersGetUserByUsernameUsage
@@ -214,6 +288,8 @@ func ParseEndpoint(
 		switch svcn {
 		case "auth":
 			svcf = authFlags
+		case "bo-contact":
+			svcf = boContactFlags
 		case "contacts":
 			svcf = contactsFlags
 		case "files":
@@ -222,6 +298,8 @@ func ParseEndpoint(
 			svcf = jwtTokenFlags
 		case "o-auth":
 			svcf = oAuthFlags
+		case "bo":
+			svcf = boFlags
 		case "public-users":
 			svcf = publicUsersFlags
 		case "users":
@@ -254,6 +332,22 @@ func ParseEndpoint(
 
 			}
 
+		case "bo-contact":
+			switch epn {
+			case "get-bo-contact":
+				epf = boContactGetBoContactFlags
+
+			case "delete-bo-contact":
+				epf = boContactDeleteBoContactFlags
+
+			case "get-bo-contact-by-id":
+				epf = boContactGetBoContactByIDFlags
+
+			case "delete-bo-many-contact":
+				epf = boContactDeleteBoManyContactFlags
+
+			}
+
 		case "contacts":
 			switch epn {
 			case "add-message":
@@ -282,12 +376,34 @@ func ParseEndpoint(
 			case "refresh":
 				epf = jwtTokenRefreshFlags
 
+			case "signin-bo":
+				epf = jwtTokenSigninBoFlags
+
 			}
 
 		case "o-auth":
 			switch epn {
 			case "o-auth":
 				epf = oAuthOAuthFlags
+
+			}
+
+		case "bo":
+			switch epn {
+			case "get-bo-users":
+				epf = boGetBoUsersFlags
+
+			case "delete-bo-user":
+				epf = boDeleteBoUserFlags
+
+			case "delete-bo-many-users":
+				epf = boDeleteBoManyUsersFlags
+
+			case "update-bo-user":
+				epf = boUpdateBoUserFlags
+
+			case "get-bo-user":
+				epf = boGetBoUserFlags
 
 			}
 
@@ -350,6 +466,22 @@ func ParseEndpoint(
 				endpoint = c.ResetPassword()
 				data, err = authc.BuildResetPasswordPayload(*authResetPasswordBodyFlag, *authResetPasswordOauthFlag)
 			}
+		case "bo-contact":
+			c := bocontactc.NewClient(scheme, host, doer, enc, dec, restore)
+			switch epn {
+			case "get-bo-contact":
+				endpoint = c.GetBoContact()
+				data, err = bocontactc.BuildGetBoContactPayload(*boContactGetBoContactOffsetFlag, *boContactGetBoContactLimitFlag, *boContactGetBoContactFieldFlag, *boContactGetBoContactDirectionFlag, *boContactGetBoContactOauthFlag, *boContactGetBoContactJWTTokenFlag)
+			case "delete-bo-contact":
+				endpoint = c.DeleteBoContact()
+				data, err = bocontactc.BuildDeleteBoContactPayload(*boContactDeleteBoContactIDFlag, *boContactDeleteBoContactOauthFlag, *boContactDeleteBoContactJWTTokenFlag)
+			case "get-bo-contact-by-id":
+				endpoint = c.GetBoContactByID()
+				data, err = bocontactc.BuildGetBoContactByIDPayload(*boContactGetBoContactByIDIDFlag, *boContactGetBoContactByIDOauthFlag, *boContactGetBoContactByIDJWTTokenFlag)
+			case "delete-bo-many-contact":
+				endpoint = c.DeleteBoManyContact()
+				data, err = bocontactc.BuildDeleteBoManyContactPayload(*boContactDeleteBoManyContactBodyFlag, *boContactDeleteBoManyContactOauthFlag, *boContactDeleteBoManyContactJWTTokenFlag)
+			}
 		case "contacts":
 			c := contactsc.NewClient(scheme, host, doer, enc, dec, restore)
 			switch epn {
@@ -379,6 +511,9 @@ func ParseEndpoint(
 			case "refresh":
 				endpoint = c.Refresh()
 				data, err = jwttokenc.BuildRefreshPayload(*jwtTokenRefreshBodyFlag, *jwtTokenRefreshOauthFlag)
+			case "signin-bo":
+				endpoint = c.SigninBo()
+				data, err = jwttokenc.BuildSigninBoPayload(*jwtTokenSigninBoBodyFlag, *jwtTokenSigninBoOauthFlag)
 			}
 		case "o-auth":
 			c := oauthc.NewClient(scheme, host, doer, enc, dec, restore)
@@ -386,6 +521,25 @@ func ParseEndpoint(
 			case "o-auth":
 				endpoint = c.OAuth()
 				data, err = oauthc.BuildOAuthPayload(*oAuthOAuthBodyFlag)
+			}
+		case "bo":
+			c := boc.NewClient(scheme, host, doer, enc, dec, restore)
+			switch epn {
+			case "get-bo-users":
+				endpoint = c.GetBoUsers()
+				data, err = boc.BuildGetBoUsersPayload(*boGetBoUsersOffsetFlag, *boGetBoUsersLimitFlag, *boGetBoUsersFieldFlag, *boGetBoUsersDirectionFlag, *boGetBoUsersOauthFlag, *boGetBoUsersJWTTokenFlag)
+			case "delete-bo-user":
+				endpoint = c.DeleteBoUser()
+				data, err = boc.BuildDeleteBoUserPayload(*boDeleteBoUserIDFlag, *boDeleteBoUserOauthFlag, *boDeleteBoUserJWTTokenFlag)
+			case "delete-bo-many-users":
+				endpoint = c.DeleteBoManyUsers()
+				data, err = boc.BuildDeleteBoManyUsersPayload(*boDeleteBoManyUsersBodyFlag, *boDeleteBoManyUsersOauthFlag, *boDeleteBoManyUsersJWTTokenFlag)
+			case "update-bo-user":
+				endpoint = c.UpdateBoUser()
+				data, err = boc.BuildUpdateBoUserPayload(*boUpdateBoUserBodyFlag, *boUpdateBoUserIDFlag, *boUpdateBoUserOauthFlag, *boUpdateBoUserJWTTokenFlag)
+			case "get-bo-user":
+				endpoint = c.GetBoUser()
+				data, err = boc.BuildGetBoUserPayload(*boGetBoUserIDFlag, *boGetBoUserOauthFlag, *boGetBoUserJWTTokenFlag)
 			}
 		case "public-users":
 			c := publicusersc.NewClient(scheme, host, doer, enc, dec, restore)
@@ -447,7 +601,7 @@ Check if email exist in database
 Example:
     %[1]s auth email-exist --body '{
       "email": "guillaume@gmail.com"
-   }' --oauth "Et mollitia enim vel ipsa nostrum aut."
+   }' --oauth "Incidunt quis aut dolorem assumenda qui."
 `, os.Args[0])
 }
 
@@ -461,7 +615,7 @@ Check if email exist in database and send code by email to reset password
 Example:
     %[1]s auth send-confirmation --body '{
       "email": "guillaume@gmail.com"
-   }' --oauth "Rerum a unde amet nesciunt voluptates voluptatem."
+   }' --oauth "Ex accusamus."
 `, os.Args[0])
 }
 
@@ -478,7 +632,84 @@ Example:
       "confirm_password": "JeSuisUnTest974",
       "email": "guillaume@gmail.com",
       "password": "JeSuisUnTest974"
-   }' --oauth "Ipsa consectetur."
+   }' --oauth "Aut tempora."
+`, os.Args[0])
+}
+
+// bo-contactUsage displays the usage of the bo-contact command and its
+// subcommands.
+func boContactUsage() {
+	fmt.Fprintf(os.Stderr, `back office contacts of the api
+Usage:
+    %[1]s [globalflags] bo-contact COMMAND [flags]
+
+COMMAND:
+    get-bo-contact: Get All messages
+    delete-bo-contact: Delete one contact by ID
+    get-bo-contact-by-id: get one contact by ID
+    delete-bo-many-contact: Delete many contact with IDs send in body
+
+Additional help:
+    %[1]s bo-contact COMMAND --help
+`, os.Args[0])
+}
+func boContactGetBoContactUsage() {
+	fmt.Fprintf(os.Stderr, `%[1]s [flags] bo-contact get-bo-contact -offset INT32 -limit INT32 -field STRING -direction STRING -oauth STRING -jwt-token STRING
+
+Get All messages
+    -offset INT32: Offset for pagination
+    -limit INT32: Limit of items listed for pagination
+    -field STRING: 
+    -direction STRING: 
+    -oauth STRING: 
+    -jwt-token STRING: 
+
+Example:
+    %[1]s bo-contact get-bo-contact --offset 0 --limit 9 --field "name" --direction "asc" --oauth "Ut necessitatibus fugiat modi dolorem assumenda officiis." --jwt-token "Qui dolorem consequuntur magnam nihil sint quasi."
+`, os.Args[0])
+}
+
+func boContactDeleteBoContactUsage() {
+	fmt.Fprintf(os.Stderr, `%[1]s [flags] bo-contact delete-bo-contact -id STRING -oauth STRING -jwt-token STRING
+
+Delete one contact by ID
+    -id STRING: 
+    -oauth STRING: 
+    -jwt-token STRING: 
+
+Example:
+    %[1]s bo-contact delete-bo-contact --id "5dfb0bf7-597a-4250-b7ad-63a43ff59c25" --oauth "Nam et." --jwt-token "Ut et."
+`, os.Args[0])
+}
+
+func boContactGetBoContactByIDUsage() {
+	fmt.Fprintf(os.Stderr, `%[1]s [flags] bo-contact get-bo-contact-by-id -id STRING -oauth STRING -jwt-token STRING
+
+get one contact by ID
+    -id STRING: 
+    -oauth STRING: 
+    -jwt-token STRING: 
+
+Example:
+    %[1]s bo-contact get-bo-contact-by-id --id "5dfb0bf7-597a-4250-b7ad-63a43ff59c25" --oauth "Veritatis iste voluptas esse." --jwt-token "Tempora vero ut temporibus odit ut."
+`, os.Args[0])
+}
+
+func boContactDeleteBoManyContactUsage() {
+	fmt.Fprintf(os.Stderr, `%[1]s [flags] bo-contact delete-bo-many-contact -body JSON -oauth STRING -jwt-token STRING
+
+Delete many contact with IDs send in body
+    -body JSON: 
+    -oauth STRING: 
+    -jwt-token STRING: 
+
+Example:
+    %[1]s bo-contact delete-bo-many-contact --body '{
+      "tab": [
+         "Quod enim occaecati aliquam ducimus omnis temporibus.",
+         "Vitae consequatur qui nostrum quia temporibus."
+      ]
+   }' --oauth "Quia iste saepe accusantium adipisci aliquam explicabo." --jwt-token "Sit dolor ut laborum rem."
 `, os.Args[0])
 }
 
@@ -507,7 +738,7 @@ Example:
     %[1]s contacts add-message --body '{
       "msg": "Je reprends l\'app pour un million",
       "user_id": "5dfb0bf7-597a-4250-b7ad-63a43ff59c25"
-   }' --oauth "Enim delectus." --jwt-token "Quidem totam."
+   }' --oauth "Voluptatibus occaecati beatae rem qui." --jwt-token "Sit dolorem."
 `, os.Args[0])
 }
 
@@ -535,15 +766,15 @@ Import file
 
 Example:
     %[1]s files import-file --body '{
-      "content": "SWxsbyBxdW8gYWxpcXVpZCBhbWV0IG5vYmlzLg==",
+      "content": "U2ltaWxpcXVlIG9tbmlzIGV4IGFiIHBlcmZlcmVuZGlzLg==",
       "filename": "foo.jpg",
       "format": "image/jpeg",
-      "h": 3954212567730331431,
-      "mime": "Vel mollitia.",
-      "size": 3028238973827103103,
-      "url": "Autem vero dolorem aperiam cum reprehenderit ad.",
-      "w": 6083434384460884878
-   }' --oauth "Aut cumque quibusdam." --jwt-token "Suscipit ipsam quam sint quia."
+      "h": 4120041173756761915,
+      "mime": "Nihil omnis quia.",
+      "size": 2604187601591124273,
+      "url": "Quo neque.",
+      "w": 5717018036527026994
+   }' --oauth "Enim nisi distinctio cum ullam." --jwt-token "Ut deserunt repudiandae et quis."
 `, os.Args[0])
 }
 
@@ -558,7 +789,7 @@ Delete one file by ID
 Example:
     %[1]s files delete-file --body '{
       "url": "/public/uploads/2021/12/2ca51d10-b660-4b2c-b27f-f7a119642885.png"
-   }' --oauth "Libero rerum voluptatem vitae perferendis maxime repellendus." --jwt-token "Quo magni tempore quisquam."
+   }' --oauth "Similique aut." --jwt-token "Rerum quia quidem dolor."
 `, os.Args[0])
 }
 
@@ -573,6 +804,7 @@ COMMAND:
     signup: signup to generate jwt token
     signin: signin
     refresh: Refresh Token
+    signin-bo: signin for back-office, user needs to be admin
 
 Additional help:
     %[1]s jwt-token COMMAND --help
@@ -591,7 +823,7 @@ Example:
       "email": "guillaume@epitech.eu",
       "password": "JeSuisUnTest974",
       "username": "guillaumemoriin"
-   }' --oauth "Dolor dicta natus assumenda ut et."
+   }' --oauth "Fugiat accusantium commodi."
 `, os.Args[0])
 }
 
@@ -606,7 +838,7 @@ Example:
     %[1]s jwt-token signin --body '{
       "email": "guillaume@epitech.eu",
       "password": "JeSuisUnTest974"
-   }' --oauth "Itaque placeat repellendus eum impedit."
+   }' --oauth "Veritatis architecto ut neque quod optio aut."
 `, os.Args[0])
 }
 
@@ -620,7 +852,22 @@ Refresh Token
 Example:
     %[1]s jwt-token refresh --body '{
       "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ"
-   }' --oauth "Qui velit qui voluptatem sit quam et."
+   }' --oauth "Et dicta distinctio nisi assumenda quas."
+`, os.Args[0])
+}
+
+func jwtTokenSigninBoUsage() {
+	fmt.Fprintf(os.Stderr, `%[1]s [flags] jwt-token signin-bo -body JSON -oauth STRING
+
+signin for back-office, user needs to be admin
+    -body JSON: 
+    -oauth STRING: 
+
+Example:
+    %[1]s jwt-token signin-bo --body '{
+      "email": "guillaume@epitech.eu",
+      "password": "JeSuisUnTest974"
+   }' --oauth "Tenetur quos."
 `, os.Args[0])
 }
 
@@ -645,10 +892,111 @@ oAuth
 
 Example:
     %[1]s o-auth o-auth --body '{
-      "client_id": "Impedit ut molestiae eveniet omnis omnis.",
-      "client_secret": "Amet est quidem quidem voluptatem.",
-      "grant_type": "Saepe perferendis."
+      "client_id": "Quo mollitia consequatur.",
+      "client_secret": "Autem necessitatibus dolorem animi vero ipsa.",
+      "grant_type": "Fuga eos repellat."
    }'
+`, os.Args[0])
+}
+
+// boUsage displays the usage of the bo command and its subcommands.
+func boUsage() {
+	fmt.Fprintf(os.Stderr, `bo of the api
+Usage:
+    %[1]s [globalflags] bo COMMAND [flags]
+
+COMMAND:
+    get-bo-users: Get All users
+    delete-bo-user: Delete one User by ID
+    delete-bo-many-users: Delete many users with IDs send in body
+    update-bo-user: Update one User
+    get-bo-user: Get one User
+
+Additional help:
+    %[1]s bo COMMAND --help
+`, os.Args[0])
+}
+func boGetBoUsersUsage() {
+	fmt.Fprintf(os.Stderr, `%[1]s [flags] bo get-bo-users -offset INT32 -limit INT32 -field STRING -direction STRING -oauth STRING -jwt-token STRING
+
+Get All users
+    -offset INT32: Offset for pagination
+    -limit INT32: Limit of items listed for pagination
+    -field STRING: 
+    -direction STRING: 
+    -oauth STRING: 
+    -jwt-token STRING: 
+
+Example:
+    %[1]s bo get-bo-users --offset 0 --limit 9 --field "name" --direction "asc" --oauth "Ea labore dolore accusamus." --jwt-token "Omnis minus rerum ea sed."
+`, os.Args[0])
+}
+
+func boDeleteBoUserUsage() {
+	fmt.Fprintf(os.Stderr, `%[1]s [flags] bo delete-bo-user -id STRING -oauth STRING -jwt-token STRING
+
+Delete one User by ID
+    -id STRING: 
+    -oauth STRING: 
+    -jwt-token STRING: 
+
+Example:
+    %[1]s bo delete-bo-user --id "5dfb0bf7-597a-4250-b7ad-63a43ff59c25" --oauth "Assumenda qui commodi qui voluptatibus molestias laborum." --jwt-token "Vitae nemo dicta."
+`, os.Args[0])
+}
+
+func boDeleteBoManyUsersUsage() {
+	fmt.Fprintf(os.Stderr, `%[1]s [flags] bo delete-bo-many-users -body JSON -oauth STRING -jwt-token STRING
+
+Delete many users with IDs send in body
+    -body JSON: 
+    -oauth STRING: 
+    -jwt-token STRING: 
+
+Example:
+    %[1]s bo delete-bo-many-users --body '{
+      "tab": [
+         "Quae ipsam a dolores sed voluptas.",
+         "Similique in ratione ratione fuga ut.",
+         "Molestiae et."
+      ]
+   }' --oauth "Et et et numquam et est laudantium." --jwt-token "Blanditiis necessitatibus corporis excepturi reprehenderit voluptatum fugiat."
+`, os.Args[0])
+}
+
+func boUpdateBoUserUsage() {
+	fmt.Fprintf(os.Stderr, `%[1]s [flags] bo update-bo-user -body JSON -id STRING -oauth STRING -jwt-token STRING
+
+Update one User
+    -body JSON: 
+    -id STRING: 
+    -oauth STRING: 
+    -jwt-token STRING: 
+
+Example:
+    %[1]s bo update-bo-user --body '{
+      "user": {
+         "avatar": "Nostrum enim.",
+         "email": "guillaume@gmail.com",
+         "firstname": "Guillaume",
+         "lastname": "Morin",
+         "role": "user",
+         "username": "guillaumemoriin"
+      }
+   }' --id "5dfb0bf7-597a-4250-b7ad-63a43ff59c25" --oauth "Deleniti exercitationem eum." --jwt-token "Eum incidunt ipsam asperiores."
+`, os.Args[0])
+}
+
+func boGetBoUserUsage() {
+	fmt.Fprintf(os.Stderr, `%[1]s [flags] bo get-bo-user -id STRING -oauth STRING -jwt-token STRING
+
+Get one User
+    -id STRING: Unique ID of the User
+    -oauth STRING: 
+    -jwt-token STRING: 
+
+Example:
+    %[1]s bo get-bo-user --id "5dfb0bf7-597a-4250-b7ad-63a43ff59c25" --oauth "Tempore perferendis veritatis corporis." --jwt-token "Libero animi qui corporis aut deserunt asperiores."
 `, os.Args[0])
 }
 
@@ -676,7 +1024,7 @@ Get one User by username
     -oauth STRING: 
 
 Example:
-    %[1]s public-users get-user-by-username --username "guillaumemoriin" --oauth "Explicabo minima nam et repellendus ut et."
+    %[1]s public-users get-user-by-username --username "guillaumemoriin" --oauth "Iure ut placeat."
 `, os.Args[0])
 }
 
@@ -690,7 +1038,7 @@ List users for search bar
 Example:
     %[1]s public-users list-users --body '{
       "key": "guillaumemoriin"
-   }' --oauth "Ducimus omnis temporibus cupiditate vitae."
+   }' --oauth "Dicta ratione."
 `, os.Args[0])
 }
 
@@ -703,7 +1051,7 @@ List users the most recent
     -oauth STRING: 
 
 Example:
-    %[1]s public-users list-users-most-recent --offset 0 --limit 5 --oauth "Aliquam explicabo ratione sit dolor."
+    %[1]s public-users list-users-most-recent --offset 0 --limit 5 --oauth "Sint a et exercitationem autem."
 `, os.Args[0])
 }
 
@@ -731,7 +1079,7 @@ Delete one User by ID
     -jwt-token STRING: 
 
 Example:
-    %[1]s users delete-user --id "5dfb0bf7-597a-4250-b7ad-63a43ff59c25" --oauth "Ipsa nisi quaerat." --jwt-token "Omnis quia quia."
+    %[1]s users delete-user --id "5dfb0bf7-597a-4250-b7ad-63a43ff59c25" --oauth "Illo at optio odio error placeat." --jwt-token "Qui provident a quis saepe."
 `, os.Args[0])
 }
 
@@ -744,7 +1092,7 @@ Get one User
     -jwt-token STRING: 
 
 Example:
-    %[1]s users get-user-by-id --id "5dfb0bf7-597a-4250-b7ad-63a43ff59c25" --oauth "Ab perferendis sit aut enim nisi." --jwt-token "Cum ullam qui ut."
+    %[1]s users get-user-by-id --id "5dfb0bf7-597a-4250-b7ad-63a43ff59c25" --oauth "Facilis dolores non commodi sed quam quidem." --jwt-token "Esse officiis dicta."
 `, os.Args[0])
 }
 
@@ -763,6 +1111,6 @@ Example:
       "id": "5dfb0bf7-597a-4250-b7ad-63a43ff59c25",
       "lastname": "Morin",
       "username": "guillaumemoriin"
-   }' --oauth "Quis ab velit pariatur mollitia quisquam blanditiis." --jwt-token "Cumque at aut eveniet quibusdam."
+   }' --oauth "Debitis dolorem nam ab est culpa." --jwt-token "Omnis consequatur."
 `, os.Args[0])
 }

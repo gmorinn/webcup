@@ -74,6 +74,49 @@ paths:
             - error_code
       schemes:
       - http
+  /bo/signin:
+    post:
+      tags:
+      - jwtToken
+      summary: signinBo jwtToken
+      description: signin for back-office, user needs to be admin
+      operationId: jwtToken#signinBo
+      parameters:
+      - name: Authorization
+        in: header
+        description: OAuth token
+        required: false
+        type: string
+        pattern: ^Bearer [^ ]+$
+      - name: SigninBoRequestBody
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/JWTTokenSigninBoRequestBody'
+          required:
+          - password
+          - email
+      responses:
+        "200":
+          description: OK response.
+          schema:
+            $ref: '#/definitions/JWTTokenSigninBoResponseBody'
+            required:
+            - access_token
+            - refresh_token
+            - success
+        "500":
+          description: Internal Server Error response.
+          schema:
+            $ref: '#/definitions/JWTTokenSigninBoUnknownErrorResponseBody'
+            required:
+            - err
+            - success
+            - error_code
+      schemes:
+      - http
+      security:
+      - OAuth2_header_Authorization: []
   /openapi.json:
     get:
       tags:
@@ -245,6 +288,212 @@ paths:
       - http
       security:
       - OAuth2_header_Authorization: []
+  /v1/bo/contacts/{id}:
+    get:
+      tags:
+      - boContact
+      summary: getBoContactByID boContact
+      description: get one contact by ID
+      operationId: boContact#getBoContactByID
+      parameters:
+      - name: id
+        in: path
+        required: true
+        type: string
+        format: uuid
+      - name: Authorization
+        in: header
+        description: OAuth token
+        required: false
+        type: string
+        pattern: ^Bearer [^ ]+$
+      - name: jwtToken
+        in: header
+        description: Jwt token
+        required: false
+        type: string
+        pattern: ^Bearer [^ ]+$
+      responses:
+        "200":
+          description: OK response.
+          schema:
+            $ref: '#/definitions/BoContactGetBoContactByIDResponseBody'
+            required:
+            - success
+        "500":
+          description: Internal Server Error response.
+          schema:
+            $ref: '#/definitions/BoContactGetBoContactByIDUnknownErrorResponseBody'
+            required:
+            - err
+            - success
+            - error_code
+      schemes:
+      - http
+      security:
+      - OAuth2_header_Authorization: []
+        jwt_header_jwtToken: []
+  /v1/bo/contacts/messages/{offset}/{limit}:
+    get:
+      tags:
+      - boContact
+      summary: getBoContact boContact
+      description: Get All messages
+      operationId: boContact#getBoContact
+      parameters:
+      - name: field
+        in: query
+        description: Items order by {field}
+        required: false
+        type: string
+        default: name
+      - name: direction
+        in: query
+        description: Items order by {field} ASC/DESC
+        required: false
+        type: string
+        default: asc
+        enum:
+        - asc
+        - desc
+      - name: offset
+        in: path
+        description: Offset for pagination
+        required: true
+        type: integer
+        format: int32
+      - name: limit
+        in: path
+        description: Limit of items listed for pagination
+        required: true
+        type: integer
+        format: int32
+      - name: Authorization
+        in: header
+        description: OAuth token
+        required: false
+        type: string
+        pattern: ^Bearer [^ ]+$
+      - name: jwtToken
+        in: header
+        description: Jwt token
+        required: false
+        type: string
+        pattern: ^Bearer [^ ]+$
+      responses:
+        "200":
+          description: OK response.
+          schema:
+            $ref: '#/definitions/BoContactGetBoContactResponseBody'
+            required:
+            - contacts
+            - success
+            - count
+        "500":
+          description: Internal Server Error response.
+          schema:
+            $ref: '#/definitions/BoContactGetBoContactUnknownErrorResponseBody'
+            required:
+            - err
+            - success
+            - error_code
+      schemes:
+      - http
+      security:
+      - OAuth2_header_Authorization: []
+        jwt_header_jwtToken: []
+  /v1/bo/contacts/remove:
+    patch:
+      tags:
+      - boContact
+      summary: deleteBoManyContact boContact
+      description: Delete many contact with IDs send in body
+      operationId: boContact#deleteBoManyContact
+      parameters:
+      - name: Authorization
+        in: header
+        description: OAuth token
+        required: false
+        type: string
+        pattern: ^Bearer [^ ]+$
+      - name: jwtToken
+        in: header
+        description: Jwt token
+        required: false
+        type: string
+        pattern: ^Bearer [^ ]+$
+      - name: DeleteBoManyContactRequestBody
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/BoContactDeleteBoManyContactRequestBody'
+          required:
+          - tab
+      responses:
+        "200":
+          description: OK response.
+          schema:
+            $ref: '#/definitions/BoContactDeleteBoManyContactResponseBody'
+            required:
+            - success
+        "500":
+          description: Internal Server Error response.
+          schema:
+            $ref: '#/definitions/BoContactDeleteBoManyContactUnknownErrorResponseBody'
+            required:
+            - err
+            - success
+            - error_code
+      schemes:
+      - http
+      security:
+      - OAuth2_header_Authorization: []
+        jwt_header_jwtToken: []
+  /v1/bo/contacts/remove/{id}:
+    put:
+      tags:
+      - boContact
+      summary: deleteBoContact boContact
+      description: Delete one contact by ID
+      operationId: boContact#deleteBoContact
+      parameters:
+      - name: id
+        in: path
+        required: true
+        type: string
+        format: uuid
+      - name: Authorization
+        in: header
+        description: OAuth token
+        required: false
+        type: string
+        pattern: ^Bearer [^ ]+$
+      - name: jwtToken
+        in: header
+        description: Jwt token
+        required: false
+        type: string
+        pattern: ^Bearer [^ ]+$
+      responses:
+        "200":
+          description: OK response.
+          schema:
+            $ref: '#/definitions/BoContactDeleteBoContactResponseBody'
+            required:
+            - success
+        "500":
+          description: Internal Server Error response.
+          schema:
+            $ref: '#/definitions/BoContactDeleteBoContactUnknownErrorResponseBody'
+            required:
+            - err
+            - success
+            - error_code
+      schemes:
+      - http
+      security:
+      - OAuth2_header_Authorization: []
+        jwt_header_jwtToken: []
   /v1/bo/file/add:
     post:
       tags:
@@ -335,6 +584,266 @@ paths:
           description: Internal Server Error response.
           schema:
             $ref: '#/definitions/FilesDeleteFileUnknownErrorResponseBody'
+            required:
+            - err
+            - success
+            - error_code
+      schemes:
+      - http
+      security:
+      - OAuth2_header_Authorization: []
+        jwt_header_jwtToken: []
+  /v1/bo/user/{id}:
+    get:
+      tags:
+      - bo
+      summary: getBoUser bo
+      description: Get one User
+      operationId: bo#getBoUser
+      parameters:
+      - name: id
+        in: path
+        description: Unique ID of the User
+        required: true
+        type: string
+        format: uuid
+      - name: Authorization
+        in: header
+        description: OAuth token
+        required: false
+        type: string
+        pattern: ^Bearer [^ ]+$
+      - name: jwtToken
+        in: header
+        description: Jwt token
+        required: false
+        type: string
+        pattern: ^Bearer [^ ]+$
+      responses:
+        "200":
+          description: OK response.
+          schema:
+            $ref: '#/definitions/BoGetBoUserResponseBody'
+            required:
+            - user
+            - success
+        "500":
+          description: Internal Server Error response.
+          schema:
+            $ref: '#/definitions/BoGetBoUserUnknownErrorResponseBody'
+            required:
+            - err
+            - success
+            - error_code
+      schemes:
+      - http
+      security:
+      - OAuth2_header_Authorization: []
+        jwt_header_jwtToken: []
+    put:
+      tags:
+      - bo
+      summary: updateBoUser bo
+      description: Update one User
+      operationId: bo#updateBoUser
+      parameters:
+      - name: id
+        in: path
+        required: true
+        type: string
+        format: uuid
+      - name: Authorization
+        in: header
+        description: OAuth token
+        required: false
+        type: string
+        pattern: ^Bearer [^ ]+$
+      - name: jwtToken
+        in: header
+        description: Jwt token
+        required: false
+        type: string
+        pattern: ^Bearer [^ ]+$
+      - name: UpdateBoUserRequestBody
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/BoUpdateBoUserRequestBody'
+          required:
+          - user
+      responses:
+        "200":
+          description: OK response.
+          schema:
+            $ref: '#/definitions/BoUpdateBoUserResponseBody'
+            required:
+            - user
+            - success
+        "500":
+          description: Internal Server Error response.
+          schema:
+            $ref: '#/definitions/BoUpdateBoUserUnknownErrorResponseBody'
+            required:
+            - err
+            - success
+            - error_code
+      schemes:
+      - http
+      security:
+      - OAuth2_header_Authorization: []
+        jwt_header_jwtToken: []
+  /v1/bo/user/remove/{id}:
+    delete:
+      tags:
+      - bo
+      summary: deleteBoUser bo
+      description: Delete one User by ID
+      operationId: bo#deleteBoUser
+      parameters:
+      - name: id
+        in: path
+        required: true
+        type: string
+        format: uuid
+      - name: Authorization
+        in: header
+        description: OAuth token
+        required: false
+        type: string
+        pattern: ^Bearer [^ ]+$
+      - name: jwtToken
+        in: header
+        description: Jwt token
+        required: false
+        type: string
+        pattern: ^Bearer [^ ]+$
+      responses:
+        "200":
+          description: OK response.
+          schema:
+            $ref: '#/definitions/BoDeleteBoUserResponseBody'
+            required:
+            - success
+        "500":
+          description: Internal Server Error response.
+          schema:
+            $ref: '#/definitions/BoDeleteBoUserUnknownErrorResponseBody'
+            required:
+            - err
+            - success
+            - error_code
+      schemes:
+      - http
+      security:
+      - OAuth2_header_Authorization: []
+        jwt_header_jwtToken: []
+  /v1/bo/users/{offset}/{limit}:
+    get:
+      tags:
+      - bo
+      summary: getBoUsers bo
+      description: Get All users
+      operationId: bo#getBoUsers
+      parameters:
+      - name: field
+        in: query
+        description: Items order by {field}
+        required: false
+        type: string
+        default: name
+      - name: direction
+        in: query
+        description: Items order by {field} ASC/DESC
+        required: false
+        type: string
+        default: asc
+        enum:
+        - asc
+        - desc
+      - name: offset
+        in: path
+        description: Offset for pagination
+        required: true
+        type: integer
+        format: int32
+      - name: limit
+        in: path
+        description: Limit of items listed for pagination
+        required: true
+        type: integer
+        format: int32
+      - name: Authorization
+        in: header
+        description: OAuth token
+        required: false
+        type: string
+        pattern: ^Bearer [^ ]+$
+      - name: jwtToken
+        in: header
+        description: Jwt token
+        required: false
+        type: string
+        pattern: ^Bearer [^ ]+$
+      responses:
+        "200":
+          description: OK response.
+          schema:
+            $ref: '#/definitions/BoGetBoUsersResponseBody'
+            required:
+            - users
+            - success
+            - count
+        "500":
+          description: Internal Server Error response.
+          schema:
+            $ref: '#/definitions/BoGetBoUsersUnknownErrorResponseBody'
+            required:
+            - err
+            - success
+            - error_code
+      schemes:
+      - http
+      security:
+      - OAuth2_header_Authorization: []
+        jwt_header_jwtToken: []
+  /v1/bo/users/remove:
+    patch:
+      tags:
+      - bo
+      summary: deleteBoManyUsers bo
+      description: Delete many users with IDs send in body
+      operationId: bo#deleteBoManyUsers
+      parameters:
+      - name: Authorization
+        in: header
+        description: OAuth token
+        required: false
+        type: string
+        pattern: ^Bearer [^ ]+$
+      - name: jwtToken
+        in: header
+        description: Jwt token
+        required: false
+        type: string
+        pattern: ^Bearer [^ ]+$
+      - name: DeleteBoManyUsersRequestBody
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/BoDeleteBoManyUsersRequestBody'
+          required:
+          - tab
+      responses:
+        "200":
+          description: OK response.
+          schema:
+            $ref: '#/definitions/BoDeleteBoManyUsersResponseBody'
+            required:
+            - success
+        "500":
+          description: Internal Server Error response.
+          schema:
+            $ref: '#/definitions/BoDeleteBoManyUsersUnknownErrorResponseBody'
             required:
             - err
             - success
@@ -819,13 +1328,13 @@ definitions:
     properties:
       exist:
         type: boolean
-        example: true
+        example: false
       success:
         type: boolean
-        example: false
+        example: true
     example:
       exist: false
-      success: false
+      success: true
     required:
     - exist
     - success
@@ -939,18 +1448,487 @@ definitions:
     properties:
       exist:
         type: boolean
-        example: true
+        example: false
       success:
         type: boolean
-        example: false
+        example: true
     example:
-      exist: true
+      exist: false
       success: true
     required:
     - exist
     - success
   AuthSendConfirmationUnknownErrorResponseBody:
     title: AuthSendConfirmationUnknownErrorResponseBody
+    type: object
+    properties:
+      err:
+        type: string
+        example: sql no rows affected
+      error_code:
+        type: string
+        example: TX_UPDATE_ITEM
+      success:
+        type: boolean
+        default: false
+        example: true
+    description: Error not identified (500)
+    example:
+      err: sql no rows affected
+      error_code: TX_UPDATE_ITEM
+      success: false
+    required:
+    - err
+    - success
+    - error_code
+  BoContactDeleteBoContactResponseBody:
+    title: BoContactDeleteBoContactResponseBody
+    type: object
+    properties:
+      success:
+        type: boolean
+        example: false
+    example:
+      success: true
+    required:
+    - success
+  BoContactDeleteBoContactUnknownErrorResponseBody:
+    title: BoContactDeleteBoContactUnknownErrorResponseBody
+    type: object
+    properties:
+      err:
+        type: string
+        example: sql no rows affected
+      error_code:
+        type: string
+        example: TX_UPDATE_ITEM
+      success:
+        type: boolean
+        default: false
+        example: false
+    description: Error not identified (500)
+    example:
+      err: sql no rows affected
+      error_code: TX_UPDATE_ITEM
+      success: false
+    required:
+    - err
+    - success
+    - error_code
+  BoContactDeleteBoManyContactRequestBody:
+    title: BoContactDeleteBoManyContactRequestBody
+    type: object
+    properties:
+      tab:
+        type: array
+        items:
+          type: string
+          example: Dolor facilis et.
+        example:
+        - Molestiae quos quo est nihil sapiente.
+        - Suscipit ut aliquid.
+    example:
+      tab:
+      - Enim et quia.
+      - Ut autem quis.
+    required:
+    - tab
+  BoContactDeleteBoManyContactResponseBody:
+    title: BoContactDeleteBoManyContactResponseBody
+    type: object
+    properties:
+      success:
+        type: boolean
+        example: true
+    example:
+      success: true
+    required:
+    - success
+  BoContactDeleteBoManyContactUnknownErrorResponseBody:
+    title: BoContactDeleteBoManyContactUnknownErrorResponseBody
+    type: object
+    properties:
+      err:
+        type: string
+        example: sql no rows affected
+      error_code:
+        type: string
+        example: TX_UPDATE_ITEM
+      success:
+        type: boolean
+        default: false
+        example: true
+    description: Error not identified (500)
+    example:
+      err: sql no rows affected
+      error_code: TX_UPDATE_ITEM
+      success: true
+    required:
+    - err
+    - success
+    - error_code
+  BoContactGetBoContactByIDResponseBody:
+    title: BoContactGetBoContactByIDResponseBody
+    type: object
+    properties:
+      contact:
+        $ref: '#/definitions/resContactResponseBody'
+      success:
+        type: boolean
+        example: false
+    example:
+      contact:
+        email: guillaume@gmail.com
+        id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+        message: Vous embauchez ?
+        user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+      success: false
+    required:
+    - success
+  BoContactGetBoContactByIDUnknownErrorResponseBody:
+    title: BoContactGetBoContactByIDUnknownErrorResponseBody
+    type: object
+    properties:
+      err:
+        type: string
+        example: sql no rows affected
+      error_code:
+        type: string
+        example: TX_UPDATE_ITEM
+      success:
+        type: boolean
+        default: false
+        example: true
+    description: Error not identified (500)
+    example:
+      err: sql no rows affected
+      error_code: TX_UPDATE_ITEM
+      success: true
+    required:
+    - err
+    - success
+    - error_code
+  BoContactGetBoContactResponseBody:
+    title: BoContactGetBoContactResponseBody
+    type: object
+    properties:
+      contacts:
+        type: array
+        items:
+          $ref: '#/definitions/resContactResponseBody'
+        description: All messages
+        example:
+        - email: guillaume@gmail.com
+          id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+          message: Vous embauchez ?
+          user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+        - email: guillaume@gmail.com
+          id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+          message: Vous embauchez ?
+          user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+        - email: guillaume@gmail.com
+          id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+          message: Vous embauchez ?
+          user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+        - email: guillaume@gmail.com
+          id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+          message: Vous embauchez ?
+          user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+      count:
+        type: integer
+        description: total of messages
+        example: 461642138316235192
+        format: int64
+      success:
+        type: boolean
+        example: true
+    example:
+      contacts:
+      - email: guillaume@gmail.com
+        id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+        message: Vous embauchez ?
+        user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+      - email: guillaume@gmail.com
+        id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+        message: Vous embauchez ?
+        user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+      count: 3491694543883905577
+      success: false
+    required:
+    - contacts
+    - success
+    - count
+  BoContactGetBoContactUnknownErrorResponseBody:
+    title: BoContactGetBoContactUnknownErrorResponseBody
+    type: object
+    properties:
+      err:
+        type: string
+        example: sql no rows affected
+      error_code:
+        type: string
+        example: TX_UPDATE_ITEM
+      success:
+        type: boolean
+        default: false
+        example: true
+    description: Error not identified (500)
+    example:
+      err: sql no rows affected
+      error_code: TX_UPDATE_ITEM
+      success: true
+    required:
+    - err
+    - success
+    - error_code
+  BoDeleteBoManyUsersRequestBody:
+    title: BoDeleteBoManyUsersRequestBody
+    type: object
+    properties:
+      tab:
+        type: array
+        items:
+          type: string
+          example: Rerum officia.
+        example:
+        - Quam quasi harum.
+        - Amet corrupti molestias.
+    example:
+      tab:
+      - Impedit quaerat amet tempore sunt explicabo.
+      - Sit eligendi est.
+    required:
+    - tab
+  BoDeleteBoManyUsersResponseBody:
+    title: BoDeleteBoManyUsersResponseBody
+    type: object
+    properties:
+      success:
+        type: boolean
+        example: false
+    example:
+      success: false
+    required:
+    - success
+  BoDeleteBoManyUsersUnknownErrorResponseBody:
+    title: BoDeleteBoManyUsersUnknownErrorResponseBody
+    type: object
+    properties:
+      err:
+        type: string
+        example: sql no rows affected
+      error_code:
+        type: string
+        example: TX_UPDATE_ITEM
+      success:
+        type: boolean
+        default: false
+        example: true
+    description: Error not identified (500)
+    example:
+      err: sql no rows affected
+      error_code: TX_UPDATE_ITEM
+      success: false
+    required:
+    - err
+    - success
+    - error_code
+  BoDeleteBoUserResponseBody:
+    title: BoDeleteBoUserResponseBody
+    type: object
+    properties:
+      success:
+        type: boolean
+        example: false
+    example:
+      success: false
+    required:
+    - success
+  BoDeleteBoUserUnknownErrorResponseBody:
+    title: BoDeleteBoUserUnknownErrorResponseBody
+    type: object
+    properties:
+      err:
+        type: string
+        example: sql no rows affected
+      error_code:
+        type: string
+        example: TX_UPDATE_ITEM
+      success:
+        type: boolean
+        default: false
+        example: true
+    description: Error not identified (500)
+    example:
+      err: sql no rows affected
+      error_code: TX_UPDATE_ITEM
+      success: true
+    required:
+    - err
+    - success
+    - error_code
+  BoGetBoUserResponseBody:
+    title: BoGetBoUserResponseBody
+    type: object
+    properties:
+      success:
+        type: boolean
+        example: false
+      user:
+        $ref: '#/definitions/resUserResponseBody'
+    example:
+      success: false
+      user:
+        avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
+        email: guillaume@gmail.com
+        firstname: Guillaume
+        id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+        lastname: Morin
+        role: Nobis recusandae rerum voluptatibus est officiis.
+        username: guillaumemorin
+    required:
+    - user
+    - success
+  BoGetBoUserUnknownErrorResponseBody:
+    title: BoGetBoUserUnknownErrorResponseBody
+    type: object
+    properties:
+      err:
+        type: string
+        example: sql no rows affected
+      error_code:
+        type: string
+        example: TX_UPDATE_ITEM
+      success:
+        type: boolean
+        default: false
+        example: true
+    description: Error not identified (500)
+    example:
+      err: sql no rows affected
+      error_code: TX_UPDATE_ITEM
+      success: false
+    required:
+    - err
+    - success
+    - error_code
+  BoGetBoUsersResponseBody:
+    title: BoGetBoUsersResponseBody
+    type: object
+    properties:
+      count:
+        type: integer
+        description: total of users
+        example: 7226229823874064717
+        format: int64
+      success:
+        type: boolean
+        example: false
+      users:
+        type: array
+        items:
+          $ref: '#/definitions/resUserResponseBody'
+        description: All users
+        example:
+        - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
+          email: guillaume@gmail.com
+          firstname: Guillaume
+          id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+          lastname: Morin
+          role: Nobis recusandae rerum voluptatibus est officiis.
+          username: guillaumemorin
+        - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
+          email: guillaume@gmail.com
+          firstname: Guillaume
+          id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+          lastname: Morin
+          role: Nobis recusandae rerum voluptatibus est officiis.
+          username: guillaumemorin
+    example:
+      count: 149874184387574442
+      success: false
+      users:
+      - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
+        email: guillaume@gmail.com
+        firstname: Guillaume
+        id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+        lastname: Morin
+        role: Nobis recusandae rerum voluptatibus est officiis.
+        username: guillaumemorin
+      - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
+        email: guillaume@gmail.com
+        firstname: Guillaume
+        id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+        lastname: Morin
+        role: Nobis recusandae rerum voluptatibus est officiis.
+        username: guillaumemorin
+    required:
+    - users
+    - success
+    - count
+  BoGetBoUsersUnknownErrorResponseBody:
+    title: BoGetBoUsersUnknownErrorResponseBody
+    type: object
+    properties:
+      err:
+        type: string
+        example: sql no rows affected
+      error_code:
+        type: string
+        example: TX_UPDATE_ITEM
+      success:
+        type: boolean
+        default: false
+        example: false
+    description: Error not identified (500)
+    example:
+      err: sql no rows affected
+      error_code: TX_UPDATE_ITEM
+      success: true
+    required:
+    - err
+    - success
+    - error_code
+  BoUpdateBoUserRequestBody:
+    title: BoUpdateBoUserRequestBody
+    type: object
+    properties:
+      user:
+        $ref: '#/definitions/payloadUserRequestBody'
+    example:
+      user:
+        avatar: Nostrum enim.
+        email: guillaume@gmail.com
+        firstname: Guillaume
+        lastname: Morin
+        role: user
+        username: guillaumemoriin
+    required:
+    - user
+  BoUpdateBoUserResponseBody:
+    title: BoUpdateBoUserResponseBody
+    type: object
+    properties:
+      success:
+        type: boolean
+        example: false
+      user:
+        $ref: '#/definitions/resUserResponseBody'
+    example:
+      success: false
+      user:
+        avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
+        email: guillaume@gmail.com
+        firstname: Guillaume
+        id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+        lastname: Morin
+        role: Nobis recusandae rerum voluptatibus est officiis.
+        username: guillaumemorin
+    required:
+    - user
+    - success
+  BoUpdateBoUserUnknownErrorResponseBody:
+    title: BoUpdateBoUserUnknownErrorResponseBody
     type: object
     properties:
       err:
@@ -1016,12 +1994,12 @@ definitions:
       success:
         type: boolean
         default: false
-        example: true
+        example: false
     description: Error not identified (500)
     example:
       err: sql no rows affected
       error_code: TX_UPDATE_ITEM
-      success: false
+      success: true
     required:
     - err
     - success
@@ -1051,19 +2029,19 @@ definitions:
       temporary:
         type: boolean
         description: Is the error temporary?
-        example: true
+        example: false
       timeout:
         type: boolean
         description: Is the error a timeout?
-        example: false
+        example: true
     description: Error response result type (default view)
     example:
-      fault: true
+      fault: false
       id: 123abc
       message: parameter 'p' must be an integer
       name: bad_request
-      temporary: false
-      timeout: true
+      temporary: true
+      timeout: false
     required:
     - name
     - id
@@ -1090,7 +2068,7 @@ definitions:
         type: boolean
         example: false
     example:
-      success: false
+      success: true
     required:
     - success
   FilesDeleteFileUnknownErrorResponseBody:
@@ -1106,7 +2084,7 @@ definitions:
       success:
         type: boolean
         default: false
-        example: true
+        example: false
     description: Error not identified (500)
     example:
       err: sql no rows affected
@@ -1124,26 +2102,21 @@ definitions:
         type: string
         description: content of image
         example:
-        - 65
-        - 100
-        - 105
-        - 112
-        - 105
-        - 115
-        - 99
-        - 105
+        - 73
+        - 108
+        - 108
+        - 111
         - 32
-        - 104
+        - 108
         - 97
+        - 98
+        - 111
         - 114
         - 117
         - 109
         - 32
-        - 105
-        - 112
-        - 115
-        - 117
-        - 109
+        - 101
+        - 97
         - 46
         format: byte
       filename:
@@ -1157,45 +2130,29 @@ definitions:
       h:
         type: integer
         description: height of image if you crop
-        example: 2735324040201956445
+        example: 148696302461631751
         format: int64
       mime:
         type: string
         description: url file
-        example: Molestias est.
+        example: Omnis qui pariatur enim quia.
       size:
         type: integer
         description: size of image
-        example: 1654155841557320179
+        example: 7888196892755125868
         format: int64
       url:
         type: string
         description: url file
-        example: Ipsa veniam fuga eos repellat.
+        example: Architecto dolorem autem.
       w:
         type: integer
         description: width of image if you crop
-        example: 1357447774266166129
+        example: 9130530644295381537
         format: int64
     example:
       content:
       - 68
-      - 111
-      - 108
-      - 111
-      - 114
-      - 101
-      - 109
-      - 32
-      - 109
-      - 97
-      - 105
-      - 111
-      - 114
-      - 101
-      - 115
-      - 32
-      - 100
       - 117
       - 99
       - 105
@@ -1203,31 +2160,17 @@ definitions:
       - 117
       - 115
       - 32
+      - 101
       - 115
-      - 97
-      - 101
-      - 112
-      - 101
-      - 32
-      - 113
-      - 117
-      - 105
-      - 97
-      - 32
-      - 98
-      - 101
-      - 97
       - 116
-      - 97
-      - 101
       - 46
       filename: foo.jpg
       format: image/jpeg
-      h: 1273410128317600240
-      mime: Adipisci facere.
-      size: 7101153195678901439
-      url: Beatae fugiat unde eos possimus mollitia qui.
-      w: 4479397002519398068
+      h: 6672894215210738694
+      mime: Magni maiores.
+      size: 4399023947504830209
+      url: Ipsam facere est in molestiae esse exercitationem.
+      w: 6463261863869225493
     required:
     - filename
     - content
@@ -1240,15 +2183,15 @@ definitions:
         $ref: '#/definitions/resFileResponseBody'
       success:
         type: boolean
-        example: false
+        example: true
     example:
       file:
         id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-        mime: Iste dolorem dignissimos est assumenda.
+        mime: Cumque at aut eveniet quibusdam.
         name: foo.png
-        size: 6342995754675976700
-        url: Ea voluptates explicabo pariatur.
-      success: true
+        size: 8463046965258278579
+        url: Velit pariatur mollitia quisquam blanditiis.
+      success: false
     required:
     - success
     - file
@@ -1325,6 +2268,70 @@ definitions:
     example:
       err: sql no rows affected
       error_code: TX_UPDATE_ITEM
+      success: false
+    required:
+    - err
+    - success
+    - error_code
+  JWTTokenSigninBoRequestBody:
+    title: JWTTokenSigninBoRequestBody
+    type: object
+    properties:
+      email:
+        type: string
+        example: guillaume@epitech.eu
+        format: email
+      password:
+        type: string
+        description: Minimum 9 charactères / Chiffre Obligatoire
+        example: JeSuisUnTest974
+        pattern: \d
+        minLength: 9
+    example:
+      email: guillaume@epitech.eu
+      password: JeSuisUnTest974
+    required:
+    - password
+    - email
+  JWTTokenSigninBoResponseBody:
+    title: JWTTokenSigninBoResponseBody
+    type: object
+    properties:
+      access_token:
+        type: string
+        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ
+      refresh_token:
+        type: string
+        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ
+      success:
+        type: boolean
+        example: true
+    example:
+      access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ
+      refresh_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ
+      success: true
+    required:
+    - access_token
+    - refresh_token
+    - success
+  JWTTokenSigninBoUnknownErrorResponseBody:
+    title: JWTTokenSigninBoUnknownErrorResponseBody
+    type: object
+    properties:
+      err:
+        type: string
+        example: sql no rows affected
+      error_code:
+        type: string
+        example: TX_UPDATE_ITEM
+      success:
+        type: boolean
+        default: false
+        example: true
+    description: Error not identified (500)
+    example:
+      err: sql no rows affected
+      error_code: TX_UPDATE_ITEM
       success: true
     required:
     - err
@@ -1362,11 +2369,11 @@ definitions:
         example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ
       success:
         type: boolean
-        example: false
+        example: true
     example:
       access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ
       refresh_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ
-      success: true
+      success: false
     required:
     - access_token
     - refresh_token
@@ -1384,12 +2391,12 @@ definitions:
       success:
         type: boolean
         default: false
-        example: false
+        example: true
     description: Error not identified (500)
     example:
       err: sql no rows affected
       error_code: TX_UPDATE_ITEM
-      success: true
+      success: false
     required:
     - err
     - success
@@ -1479,22 +2486,22 @@ definitions:
     properties:
       access_token:
         type: string
-        example: Sed non nobis recusandae rerum voluptatibus.
+        example: Ad libero voluptas aspernatur.
       expires_in:
         type: integer
-        example: 7172123166178783568
+        example: 9018077450687815127
         format: int64
       success:
         type: boolean
         example: true
       token_type:
         type: string
-        example: Officiis earum sint et.
+        example: Eum perferendis facilis.
     example:
-      access_token: Qui commodi qui voluptatibus.
-      expires_in: 7356725827135952486
+      access_token: Excepturi tenetur totam consequatur.
+      expires_in: 6072844836572951646
       success: false
-      token_type: Laborum aut vitae nemo dicta.
+      token_type: Natus dolores impedit reiciendis suscipit vel ullam.
     required:
     - access_token
     - token_type
@@ -1506,22 +2513,22 @@ definitions:
     properties:
       access_token:
         type: string
-        example: Quia facere natus.
+        example: Minima dolor accusamus omnis veniam soluta.
       expires_in:
         type: integer
-        example: 3415385629817383184
+        example: 6246377567517904053
         format: int64
       success:
         type: boolean
         example: false
       token_type:
         type: string
-        example: Ut accusantium aliquid provident molestiae iste sed.
+        example: Et dolores nisi quia quis.
     example:
-      access_token: Totam ut ea.
-      expires_in: 7659891436596604883
-      success: true
-      token_type: Dolore accusamus saepe omnis.
+      access_token: Esse et vitae aut non blanditiis sunt.
+      expires_in: 4322289941673867609
+      success: false
+      token_type: Odio adipisci.
     required:
     - access_token
     - token_type
@@ -1533,18 +2540,17 @@ definitions:
     properties:
       client_id:
         type: string
-        example: Ipsam a dolores sed.
+        example: Inventore minima consequatur nesciunt ut incidunt.
       client_secret:
         type: string
-        example: Omnis similique in.
+        example: Quas cumque.
       grant_type:
         type: string
-        example: Ratione fuga.
+        example: Optio rerum sunt facere ipsam.
     example:
-      client_id: Sit molestiae et.
-      client_secret: Et et et numquam et est laudantium.
-      grant_type: Blanditiis necessitatibus corporis excepturi reprehenderit voluptatum
-        fugiat.
+      client_id: Explicabo totam quia perspiciatis dolorum.
+      client_secret: Distinctio aperiam excepturi eveniet velit aperiam.
+      grant_type: Natus dolor eaque modi.
     required:
     - client_id
     - client_secret
@@ -1578,7 +2584,7 @@ definitions:
     properties:
       success:
         type: boolean
-        example: true
+        example: false
       user:
         $ref: '#/definitions/resUserResponseBody'
     example:
@@ -1589,7 +2595,7 @@ definitions:
         firstname: Guillaume
         id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
         lastname: Morin
-        role: Non deleniti veritatis iste.
+        role: Nobis recusandae rerum voluptatibus est officiis.
         username: guillaumemorin
     required:
     - user
@@ -1607,12 +2613,12 @@ definitions:
       success:
         type: boolean
         default: false
-        example: false
+        example: true
     description: Error not identified (500)
     example:
       err: sql no rows affected
       error_code: TX_UPDATE_ITEM
-      success: true
+      success: false
     required:
     - err
     - success
@@ -1624,7 +2630,7 @@ definitions:
       count:
         type: integer
         description: total of users
-        example: 5774609911382297710
+        example: 5092835139479383356
         format: int64
       success:
         type: boolean
@@ -1640,60 +2646,32 @@ definitions:
           firstname: Guillaume
           id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
           lastname: Morin
-          role: Non deleniti veritatis iste.
+          role: Nobis recusandae rerum voluptatibus est officiis.
           username: guillaumemorin
         - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
           email: guillaume@gmail.com
           firstname: Guillaume
           id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
           lastname: Morin
-          role: Non deleniti veritatis iste.
-          username: guillaumemorin
-        - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
-          email: guillaume@gmail.com
-          firstname: Guillaume
-          id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-          lastname: Morin
-          role: Non deleniti veritatis iste.
-          username: guillaumemorin
-        - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
-          email: guillaume@gmail.com
-          firstname: Guillaume
-          id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-          lastname: Morin
-          role: Non deleniti veritatis iste.
+          role: Nobis recusandae rerum voluptatibus est officiis.
           username: guillaumemorin
     example:
-      count: 3080341330830118180
-      success: true
+      count: 868775246152618760
+      success: false
       users:
       - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
         email: guillaume@gmail.com
         firstname: Guillaume
         id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
         lastname: Morin
-        role: Non deleniti veritatis iste.
+        role: Nobis recusandae rerum voluptatibus est officiis.
         username: guillaumemorin
       - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
         email: guillaume@gmail.com
         firstname: Guillaume
         id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
         lastname: Morin
-        role: Non deleniti veritatis iste.
-        username: guillaumemorin
-      - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
-        email: guillaume@gmail.com
-        firstname: Guillaume
-        id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-        lastname: Morin
-        role: Non deleniti veritatis iste.
-        username: guillaumemorin
-      - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
-        email: guillaume@gmail.com
-        firstname: Guillaume
-        id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-        lastname: Morin
-        role: Non deleniti veritatis iste.
+        role: Nobis recusandae rerum voluptatibus est officiis.
         username: guillaumemorin
     required:
     - users
@@ -1717,7 +2695,7 @@ definitions:
     example:
       err: sql no rows affected
       error_code: TX_UPDATE_ITEM
-      success: true
+      success: false
     required:
     - err
     - success
@@ -1751,21 +2729,28 @@ definitions:
           firstname: Guillaume
           id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
           lastname: Morin
-          role: Non deleniti veritatis iste.
+          role: Nobis recusandae rerum voluptatibus est officiis.
           username: guillaumemorin
         - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
           email: guillaume@gmail.com
           firstname: Guillaume
           id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
           lastname: Morin
-          role: Non deleniti veritatis iste.
+          role: Nobis recusandae rerum voluptatibus est officiis.
           username: guillaumemorin
         - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
           email: guillaume@gmail.com
           firstname: Guillaume
           id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
           lastname: Morin
-          role: Non deleniti veritatis iste.
+          role: Nobis recusandae rerum voluptatibus est officiis.
+          username: guillaumemorin
+        - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
+          email: guillaume@gmail.com
+          firstname: Guillaume
+          id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+          lastname: Morin
+          role: Nobis recusandae rerum voluptatibus est officiis.
           username: guillaumemorin
     example:
       success: true
@@ -1775,21 +2760,28 @@ definitions:
         firstname: Guillaume
         id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
         lastname: Morin
-        role: Non deleniti veritatis iste.
+        role: Nobis recusandae rerum voluptatibus est officiis.
         username: guillaumemorin
       - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
         email: guillaume@gmail.com
         firstname: Guillaume
         id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
         lastname: Morin
-        role: Non deleniti veritatis iste.
+        role: Nobis recusandae rerum voluptatibus est officiis.
         username: guillaumemorin
       - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
         email: guillaume@gmail.com
         firstname: Guillaume
         id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
         lastname: Morin
-        role: Non deleniti veritatis iste.
+        role: Nobis recusandae rerum voluptatibus est officiis.
+        username: guillaumemorin
+      - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
+        email: guillaume@gmail.com
+        firstname: Guillaume
+        id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+        lastname: Morin
+        role: Nobis recusandae rerum voluptatibus est officiis.
         username: guillaumemorin
     required:
     - users
@@ -1807,7 +2799,7 @@ definitions:
       success:
         type: boolean
         default: false
-        example: false
+        example: true
     description: Error not identified (500)
     example:
       err: sql no rows affected
@@ -1823,7 +2815,7 @@ definitions:
     properties:
       success:
         type: boolean
-        example: false
+        example: true
     example:
       success: false
     required:
@@ -1841,7 +2833,7 @@ definitions:
       success:
         type: boolean
         default: false
-        example: true
+        example: false
     description: Error not identified (500)
     example:
       err: sql no rows affected
@@ -1857,18 +2849,18 @@ definitions:
     properties:
       success:
         type: boolean
-        example: true
+        example: false
       user:
         $ref: '#/definitions/resUserResponseBody'
     example:
-      success: true
+      success: false
       user:
         avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
         email: guillaume@gmail.com
         firstname: Guillaume
         id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
         lastname: Morin
-        role: Non deleniti veritatis iste.
+        role: Nobis recusandae rerum voluptatibus est officiis.
         username: guillaumemorin
     required:
     - user
@@ -1886,12 +2878,12 @@ definitions:
       success:
         type: boolean
         default: false
-        example: true
+        example: false
     description: Error not identified (500)
     example:
       err: sql no rows affected
       error_code: TX_UPDATE_ITEM
-      success: true
+      success: false
     required:
     - err
     - success
@@ -1940,18 +2932,18 @@ definitions:
     properties:
       success:
         type: boolean
-        example: true
+        example: false
       user:
         $ref: '#/definitions/resUserResponseBody'
     example:
-      success: true
+      success: false
       user:
         avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
         email: guillaume@gmail.com
         firstname: Guillaume
         id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
         lastname: Morin
-        role: Non deleniti veritatis iste.
+        role: Nobis recusandae rerum voluptatibus est officiis.
         username: guillaumemorin
     required:
     - success
@@ -1968,7 +2960,7 @@ definitions:
       success:
         type: boolean
         default: false
-        example: false
+        example: true
     description: Error not identified (500)
     example:
       err: sql no rows affected
@@ -1978,6 +2970,82 @@ definitions:
     - err
     - success
     - error_code
+  payloadUserRequestBody:
+    title: payloadUserRequestBody
+    type: object
+    properties:
+      avatar:
+        type: string
+        description: Url of the avatar and stock in db
+        example: Autem atque perspiciatis molestiae.
+      email:
+        type: string
+        example: guillaume@gmail.com
+        format: email
+      firstname:
+        type: string
+        example: Guillaume
+        minLength: 3
+        maxLength: 20
+      lastname:
+        type: string
+        example: Morin
+        minLength: 3
+        maxLength: 20
+      role:
+        type: string
+        description: role of the user
+        example: pro
+        enum:
+        - admin
+        - user
+        - pro
+      username:
+        type: string
+        example: guillaumemoriin
+        pattern: ^[a-z0-9_\-]+$
+        minLength: 2
+        maxLength: 20
+    example:
+      avatar: Voluptas veniam.
+      email: guillaume@gmail.com
+      firstname: Guillaume
+      lastname: Morin
+      role: pro
+      username: guillaumemoriin
+    required:
+    - email
+    - username
+    - firstname
+    - lastname
+    - avatar
+    - role
+  resContactResponseBody:
+    title: resContactResponseBody
+    type: object
+    properties:
+      email:
+        type: string
+        example: guillaume@gmail.com
+      id:
+        type: string
+        example: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+      message:
+        type: string
+        example: Vous embauchez ?
+      user_id:
+        type: string
+        example: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+    example:
+      email: guillaume@gmail.com
+      id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+      message: Vous embauchez ?
+      user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+    required:
+    - id
+    - email
+    - user_id
+    - message
   resFileResponseBody:
     title: resFileResponseBody
     type: object
@@ -1988,23 +3056,23 @@ definitions:
         format: uuid
       mime:
         type: string
-        example: Nisi assumenda quas sapiente odit ducimus tenetur.
+        example: Et quidem quae.
       name:
         type: string
         example: foo.png
       size:
         type: integer
-        example: 6547317807769550271
+        example: 7624449709937065176
         format: int64
       url:
         type: string
-        example: Ea et dicta.
+        example: Iste necessitatibus sint et est sed molestiae.
     example:
       id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-      mime: Mollitia consequatur.
+      mime: Est alias eaque cupiditate illum.
       name: foo.png
-      size: 4903101500191848499
-      url: A sunt.
+      size: 8388756197555321874
+      url: Quis sapiente consequuntur.
     required:
     - id
     - name
@@ -2031,7 +3099,7 @@ definitions:
       role:
         type: string
         description: User is admin or not
-        example: Explicabo perferendis nostrum enim.
+        example: Maiores reprehenderit est illo maiores.
       username:
         type: string
         example: guillaumemorin
@@ -2041,7 +3109,7 @@ definitions:
       firstname: Guillaume
       id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
       lastname: Morin
-      role: Omnis deleniti.
+      role: Deserunt mollitia maxime eius.
       username: guillaumemorin
     required:
     - id

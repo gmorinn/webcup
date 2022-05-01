@@ -38,6 +38,14 @@ type RefreshRequestBody struct {
 	RefreshToken string `form:"refresh_token" json:"refresh_token" xml:"refresh_token"`
 }
 
+// SigninBoRequestBody is the type of the "jwtToken" service "signinBo"
+// endpoint HTTP request body.
+type SigninBoRequestBody struct {
+	Email string `form:"email" json:"email" xml:"email"`
+	// Minimum 9 charactères / Chiffre Obligatoire
+	Password string `form:"password" json:"password" xml:"password"`
+}
+
 // SignupResponseBody is the type of the "jwtToken" service "signup" endpoint
 // HTTP response body.
 type SignupResponseBody struct {
@@ -62,6 +70,14 @@ type RefreshResponseBody struct {
 	Success      *bool   `form:"success,omitempty" json:"success,omitempty" xml:"success,omitempty"`
 }
 
+// SigninBoResponseBody is the type of the "jwtToken" service "signinBo"
+// endpoint HTTP response body.
+type SigninBoResponseBody struct {
+	AccessToken  *string `form:"access_token,omitempty" json:"access_token,omitempty" xml:"access_token,omitempty"`
+	RefreshToken *string `form:"refresh_token,omitempty" json:"refresh_token,omitempty" xml:"refresh_token,omitempty"`
+	Success      *bool   `form:"success,omitempty" json:"success,omitempty" xml:"success,omitempty"`
+}
+
 // SignupUnknownErrorResponseBody is the type of the "jwtToken" service
 // "signup" endpoint HTTP response body for the "unknown_error" error.
 type SignupUnknownErrorResponseBody struct {
@@ -81,6 +97,14 @@ type SigninUnknownErrorResponseBody struct {
 // RefreshUnknownErrorResponseBody is the type of the "jwtToken" service
 // "refresh" endpoint HTTP response body for the "unknown_error" error.
 type RefreshUnknownErrorResponseBody struct {
+	Err       *string `form:"err,omitempty" json:"err,omitempty" xml:"err,omitempty"`
+	ErrorCode *string `form:"error_code,omitempty" json:"error_code,omitempty" xml:"error_code,omitempty"`
+	Success   *bool   `form:"success,omitempty" json:"success,omitempty" xml:"success,omitempty"`
+}
+
+// SigninBoUnknownErrorResponseBody is the type of the "jwtToken" service
+// "signinBo" endpoint HTTP response body for the "unknown_error" error.
+type SigninBoUnknownErrorResponseBody struct {
 	Err       *string `form:"err,omitempty" json:"err,omitempty" xml:"err,omitempty"`
 	ErrorCode *string `form:"error_code,omitempty" json:"error_code,omitempty" xml:"error_code,omitempty"`
 	Success   *bool   `form:"success,omitempty" json:"success,omitempty" xml:"success,omitempty"`
@@ -113,6 +137,16 @@ func NewSigninRequestBody(p *jwttoken.SigninPayload) *SigninRequestBody {
 func NewRefreshRequestBody(p *jwttoken.RefreshPayload) *RefreshRequestBody {
 	body := &RefreshRequestBody{
 		RefreshToken: p.RefreshToken,
+	}
+	return body
+}
+
+// NewSigninBoRequestBody builds the HTTP request body from the payload of the
+// "signinBo" endpoint of the "jwtToken" service.
+func NewSigninBoRequestBody(p *jwttoken.SigninBoPayload) *SigninBoRequestBody {
+	body := &SigninBoRequestBody{
+		Email:    p.Email,
+		Password: p.Password,
 	}
 	return body
 }
@@ -189,6 +223,30 @@ func NewRefreshUnknownError(body *RefreshUnknownErrorResponseBody) *jwttoken.Unk
 	return v
 }
 
+// NewSigninBoSignOK builds a "jwtToken" service "signinBo" endpoint result
+// from a HTTP "OK" response.
+func NewSigninBoSignOK(body *SigninBoResponseBody) *jwttoken.Sign {
+	v := &jwttoken.Sign{
+		AccessToken:  *body.AccessToken,
+		RefreshToken: *body.RefreshToken,
+		Success:      *body.Success,
+	}
+
+	return v
+}
+
+// NewSigninBoUnknownError builds a jwtToken service signinBo endpoint
+// unknown_error error.
+func NewSigninBoUnknownError(body *SigninBoUnknownErrorResponseBody) *jwttoken.UnknownError {
+	v := &jwttoken.UnknownError{
+		Err:       *body.Err,
+		ErrorCode: *body.ErrorCode,
+		Success:   *body.Success,
+	}
+
+	return v
+}
+
 // ValidateSignupResponseBody runs the validations defined on SignupResponseBody
 func ValidateSignupResponseBody(body *SignupResponseBody) (err error) {
 	if body.AccessToken == nil {
@@ -220,6 +278,21 @@ func ValidateSigninResponseBody(body *SigninResponseBody) (err error) {
 // ValidateRefreshResponseBody runs the validations defined on
 // RefreshResponseBody
 func ValidateRefreshResponseBody(body *RefreshResponseBody) (err error) {
+	if body.AccessToken == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("access_token", "body"))
+	}
+	if body.RefreshToken == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("refresh_token", "body"))
+	}
+	if body.Success == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("success", "body"))
+	}
+	return
+}
+
+// ValidateSigninBoResponseBody runs the validations defined on
+// SigninBoResponseBody
+func ValidateSigninBoResponseBody(body *SigninBoResponseBody) (err error) {
 	if body.AccessToken == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("access_token", "body"))
 	}
@@ -265,6 +338,21 @@ func ValidateSigninUnknownErrorResponseBody(body *SigninUnknownErrorResponseBody
 // ValidateRefreshUnknownErrorResponseBody runs the validations defined on
 // refresh_unknown_error_response_body
 func ValidateRefreshUnknownErrorResponseBody(body *RefreshUnknownErrorResponseBody) (err error) {
+	if body.Err == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("err", "body"))
+	}
+	if body.Success == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("success", "body"))
+	}
+	if body.ErrorCode == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("error_code", "body"))
+	}
+	return
+}
+
+// ValidateSigninBoUnknownErrorResponseBody runs the validations defined on
+// signinBo_unknown_error_response_body
+func ValidateSigninBoUnknownErrorResponseBody(body *SigninBoUnknownErrorResponseBody) (err error) {
 	if body.Err == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("err", "body"))
 	}

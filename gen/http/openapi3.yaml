@@ -27,9 +27,9 @@ paths:
             schema:
               $ref: '#/components/schemas/OAuthRequestBody'
             example:
-              client_id: Impedit ut molestiae eveniet omnis omnis.
-              client_secret: Amet est quidem quidem voluptatem.
-              grant_type: Saepe perferendis.
+              client_id: Quo mollitia consequatur.
+              client_secret: Autem necessitatibus dolorem animi vero ipsa.
+              grant_type: Fuga eos repellat.
       responses:
         "201":
           description: Created response.
@@ -38,10 +38,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/OAuthResponse'
               example:
-                access_token: Dolorum rerum rerum.
-                expires_in: 3066937485378452835
-                success: false
-                token_type: Amet harum.
+                access_token: Dolorem quia molestias est exercitationem.
+                expires_in: 4650264894356005535
+                success: true
+                token_type: Harum ipsum quidem in beatae.
         "400":
           description: Bad Request response.
           content:
@@ -49,30 +49,66 @@ paths:
               schema:
                 $ref: '#/components/schemas/OAuthResponse'
               example:
-                access_token: Dolorem consequuntur magnam.
-                expires_in: 8740314464265604300
-                success: false
-                token_type: Sint quasi.
+                access_token: Accusantium aliquid provident.
+                expires_in: 7970106614419599573
+                success: true
+                token_type: Iste sed eos sed.
         "401":
           description: 'unauthorized: Unauthorized response.'
           content:
             application/json:
               schema:
                 type: string
-                example: Recusandae molestiae quos.
+                example: Cumque necessitatibus quos.
         "403":
           description: 'oauth_error: Forbidden response.'
           content:
             application/json:
               schema:
                 type: string
-                example: Dolor facilis et.
+                example: Sunt vel qui non iure soluta.
         "500":
           description: 'unknown_error: Error not identified (500)'
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnknownError'
+  /bo/signin:
+    post:
+      tags:
+      - jwtToken
+      summary: signinBo jwtToken
+      description: signin for back-office, user needs to be admin
+      operationId: jwtToken#signinBo
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SigninRequestBody'
+            example:
+              email: guillaume@epitech.eu
+              password: JeSuisUnTest974
+      responses:
+        "200":
+          description: OK response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sign'
+              example:
+                access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ
+                refresh_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ
+                success: false
+        "500":
+          description: 'unknown_error: Error not identified (500)'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnknownError'
+      security:
+      - OAuth2_header_Authorization:
+        - api:read
   /openapi.json:
     get:
       tags:
@@ -212,6 +248,250 @@ paths:
       security:
       - OAuth2_header_Authorization:
         - api:read
+  /v1/bo/contacts/{id}:
+    get:
+      tags:
+      - boContact
+      summary: getBoContactByID boContact
+      description: get one contact by ID
+      operationId: boContact#getBoContactByID
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          example: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+          format: uuid
+        example: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+      - name: jwtToken
+        in: header
+        description: Jwt token
+        allowEmptyValue: true
+        schema:
+          type: string
+          description: Jwt token
+          example: "Bearer \U000708E7\U000BB83D\U00029014"
+          pattern: ^Bearer [^ ]+$
+        example: "Bearer \U000C518F\U00107C83\U0008CE64"
+      responses:
+        "200":
+          description: OK response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetBoContactByIDResponseBody'
+              example:
+                contact:
+                  email: guillaume@gmail.com
+                  id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+                  message: Vous embauchez ?
+                  user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+                success: false
+        "500":
+          description: 'unknown_error: Error not identified (500)'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnknownError'
+      security:
+      - OAuth2_header_Authorization:
+        - api:read
+        jwt_header_jwtToken:
+        - api:read
+        - api:write
+  /v1/bo/contacts/messages/{offset}/{limit}:
+    get:
+      tags:
+      - boContact
+      summary: getBoContact boContact
+      description: Get All messages
+      operationId: boContact#getBoContact
+      parameters:
+      - name: field
+        in: query
+        description: Items order by {field}
+        allowEmptyValue: true
+        schema:
+          type: string
+          description: Items order by {field}
+          default: name
+          example: name
+        example: name
+      - name: direction
+        in: query
+        description: Items order by {field} ASC/DESC
+        allowEmptyValue: true
+        schema:
+          type: string
+          description: Items order by {field} ASC/DESC
+          default: asc
+          example: asc
+          enum:
+          - asc
+          - desc
+        example: asc
+      - name: offset
+        in: path
+        description: Offset for pagination
+        required: true
+        schema:
+          type: integer
+          description: Offset for pagination
+          example: 0
+          format: int32
+        example: 0
+      - name: limit
+        in: path
+        description: Limit of items listed for pagination
+        required: true
+        schema:
+          type: integer
+          description: Limit of items listed for pagination
+          example: 9
+          format: int32
+        example: 9
+      - name: jwtToken
+        in: header
+        description: Jwt token
+        allowEmptyValue: true
+        schema:
+          type: string
+          description: Jwt token
+          example: "Bearer \U000DF0C7\U00050969\U0005BB0F\U00040D2F"
+          pattern: ^Bearer [^ ]+$
+        example: "Bearer \U00094B2E\U000AC949\U0004CDE6\U00028764\U000B7D56"
+      responses:
+        "200":
+          description: OK response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetBoContactResponseBody'
+              example:
+                contacts:
+                - email: guillaume@gmail.com
+                  id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+                  message: Vous embauchez ?
+                  user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+                - email: guillaume@gmail.com
+                  id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+                  message: Vous embauchez ?
+                  user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+                - email: guillaume@gmail.com
+                  id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+                  message: Vous embauchez ?
+                  user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+                count: 7279443565013727231
+                success: true
+        "500":
+          description: 'unknown_error: Error not identified (500)'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnknownError'
+      security:
+      - OAuth2_header_Authorization:
+        - api:read
+        jwt_header_jwtToken:
+        - api:read
+        - api:write
+  /v1/bo/contacts/remove:
+    patch:
+      tags:
+      - boContact
+      summary: deleteBoManyContact boContact
+      description: Delete many contact with IDs send in body
+      operationId: boContact#deleteBoManyContact
+      parameters:
+      - name: jwtToken
+        in: header
+        description: Jwt token
+        allowEmptyValue: true
+        schema:
+          type: string
+          description: Jwt token
+          example: "Bearer \U0002CFAC\U000E8A7A\U000D114D\U00100513\U0002BF78"
+          pattern: ^Bearer [^ ]+$
+        example: "Bearer \U0001EFE7\U00064D0B\U0006EC04\U0009B0FE\U000E3B6C"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeleteBoManyContactRequestBody'
+            example:
+              tab:
+              - Quod enim occaecati aliquam ducimus omnis temporibus.
+              - Vitae consequatur qui nostrum quia temporibus.
+      responses:
+        "200":
+          description: OK response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResetPasswordResponseBody'
+              example:
+                success: false
+        "500":
+          description: 'unknown_error: Error not identified (500)'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnknownError'
+      security:
+      - OAuth2_header_Authorization:
+        - api:read
+        jwt_header_jwtToken:
+        - api:read
+        - api:write
+  /v1/bo/contacts/remove/{id}:
+    put:
+      tags:
+      - boContact
+      summary: deleteBoContact boContact
+      description: Delete one contact by ID
+      operationId: boContact#deleteBoContact
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          example: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+          format: uuid
+        example: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+      - name: jwtToken
+        in: header
+        description: Jwt token
+        allowEmptyValue: true
+        schema:
+          type: string
+          description: Jwt token
+          example: "Bearer \U000EA3C4\U000CC528\U0002A1AB\U00073DFA\U000F48C0\U000911AF"
+          pattern: ^Bearer [^ ]+$
+        example: "Bearer \U0003705F\U0001D315\U0010C64D\U000D64C8\U00080588\U0006424B"
+      responses:
+        "200":
+          description: OK response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResetPasswordResponseBody'
+              example:
+                success: true
+        "500":
+          description: 'unknown_error: Error not identified (500)'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnknownError'
+      security:
+      - OAuth2_header_Authorization:
+        - api:read
+        jwt_header_jwtToken:
+        - api:read
+        - api:write
   /v1/bo/file/add:
     post:
       tags:
@@ -227,9 +507,9 @@ paths:
         schema:
           type: string
           description: Jwt token
-          example: "Bearer \U000EA3C4\U000CC528\U0002A1AB\U00073DFA\U000F48C0\U000911AF"
+          example: "Bearer \U000A4AAA\U00094DB1\U0009DE6D\U0006E1D8"
           pattern: ^Bearer [^ ]+$
-        example: "Bearer \U0003705F\U0001D315\U0010C64D\U000D64C8\U00080588\U0006424B"
+        example: "Bearer \U00073A8F\U0004093F\U0005301D뭘"
       requestBody:
         required: true
         content:
@@ -238,41 +518,47 @@ paths:
               $ref: '#/components/schemas/ImportFileRequestBody'
             example:
               content:
-              - 73
-              - 108
-              - 108
-              - 111
-              - 32
-              - 113
-              - 117
-              - 111
-              - 32
-              - 97
-              - 108
+              - 83
               - 105
-              - 113
-              - 117
-              - 105
-              - 100
-              - 32
-              - 97
               - 109
+              - 105
+              - 108
+              - 105
+              - 113
+              - 117
               - 101
-              - 116
               - 32
-              - 110
               - 111
+              - 109
+              - 110
+              - 105
+              - 115
+              - 32
+              - 101
+              - 120
+              - 32
+              - 97
               - 98
+              - 32
+              - 112
+              - 101
+              - 114
+              - 102
+              - 101
+              - 114
+              - 101
+              - 110
+              - 100
               - 105
               - 115
               - 46
               filename: foo.jpg
               format: image/jpeg
-              h: 3954212567730331431
-              mime: Vel mollitia.
-              size: 3028238973827103103
-              url: Autem vero dolorem aperiam cum reprehenderit ad.
-              w: 6083434384460884878
+              h: 4120041173756761915
+              mime: Nihil omnis quia.
+              size: 2604187601591124273
+              url: Quo neque.
+              w: 5717018036527026994
       responses:
         "201":
           description: Created response.
@@ -283,11 +569,11 @@ paths:
               example:
                 file:
                   id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-                  mime: Iste dolorem dignissimos est assumenda.
+                  mime: Cumque at aut eveniet quibusdam.
                   name: foo.png
-                  size: 6342995754675976700
-                  url: Ea voluptates explicabo pariatur.
-                success: true
+                  size: 8463046965258278579
+                  url: Velit pariatur mollitia quisquam blanditiis.
+                success: false
         "500":
           description: 'unknown_error: Error not identified (500)'
           content:
@@ -315,9 +601,9 @@ paths:
         schema:
           type: string
           description: Jwt token
-          example: "Bearer \U000708E7\U000BB83D\U00029014"
+          example: "Bearer \U0010846B\U000BC184\U000ACF17"
           pattern: ^Bearer [^ ]+$
-        example: "Bearer \U000C518F\U00107C83\U0008CE64"
+        example: "Bearer \U0001DAC9\U0002B68D\U00058EF7\U0004EB2F\U00065C70\U00021439"
       requestBody:
         required: true
         content:
@@ -326,6 +612,340 @@ paths:
               $ref: '#/components/schemas/DeleteFileRequestBody'
             example:
               url: /public/uploads/2021/12/2ca51d10-b660-4b2c-b27f-f7a119642885.png
+      responses:
+        "200":
+          description: OK response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResetPasswordResponseBody'
+              example:
+                success: false
+        "500":
+          description: 'unknown_error: Error not identified (500)'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnknownError'
+      security:
+      - OAuth2_header_Authorization:
+        - api:read
+        jwt_header_jwtToken:
+        - api:read
+        - api:write
+  /v1/bo/user/{id}:
+    get:
+      tags:
+      - bo
+      summary: getBoUser bo
+      description: Get one User
+      operationId: bo#getBoUser
+      parameters:
+      - name: id
+        in: path
+        description: Unique ID of the User
+        required: true
+        schema:
+          type: string
+          description: Unique ID of the User
+          example: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+          format: uuid
+        example: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+      - name: jwtToken
+        in: header
+        description: Jwt token
+        allowEmptyValue: true
+        schema:
+          type: string
+          description: Jwt token
+          example: "Bearer \U001033D2\U0005831D缒\U00025102"
+          pattern: ^Bearer [^ ]+$
+        example: "Bearer \U00054D0F\U000B981Dꇸ\U00056603"
+      responses:
+        "200":
+          description: OK response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateBoUserResponseBody'
+              example:
+                success: true
+                user:
+                  avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
+                  email: guillaume@gmail.com
+                  firstname: Guillaume
+                  id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+                  lastname: Morin
+                  role: Nobis recusandae rerum voluptatibus est officiis.
+                  username: guillaumemorin
+        "500":
+          description: 'unknown_error: Error not identified (500)'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnknownError'
+      security:
+      - OAuth2_header_Authorization:
+        - api:read
+        jwt_header_jwtToken:
+        - api:read
+        - api:write
+    put:
+      tags:
+      - bo
+      summary: updateBoUser bo
+      description: Update one User
+      operationId: bo#updateBoUser
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          example: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+          format: uuid
+        example: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+      - name: jwtToken
+        in: header
+        description: Jwt token
+        allowEmptyValue: true
+        schema:
+          type: string
+          description: Jwt token
+          example: "Bearer \U000E6DCE"
+          pattern: ^Bearer [^ ]+$
+        example: "Bearer \U000B9D08\U000DDE24"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateBoUserRequestBody'
+            example:
+              user:
+                avatar: Nostrum enim.
+                email: guillaume@gmail.com
+                firstname: Guillaume
+                lastname: Morin
+                role: user
+                username: guillaumemoriin
+      responses:
+        "200":
+          description: OK response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateBoUserResponseBody'
+              example:
+                success: true
+                user:
+                  avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
+                  email: guillaume@gmail.com
+                  firstname: Guillaume
+                  id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+                  lastname: Morin
+                  role: Nobis recusandae rerum voluptatibus est officiis.
+                  username: guillaumemorin
+        "500":
+          description: 'unknown_error: Error not identified (500)'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnknownError'
+      security:
+      - OAuth2_header_Authorization:
+        - api:read
+        jwt_header_jwtToken:
+        - api:read
+        - api:write
+  /v1/bo/user/remove/{id}:
+    delete:
+      tags:
+      - bo
+      summary: deleteBoUser bo
+      description: Delete one User by ID
+      operationId: bo#deleteBoUser
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          example: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+          format: uuid
+        example: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+      - name: jwtToken
+        in: header
+        description: Jwt token
+        allowEmptyValue: true
+        schema:
+          type: string
+          description: Jwt token
+          example: "Bearer \U0008E261\U000B01FC\U00026B1C\U00091858\U0001980E"
+          pattern: ^Bearer [^ ]+$
+        example: "Bearer \U000E4423"
+      responses:
+        "200":
+          description: OK response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResetPasswordResponseBody'
+              example:
+                success: true
+        "500":
+          description: 'unknown_error: Error not identified (500)'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnknownError'
+      security:
+      - OAuth2_header_Authorization:
+        - api:read
+        jwt_header_jwtToken:
+        - api:read
+        - api:write
+  /v1/bo/users/{offset}/{limit}:
+    get:
+      tags:
+      - bo
+      summary: getBoUsers bo
+      description: Get All users
+      operationId: bo#getBoUsers
+      parameters:
+      - name: field
+        in: query
+        description: Items order by {field}
+        allowEmptyValue: true
+        schema:
+          type: string
+          description: Items order by {field}
+          default: name
+          example: name
+        example: name
+      - name: direction
+        in: query
+        description: Items order by {field} ASC/DESC
+        allowEmptyValue: true
+        schema:
+          type: string
+          description: Items order by {field} ASC/DESC
+          default: asc
+          example: asc
+          enum:
+          - asc
+          - desc
+        example: asc
+      - name: offset
+        in: path
+        description: Offset for pagination
+        required: true
+        schema:
+          type: integer
+          description: Offset for pagination
+          example: 0
+          format: int32
+        example: 0
+      - name: limit
+        in: path
+        description: Limit of items listed for pagination
+        required: true
+        schema:
+          type: integer
+          description: Limit of items listed for pagination
+          example: 9
+          format: int32
+        example: 9
+      - name: jwtToken
+        in: header
+        description: Jwt token
+        allowEmptyValue: true
+        schema:
+          type: string
+          description: Jwt token
+          example: "Bearer \U000C1595\U000E383B\U00017267"
+          pattern: ^Bearer [^ ]+$
+        example: "Bearer \U00103049\U0003E8E7눻\U000E37F0\U0006CF89\U00044382"
+      responses:
+        "200":
+          description: OK response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetBoUsersResponseBody'
+              example:
+                count: 5254701374454642060
+                success: false
+                users:
+                - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
+                  email: guillaume@gmail.com
+                  firstname: Guillaume
+                  id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+                  lastname: Morin
+                  role: Nobis recusandae rerum voluptatibus est officiis.
+                  username: guillaumemorin
+                - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
+                  email: guillaume@gmail.com
+                  firstname: Guillaume
+                  id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+                  lastname: Morin
+                  role: Nobis recusandae rerum voluptatibus est officiis.
+                  username: guillaumemorin
+                - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
+                  email: guillaume@gmail.com
+                  firstname: Guillaume
+                  id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+                  lastname: Morin
+                  role: Nobis recusandae rerum voluptatibus est officiis.
+                  username: guillaumemorin
+                - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
+                  email: guillaume@gmail.com
+                  firstname: Guillaume
+                  id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+                  lastname: Morin
+                  role: Nobis recusandae rerum voluptatibus est officiis.
+                  username: guillaumemorin
+        "500":
+          description: 'unknown_error: Error not identified (500)'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnknownError'
+      security:
+      - OAuth2_header_Authorization:
+        - api:read
+        jwt_header_jwtToken:
+        - api:read
+        - api:write
+  /v1/bo/users/remove:
+    patch:
+      tags:
+      - bo
+      summary: deleteBoManyUsers bo
+      description: Delete many users with IDs send in body
+      operationId: bo#deleteBoManyUsers
+      parameters:
+      - name: jwtToken
+        in: header
+        description: Jwt token
+        allowEmptyValue: true
+        schema:
+          type: string
+          description: Jwt token
+          example: "Bearer �\U00088786\U00080C65\U0010DA1D"
+          pattern: ^Bearer [^ ]+$
+        example: "Bearer \U00024B30\U00021C16\U0003F7DE\U00077D87\U00105B0D\U000F0D46"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeleteBoManyContactRequestBody'
+            example:
+              tab:
+              - Quae ipsam a dolores sed voluptas.
+              - Similique in ratione ratione fuga ut.
+              - Molestiae et.
       responses:
         "200":
           description: OK response.
@@ -370,8 +990,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/EmailExistResponseBody'
               example:
-                exist: false
-                success: true
+                exist: true
+                success: false
         "500":
           description: 'unknown_error: Error not identified (500)'
           content:
@@ -442,7 +1062,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ResetPasswordResponseBody'
               example:
-                success: false
+                success: true
         "500":
           description: 'unknown_error: Error not identified (500)'
           content:
@@ -467,9 +1087,9 @@ paths:
         schema:
           type: string
           description: Jwt token
-          example: "Bearer \U000DF0C7\U00050969\U0005BB0F\U00040D2F"
+          example: "Bearer \U0010D749\U000DDB74웠\U0010545D"
           pattern: ^Bearer [^ ]+$
-        example: "Bearer \U00094B2E\U000AC949\U0004CDE6\U00028764\U000B7D56"
+        example: "Bearer \U000F46B1\U00098CAB\U0002A625\U00040A1F"
       requestBody:
         required: true
         content:
@@ -524,16 +1144,16 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GetUserByUsernameResponseBody'
+                $ref: '#/components/schemas/UpdateBoUserResponseBody'
               example:
-                success: true
+                success: false
                 user:
                   avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
                   email: guillaume@gmail.com
                   firstname: Guillaume
                   id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
                   lastname: Morin
-                  role: Non deleniti veritatis iste.
+                  role: Nobis recusandae rerum voluptatibus est officiis.
                   username: guillaumemorin
         "403":
           description: 'oauth_error: Forbidden response.'
@@ -541,7 +1161,7 @@ paths:
             application/json:
               schema:
                 type: string
-                example: Necessitatibus sint.
+                example: Doloremque fugit odio perspiciatis qui repellat sapiente.
         "500":
           description: 'unknown_error: Error not identified (500)'
           content:
@@ -585,9 +1205,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ListUsersMostRecentResponseBody'
+                $ref: '#/components/schemas/GetBoUsersResponseBody'
               example:
-                count: 6995978548169831727
+                count: 4190108163610728084
                 success: true
                 users:
                 - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
@@ -595,14 +1215,14 @@ paths:
                   firstname: Guillaume
                   id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
                   lastname: Morin
-                  role: Non deleniti veritatis iste.
+                  role: Nobis recusandae rerum voluptatibus est officiis.
                   username: guillaumemorin
                 - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
                   email: guillaume@gmail.com
                   firstname: Guillaume
                   id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
                   lastname: Morin
-                  role: Non deleniti veritatis iste.
+                  role: Nobis recusandae rerum voluptatibus est officiis.
                   username: guillaumemorin
         "403":
           description: 'oauth_error: Forbidden response.'
@@ -610,7 +1230,7 @@ paths:
             application/json:
               schema:
                 type: string
-                example: Alias eaque.
+                example: Quos perferendis veniam cupiditate et.
         "500":
           description: 'unknown_error: Error not identified (500)'
           content:
@@ -643,28 +1263,35 @@ paths:
               schema:
                 $ref: '#/components/schemas/ListUsersResponseBody'
               example:
-                success: true
+                success: false
                 users:
                 - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
                   email: guillaume@gmail.com
                   firstname: Guillaume
                   id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
                   lastname: Morin
-                  role: Non deleniti veritatis iste.
+                  role: Nobis recusandae rerum voluptatibus est officiis.
                   username: guillaumemorin
                 - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
                   email: guillaume@gmail.com
                   firstname: Guillaume
                   id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
                   lastname: Morin
-                  role: Non deleniti veritatis iste.
+                  role: Nobis recusandae rerum voluptatibus est officiis.
                   username: guillaumemorin
                 - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
                   email: guillaume@gmail.com
                   firstname: Guillaume
                   id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
                   lastname: Morin
-                  role: Non deleniti veritatis iste.
+                  role: Nobis recusandae rerum voluptatibus est officiis.
+                  username: guillaumemorin
+                - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
+                  email: guillaume@gmail.com
+                  firstname: Guillaume
+                  id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+                  lastname: Morin
+                  role: Nobis recusandae rerum voluptatibus est officiis.
                   username: guillaumemorin
         "403":
           description: 'oauth_error: Forbidden response.'
@@ -672,7 +1299,7 @@ paths:
             application/json:
               schema:
                 type: string
-                example: Et quidem quae.
+                example: Quo et.
         "500":
           description: 'unknown_error: Error not identified (500)'
           content:
@@ -707,16 +1334,16 @@ paths:
         schema:
           type: string
           description: Jwt token
-          example: "Bearer \U0010D749\U000DDB74웠\U0010545D"
+          example: "Bearer \U00099594\U0008572E\U000A3DF9\U00023A7F\U000402B0\U0003B577"
           pattern: ^Bearer [^ ]+$
-        example: "Bearer \U000F46B1\U00098CAB\U0002A625\U00040A1F"
+        example: "Bearer \U00053D84\U00053F11"
       responses:
         "200":
           description: OK response.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GetUserByUsernameResponseBody'
+                $ref: '#/components/schemas/UpdateBoUserResponseBody'
               example:
                 success: true
                 user:
@@ -725,7 +1352,7 @@ paths:
                   firstname: Guillaume
                   id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
                   lastname: Morin
-                  role: Non deleniti veritatis iste.
+                  role: Nobis recusandae rerum voluptatibus est officiis.
                   username: guillaumemorin
         "500":
           description: 'unknown_error: Error not identified (500)'
@@ -754,9 +1381,9 @@ paths:
         schema:
           type: string
           description: Jwt token
-          example: "Bearer \U000A4AAA\U00094DB1\U0009DE6D\U0006E1D8"
+          example: "Bearer \U0007FD8E\U0008989D"
           pattern: ^Bearer [^ ]+$
-        example: "Bearer \U00073A8F\U0004093F\U0005301D뭘"
+        example: "Bearer \U00049157\U0005B65E\U000D858F\U000CCFA5\U0005C212"
       requestBody:
         required: true
         content:
@@ -784,7 +1411,7 @@ paths:
                   firstname: Guillaume
                   id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
                   lastname: Morin
-                  role: Non deleniti veritatis iste.
+                  role: Nobis recusandae rerum voluptatibus est officiis.
                   username: guillaumemorin
         "500":
           description: 'unknown_error: Error not identified (500)'
@@ -821,9 +1448,9 @@ paths:
         schema:
           type: string
           description: Jwt token
-          example: "Bearer \U0002CFAC\U000E8A7A\U000D114D\U00100513\U0002BF78"
+          example: "Bearer \U000FE762\U000F7069鯬\U0009B65E\U0010D28B\U0010842D"
           pattern: ^Bearer [^ ]+$
-        example: "Bearer \U0001EFE7\U00064D0B\U0006EC04\U0009B0FE\U000E3B6C"
+        example: "Bearer \U00032DC4\U000599FA\U0001D1D3\U00057A5E\U000B1A96\U000E83A2"
       responses:
         "200":
           description: OK response.
@@ -832,7 +1459,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ResetPasswordResponseBody'
               example:
-                success: true
+                success: false
         "500":
           description: 'unknown_error: Error not identified (500)'
           content:
@@ -865,6 +1492,24 @@ components:
       required:
       - user_id
       - msg
+    DeleteBoManyContactRequestBody:
+      type: object
+      properties:
+        tab:
+          type: array
+          items:
+            type: string
+            example: Est maxime aliquid ipsa debitis autem.
+          example:
+          - Veritatis molestias magnam non ex enim totam.
+          - Eligendi aut fugiat.
+          - Provident quis.
+      example:
+        tab:
+        - Dolores sed repellat.
+        - Quas quia ullam.
+      required:
+      - tab
     DeleteFileRequestBody:
       type: object
       properties:
@@ -897,31 +1542,128 @@ components:
           example: true
       example:
         exist: true
-        success: false
+        success: true
       required:
       - exist
       - success
-    GetUserByUsernameResponseBody:
+    GetBoContactByIDResponseBody:
       type: object
       properties:
+        contact:
+          $ref: '#/components/schemas/ResContact'
+        success:
+          type: boolean
+          example: false
+      example:
+        contact:
+          email: guillaume@gmail.com
+          id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+          message: Vous embauchez ?
+          user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+        success: false
+      required:
+      - success
+    GetBoContactResponseBody:
+      type: object
+      properties:
+        contacts:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResContact'
+          description: All messages
+          example:
+          - email: guillaume@gmail.com
+            id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+            message: Vous embauchez ?
+            user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+          - email: guillaume@gmail.com
+            id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+            message: Vous embauchez ?
+            user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+        count:
+          type: integer
+          description: total of messages
+          example: 1923532848995119821
+          format: int64
         success:
           type: boolean
           example: true
-        user:
-          $ref: '#/components/schemas/ResUser'
       example:
+        contacts:
+        - email: guillaume@gmail.com
+          id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+          message: Vous embauchez ?
+          user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+        - email: guillaume@gmail.com
+          id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+          message: Vous embauchez ?
+          user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+        count: 8030613840281320028
         success: true
-        user:
-          avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
+      required:
+      - contacts
+      - success
+      - count
+    GetBoUsersResponseBody:
+      type: object
+      properties:
+        count:
+          type: integer
+          description: total of users
+          example: 3854554440749211721
+          format: int64
+        success:
+          type: boolean
+          example: false
+        users:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResUser'
+          description: All users
+          example:
+          - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
+            email: guillaume@gmail.com
+            firstname: Guillaume
+            id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+            lastname: Morin
+            role: Nobis recusandae rerum voluptatibus est officiis.
+            username: guillaumemorin
+          - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
+            email: guillaume@gmail.com
+            firstname: Guillaume
+            id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+            lastname: Morin
+            role: Nobis recusandae rerum voluptatibus est officiis.
+            username: guillaumemorin
+          - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
+            email: guillaume@gmail.com
+            firstname: Guillaume
+            id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+            lastname: Morin
+            role: Nobis recusandae rerum voluptatibus est officiis.
+            username: guillaumemorin
+      example:
+        count: 6615153050981237776
+        success: true
+        users:
+        - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
           email: guillaume@gmail.com
           firstname: Guillaume
           id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
           lastname: Morin
-          role: Non deleniti veritatis iste.
+          role: Nobis recusandae rerum voluptatibus est officiis.
+          username: guillaumemorin
+        - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
+          email: guillaume@gmail.com
+          firstname: Guillaume
+          id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+          lastname: Morin
+          role: Nobis recusandae rerum voluptatibus est officiis.
           username: guillaumemorin
       required:
-      - user
+      - users
       - success
+      - count
     ImportFileRequestBody:
       type: object
       properties:
@@ -929,40 +1671,43 @@ components:
           type: string
           description: content of image
           example:
-          - 86
-          - 101
+          - 83
+          - 105
+          - 116
+          - 32
+          - 108
+          - 97
+          - 98
+          - 111
           - 114
           - 105
-          - 116
-          - 97
-          - 116
-          - 105
-          - 115
-          - 32
-          - 118
           - 111
-          - 108
-          - 117
-          - 112
-          - 116
-          - 97
-          - 116
-          - 101
-          - 109
-          - 32
           - 115
           - 97
-          - 112
-          - 105
-          - 101
-          - 110
-          - 116
-          - 101
+          - 109
           - 32
           - 101
+          - 97
+          - 32
+          - 112
+          - 111
+          - 114
+          - 114
+          - 111
+          - 32
+          - 105
           - 110
+          - 32
+          - 97
+          - 116
+          - 32
+          - 100
+          - 117
+          - 99
           - 105
           - 109
+          - 117
+          - 115
           - 46
           format: binary
         filename:
@@ -976,72 +1721,54 @@ components:
         h:
           type: integer
           description: height of image if you crop
-          example: 4166529308275498835
+          example: 7905598670857642619
           format: int64
         mime:
           type: string
           description: url file
-          example: Explicabo non eius labore sed a.
+          example: Libero magnam quia voluptatem ut quibusdam nam.
         size:
           type: integer
           description: size of image
-          example: 7942531826164798556
+          example: 9207431603884740369
           format: int64
         url:
           type: string
           description: url file
-          example: Tenetur dicta ratione.
+          example: Quas sapiente est distinctio quia.
         w:
           type: integer
           description: width of image if you crop
-          example: 6957845075561693354
+          example: 3851153339623786695
           format: int64
       example:
         content:
-        - 69
-        - 114
-        - 114
-        - 111
-        - 114
-        - 32
-        - 99
-        - 111
-        - 110
-        - 115
-        - 101
-        - 113
+        - 81
         - 117
-        - 117
-        - 110
-        - 116
-        - 117
-        - 114
-        - 32
-        - 115
         - 105
-        - 110
-        - 116
-        - 32
-        - 115
         - 97
-        - 101
-        - 112
-        - 101
         - 32
-        - 113
-        - 117
-        - 105
-        - 32
-        - 117
         - 116
+        - 101
+        - 109
+        - 112
+        - 111
+        - 114
+        - 97
+        - 32
+        - 101
+        - 97
+        - 114
+        - 117
+        - 109
         - 46
         filename: foo.jpg
         format: image/jpeg
-        h: 4410797695868560903
-        mime: Exercitationem autem architecto necessitatibus.
-        size: 7013135547945378931
-        url: Doloribus quis numquam provident.
-        w: 7199480430913498476
+        h: 6403530369267105611
+        mime: Non natus.
+        size: 5815012610362759365
+        url: Quae unde omnis qui beatae.
+        w: 3589360877923256836
       required:
       - filename
       - content
@@ -1053,85 +1780,18 @@ components:
           $ref: '#/components/schemas/ResFile'
         success:
           type: boolean
-          example: false
+          example: true
       example:
         file:
           id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-          mime: Iste dolorem dignissimos est assumenda.
+          mime: Cumque at aut eveniet quibusdam.
           name: foo.png
-          size: 6342995754675976700
-          url: Ea voluptates explicabo pariatur.
+          size: 8463046965258278579
+          url: Velit pariatur mollitia quisquam blanditiis.
         success: true
       required:
       - success
       - file
-    ListUsersMostRecentResponseBody:
-      type: object
-      properties:
-        count:
-          type: integer
-          description: total of users
-          example: 535350432793924435
-          format: int64
-        success:
-          type: boolean
-          example: false
-        users:
-          type: array
-          items:
-            $ref: '#/components/schemas/ResUser'
-          description: Result is an an array of user
-          example:
-          - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
-            email: guillaume@gmail.com
-            firstname: Guillaume
-            id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-            lastname: Morin
-            role: Non deleniti veritatis iste.
-            username: guillaumemorin
-          - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
-            email: guillaume@gmail.com
-            firstname: Guillaume
-            id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-            lastname: Morin
-            role: Non deleniti veritatis iste.
-            username: guillaumemorin
-      example:
-        count: 6274988928502862421
-        success: false
-        users:
-        - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
-          email: guillaume@gmail.com
-          firstname: Guillaume
-          id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-          lastname: Morin
-          role: Non deleniti veritatis iste.
-          username: guillaumemorin
-        - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
-          email: guillaume@gmail.com
-          firstname: Guillaume
-          id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-          lastname: Morin
-          role: Non deleniti veritatis iste.
-          username: guillaumemorin
-        - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
-          email: guillaume@gmail.com
-          firstname: Guillaume
-          id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-          lastname: Morin
-          role: Non deleniti veritatis iste.
-          username: guillaumemorin
-        - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
-          email: guillaume@gmail.com
-          firstname: Guillaume
-          id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-          lastname: Morin
-          role: Non deleniti veritatis iste.
-          username: guillaumemorin
-      required:
-      - users
-      - success
-      - count
     ListUsersRequestBody:
       type: object
       properties:
@@ -1147,7 +1807,7 @@ components:
       properties:
         success:
           type: boolean
-          example: true
+          example: false
         users:
           type: array
           items:
@@ -1159,28 +1819,21 @@ components:
             firstname: Guillaume
             id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
             lastname: Morin
-            role: Non deleniti veritatis iste.
+            role: Nobis recusandae rerum voluptatibus est officiis.
             username: guillaumemorin
           - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
             email: guillaume@gmail.com
             firstname: Guillaume
             id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
             lastname: Morin
-            role: Non deleniti veritatis iste.
+            role: Nobis recusandae rerum voluptatibus est officiis.
             username: guillaumemorin
           - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
             email: guillaume@gmail.com
             firstname: Guillaume
             id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
             lastname: Morin
-            role: Non deleniti veritatis iste.
-            username: guillaumemorin
-          - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
-            email: guillaume@gmail.com
-            firstname: Guillaume
-            id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-            lastname: Morin
-            role: Non deleniti veritatis iste.
+            role: Nobis recusandae rerum voluptatibus est officiis.
             username: guillaumemorin
       example:
         success: true
@@ -1190,21 +1843,21 @@ components:
           firstname: Guillaume
           id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
           lastname: Morin
-          role: Non deleniti veritatis iste.
+          role: Nobis recusandae rerum voluptatibus est officiis.
           username: guillaumemorin
         - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
           email: guillaume@gmail.com
           firstname: Guillaume
           id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
           lastname: Morin
-          role: Non deleniti veritatis iste.
+          role: Nobis recusandae rerum voluptatibus est officiis.
           username: guillaumemorin
         - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
           email: guillaume@gmail.com
           firstname: Guillaume
           id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
           lastname: Morin
-          role: Non deleniti veritatis iste.
+          role: Nobis recusandae rerum voluptatibus est officiis.
           username: guillaumemorin
       required:
       - users
@@ -1214,17 +1867,17 @@ components:
       properties:
         client_id:
           type: string
-          example: Sit esse officiis dicta.
+          example: Et provident iusto quo a sit.
         client_secret:
           type: string
-          example: Ducimus consequuntur debitis dolorem nam ab est.
+          example: Hic debitis aut ipsum et.
         grant_type:
           type: string
-          example: Accusamus omnis consequatur excepturi vero.
+          example: Id in.
       example:
-        client_id: Quis dolorem ut dolores tenetur corrupti.
-        client_secret: Et perferendis sapiente.
-        grant_type: Ipsa dolores voluptas consequatur ipsam ex voluptas.
+        client_id: Architecto error et corrupti sed.
+        client_secret: Enim placeat dignissimos.
+        grant_type: Et atque doloremque odit sunt nam dolores.
       required:
       - client_id
       - client_secret
@@ -1234,27 +1887,76 @@ components:
       properties:
         access_token:
           type: string
-          example: Sunt aut ipsum ea et.
+          example: Numquam ratione.
         expires_in:
           type: integer
-          example: 7575041439073198516
+          example: 7907662984415308684
           format: int64
         success:
           type: boolean
-          example: true
+          example: false
         token_type:
           type: string
-          example: Assumenda sed.
+          example: Quod quis quidem eum inventore et quo.
       example:
-        access_token: Autem aut.
-        expires_in: 7381898622861404840
+        access_token: Sit numquam ea quos eaque cupiditate.
+        expires_in: 284056342402974006
         success: true
-        token_type: Consequuntur veniam mollitia aut incidunt et.
+        token_type: Totam repellendus omnis distinctio voluptatem sit.
       required:
       - access_token
       - token_type
       - expires_in
       - success
+    PayloadUser:
+      type: object
+      properties:
+        avatar:
+          type: string
+          description: Url of the avatar and stock in db
+          example: Illo ipsam excepturi suscipit non.
+        email:
+          type: string
+          example: guillaume@gmail.com
+          format: email
+        firstname:
+          type: string
+          example: Guillaume
+          minLength: 3
+          maxLength: 20
+        lastname:
+          type: string
+          example: Morin
+          minLength: 3
+          maxLength: 20
+        role:
+          type: string
+          description: role of the user
+          example: pro
+          enum:
+          - admin
+          - user
+          - pro
+        username:
+          type: string
+          example: guillaumemoriin
+          pattern: ^[a-z0-9_\-]+$
+          minLength: 2
+          maxLength: 20
+      example:
+        avatar: Sed eos soluta nemo atque.
+        email: guillaume@gmail.com
+        firstname: Guillaume
+        lastname: Morin
+        role: user
+        username: guillaumemoriin
+      required:
+      - email
+      - username
+      - firstname
+      - lastname
+      - avatar
+      - role
     RefreshRequestBody:
       type: object
       properties:
@@ -1265,6 +1967,31 @@ components:
         refresh_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ
       required:
       - refresh_token
+    ResContact:
+      type: object
+      properties:
+        email:
+          type: string
+          example: guillaume@gmail.com
+        id:
+          type: string
+          example: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+        message:
+          type: string
+          example: Vous embauchez ?
+        user_id:
+          type: string
+          example: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+      example:
+        email: guillaume@gmail.com
+        id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+        message: Vous embauchez ?
+        user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+      required:
+      - id
+      - email
+      - user_id
+      - message
     ResFile:
       type: object
       properties:
@@ -1274,23 +2001,23 @@ components:
           format: uuid
         mime:
           type: string
-          example: Labore et illo at optio.
+          example: Sint aut deleniti dolores voluptatibus iusto.
         name:
           type: string
           example: foo.png
         size:
           type: integer
-          example: 7025243929774420254
+          example: 6838238732989430607
           format: int64
         url:
           type: string
-          example: Nostrum qui magnam.
+          example: Nisi totam.
       example:
         id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-        mime: Quis saepe debitis natus suscipit facilis.
+        mime: Libero sed.
         name: foo.png
-        size: 4607917646223374317
-        url: Placeat nihil qui provident.
+        size: 8880041394114800655
+        url: Non architecto quod.
       required:
       - id
       - name
@@ -1316,7 +2043,7 @@ components:
         role:
           type: string
           description: User is admin or not
-          example: Aliquid id doloremque enim et quia vel.
+          example: Qui delectus et veniam sunt voluptatibus.
         username:
           type: string
           example: guillaumemorin
@@ -1326,7 +2053,7 @@ components:
         firstname: Guillaume
         id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
         lastname: Morin
-        role: Autem quis voluptatem nemo eos.
+        role: Ea porro qui quidem voluptas quam odit.
         username: guillaumemorin
       required:
       - id
@@ -1375,9 +2102,9 @@ components:
       properties:
         success:
           type: boolean
-          example: true
+          example: false
       example:
-        success: false
+        success: true
       required:
       - success
     Sign:
@@ -1475,6 +2202,42 @@ components:
       - err
       - success
       - error_code
+    UpdateBoUserRequestBody:
+      type: object
+      properties:
+        user:
+          $ref: '#/components/schemas/PayloadUser'
+      example:
+        user:
+          avatar: Nostrum enim.
+          email: guillaume@gmail.com
+          firstname: Guillaume
+          lastname: Morin
+          role: user
+          username: guillaumemoriin
+      required:
+      - user
+    UpdateBoUserResponseBody:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        user:
+          $ref: '#/components/schemas/ResUser'
+      example:
+        success: false
+        user:
+          avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
+          email: guillaume@gmail.com
+          firstname: Guillaume
+          id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+          lastname: Morin
+          role: Nobis recusandae rerum voluptatibus est officiis.
+          username: guillaumemorin
+      required:
+      - user
+      - success
     UpdateDescriptionRequestBody:
       type: object
       properties:
@@ -1517,18 +2280,18 @@ components:
       properties:
         success:
           type: boolean
-          example: false
+          example: true
         user:
           $ref: '#/components/schemas/ResUser'
       example:
-        success: true
+        success: false
         user:
           avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
           email: guillaume@gmail.com
           firstname: Guillaume
           id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
           lastname: Morin
-          role: Non deleniti veritatis iste.
+          role: Nobis recusandae rerum voluptatibus est officiis.
           username: guillaumemorin
       required:
       - success
@@ -1552,6 +2315,8 @@ tags:
 - name: fileapi
 - name: auth
   description: Forget password / reset password / send Email Code
+- name: boContact
+  description: back office contacts of the api
 - name: contacts
   description: contacts of the api
 - name: files
@@ -1560,6 +2325,8 @@ tags:
   description: Use Token to authenticate. Signin and Signup
 - name: oAuth
   description: Oauth to authentificate
+- name: bo
+  description: bo of the api
 - name: publicUsers
   description: public route of users
 - name: users

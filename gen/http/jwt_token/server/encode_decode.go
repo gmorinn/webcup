@@ -261,3 +261,84 @@ func EncodeRefreshError(encoder func(context.Context, http.ResponseWriter) goaht
 		}
 	}
 }
+
+// EncodeSigninBoResponse returns an encoder for responses returned by the
+// jwtToken signinBo endpoint.
+func EncodeSigninBoResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
+	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
+		res, _ := v.(*jwttoken.Sign)
+		enc := encoder(ctx, w)
+		body := NewSigninBoResponseBody(res)
+		w.WriteHeader(http.StatusOK)
+		return enc.Encode(body)
+	}
+}
+
+// DecodeSigninBoRequest returns a decoder for requests sent to the jwtToken
+// signinBo endpoint.
+func DecodeSigninBoRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
+	return func(r *http.Request) (interface{}, error) {
+		var (
+			body SigninBoRequestBody
+			err  error
+		)
+		err = decoder(r).Decode(&body)
+		if err != nil {
+			if err == io.EOF {
+				return nil, goa.MissingPayloadError()
+			}
+			return nil, goa.DecodePayloadError(err.Error())
+		}
+		err = ValidateSigninBoRequestBody(&body)
+		if err != nil {
+			return nil, err
+		}
+
+		var (
+			oauth *string
+		)
+		oauthRaw := r.Header.Get("Authorization")
+		if oauthRaw != "" {
+			oauth = &oauthRaw
+		}
+		payload := NewSigninBoPayload(&body, oauth)
+		if payload.Oauth != nil {
+			if strings.Contains(*payload.Oauth, " ") {
+				// Remove authorization scheme prefix (e.g. "Bearer")
+				cred := strings.SplitN(*payload.Oauth, " ", 2)[1]
+				payload.Oauth = &cred
+			}
+		}
+
+		return payload, nil
+	}
+}
+
+// EncodeSigninBoError returns an encoder for errors returned by the signinBo
+// jwtToken endpoint.
+func EncodeSigninBoError(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder, formatter func(err error) goahttp.Statuser) func(context.Context, http.ResponseWriter, error) error {
+	encodeError := goahttp.ErrorEncoder(encoder, formatter)
+	return func(ctx context.Context, w http.ResponseWriter, v error) error {
+		var en ErrorNamer
+		if !errors.As(v, &en) {
+			return encodeError(ctx, w, v)
+		}
+		switch en.ErrorName() {
+		case "unknown_error":
+			var res *jwttoken.UnknownError
+			errors.As(v, &res)
+			enc := encoder(ctx, w)
+			var body interface{}
+			if formatter != nil {
+				body = formatter(res)
+			} else {
+				body = NewSigninBoUnknownErrorResponseBody(res)
+			}
+			w.Header().Set("goa-error", res.ErrorName())
+			w.WriteHeader(http.StatusInternalServerError)
+			return enc.Encode(body)
+		default:
+			return encodeError(ctx, w, v)
+		}
+	}
+}

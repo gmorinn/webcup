@@ -24,6 +24,7 @@ type Querier interface {
 	DeleteUserByID(ctx context.Context, id uuid.UUID) error
 	ExistUserByEmailAndConfirmCode(ctx context.Context, arg ExistUserByEmailAndConfirmCodeParams) (bool, error)
 	FindUserByEmail(ctx context.Context, email string) (User, error)
+	GetBoAllUsers(ctx context.Context, arg GetBoAllUsersParams) ([]User, error)
 	GetCodeByEmail(ctx context.Context, email string) (sql.NullString, error)
 	GetEmailByUserID(ctx context.Context, id uuid.UUID) (string, error)
 	GetFileByURL(ctx context.Context, url sql.NullString) (File, error)
@@ -43,6 +44,7 @@ type Querier interface {
 	UpdateAvatarUser(ctx context.Context, arg UpdateAvatarUserParams) error
 	UpdateDescriptionUser(ctx context.Context, arg UpdateDescriptionUserParams) error
 	UpdatePasswordUserWithconfirmCode(ctx context.Context, arg UpdatePasswordUserWithconfirmCodeParams) error
+	UpdateUserBo(ctx context.Context, arg UpdateUserBoParams) error
 	UpdateUserConfirmCode(ctx context.Context, arg UpdateUserConfirmCodeParams) error
 	UpdateUserPassword(ctx context.Context, arg UpdateUserPasswordParams) error
 }
