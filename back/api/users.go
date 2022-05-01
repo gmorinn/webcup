@@ -21,20 +21,6 @@ type userssrvc struct {
 	server *Server
 }
 
-type RealisationArray struct {
-	Img  string `json:"img"`
-	Text string `json:"text"`
-}
-
-type LinkArray struct {
-	Url  string `json:"url"`
-	Text string `json:"text"`
-}
-
-type CompetenceArray struct {
-	Value string `json:"value"`
-}
-
 // newUsers returns the users service implementation.
 func NewUsers(logger *log.Logger, server *Server) users.Service {
 	return &userssrvc{logger, server}

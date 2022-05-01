@@ -26,7 +26,7 @@ var _ = API("webcup", func() {
 	Description("Best API REST building with GoaDesign")
 	Version("1.0")
 
-	cors.Origin(fmt.Sprintf("/.*%v.*/", "gm-influence.re"), func() {
+	cors.Origin(fmt.Sprintf("/.*%v.*/", "localhost"), func() {
 		cors.Headers("Authorization", "Content-Type", "jwtToken", "Origin")
 		cors.Methods("POST", "GET", "PUT", "OPTIONS", "DELETE", "PATCH")
 		cors.Expose("Content-Type", "Origin")
