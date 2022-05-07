@@ -10,7 +10,7 @@ info:
     name: GOA X GM
     url: https://guillaume-morin.fr/
   version: "1.0"
-host: localhost:8088
+host: :0
 consumes:
 - application/json
 - application/xml

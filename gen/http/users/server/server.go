@@ -270,7 +270,7 @@ func NewCORSHandler() http.Handler {
 // HandleUsersOrigin applies the CORS response headers corresponding to the
 // origin for the service users.
 func HandleUsersOrigin(h http.Handler) http.Handler {
-	spec0 := regexp.MustCompile(".*localhost.*")
+	spec0 := regexp.MustCompile(".*team-gm.re.*")
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		origin := r.Header.Get("Origin")
 		if origin == "" {
