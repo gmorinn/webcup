@@ -91,6 +91,10 @@ type GetDataByUserIDPayload struct {
 	JWTToken *string
 	// Use to generate Oauth with /authorization
 	Oauth *string
+	// Offset for pagination
+	Offset int32
+	// Limit of items listed for pagination
+	Limit int32
 }
 
 // GetDataByUserIDResult is the result type of the data service getDataByUserID
@@ -99,6 +103,8 @@ type GetDataByUserIDResult struct {
 	// Result is an object
 	Data    []*ResData
 	Success bool
+	// total of datas
+	Count int64
 }
 
 // ListDataMostRecentPayload is the payload type of the data service

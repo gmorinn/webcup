@@ -442,6 +442,8 @@ func DecodeUpdateDataResponse(decoder func(*http.Response) goahttp.Decoder, rest
 func (c *Client) BuildGetDataByUserIDRequest(ctx context.Context, v interface{}) (*http.Request, error) {
 	var (
 		userID string
+		offset int32
+		limit  int32
 	)
 	{
 		p, ok := v.(*data.GetDataByUserIDPayload)
@@ -449,8 +451,10 @@ func (c *Client) BuildGetDataByUserIDRequest(ctx context.Context, v interface{})
 			return nil, goahttp.ErrInvalidType("data", "getDataByUserID", "*data.GetDataByUserIDPayload", v)
 		}
 		userID = p.UserID
+		offset = p.Offset
+		limit = p.Limit
 	}
-	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: GetDataByUserIDDataPath(userID)}
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: GetDataByUserIDDataPath(userID, offset, limit)}
 	req, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
 		return nil, goahttp.ErrInvalidURL("data", "getDataByUserID", u.String(), err)

@@ -72,6 +72,8 @@ type GetDataByUserIDResponseBody struct {
 	// Result is an object
 	Data    []*ResDataResponseBody `form:"data,omitempty" json:"data,omitempty" xml:"data,omitempty"`
 	Success *bool                  `form:"success,omitempty" json:"success,omitempty" xml:"success,omitempty"`
+	// total of datas
+	Count *int64 `form:"count,omitempty" json:"count,omitempty" xml:"count,omitempty"`
 }
 
 // GetDataByIDResponseBody is the type of the "data" service "getDataByID"
@@ -285,6 +287,7 @@ func NewUpdateDataUnknownError(body *UpdateDataUnknownErrorResponseBody) *data.U
 func NewGetDataByUserIDResultOK(body *GetDataByUserIDResponseBody) *data.GetDataByUserIDResult {
 	v := &data.GetDataByUserIDResult{
 		Success: *body.Success,
+		Count:   *body.Count,
 	}
 	v.Data = make([]*data.ResData, len(body.Data))
 	for i, val := range body.Data {
@@ -412,6 +415,9 @@ func ValidateGetDataByUserIDResponseBody(body *GetDataByUserIDResponseBody) (err
 	}
 	if body.Success == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("success", "body"))
+	}
+	if body.Count == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("count", "body"))
 	}
 	for _, e := range body.Data {
 		if e != nil {
@@ -575,8 +581,8 @@ func ValidateResDataResponseBody(body *ResDataResponseBody) (err error) {
 		}
 	}
 	if body.Category != nil {
-		if !(*body.Category == "robotics" || *body.Category == "space" || *body.Category == "brain" || *body.Category == "animals") {
-			err = goa.MergeErrors(err, goa.InvalidEnumValueError("body.category", *body.Category, []interface{}{"robotics", "space", "brain", "animals"}))
+		if !(*body.Category == "robotics" || *body.Category == "space" || *body.Category == "brain" || *body.Category == "animals" || *body.Category == "autre") {
+			err = goa.MergeErrors(err, goa.InvalidEnumValueError("body.category", *body.Category, []interface{}{"robotics", "space", "brain", "animals", "autre"}))
 		}
 	}
 	if body.UserID != nil {
@@ -600,8 +606,8 @@ func ValidatePayloadDataRequestBody(body *PayloadDataRequestBody) (err error) {
 	if utf8.RuneCountInString(body.Description) > 500 {
 		err = goa.MergeErrors(err, goa.InvalidLengthError("body.description", body.Description, utf8.RuneCountInString(body.Description), 500, false))
 	}
-	if !(body.Category == "robotics" || body.Category == "space" || body.Category == "brain" || body.Category == "animals") {
-		err = goa.MergeErrors(err, goa.InvalidEnumValueError("body.category", body.Category, []interface{}{"robotics", "space", "brain", "animals"}))
+	if !(body.Category == "robotics" || body.Category == "space" || body.Category == "brain" || body.Category == "animals" || body.Category == "autre") {
+		err = goa.MergeErrors(err, goa.InvalidEnumValueError("body.category", body.Category, []interface{}{"robotics", "space", "brain", "animals", "autre"}))
 	}
 	err = goa.MergeErrors(err, goa.ValidateFormat("body.user_id", body.UserID, goa.FormatUUID))
 

@@ -29,7 +29,7 @@ type Querier interface {
 	GetBoAllUsers(ctx context.Context, arg GetBoAllUsersParams) ([]User, error)
 	GetCodeByEmail(ctx context.Context, email string) (sql.NullString, error)
 	GetDataByID(ctx context.Context, id uuid.UUID) (Datum, error)
-	GetDataByUserID(ctx context.Context, userID uuid.UUID) ([]Datum, error)
+	GetDataByUserID(ctx context.Context, arg GetDataByUserIDParams) ([]Datum, error)
 	GetEmailByUserID(ctx context.Context, id uuid.UUID) (string, error)
 	GetFileByURL(ctx context.Context, url sql.NullString) (File, error)
 	GetMessageByID(ctx context.Context, id uuid.UUID) (Contact, error)

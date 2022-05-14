@@ -433,6 +433,8 @@ func DecodeGetDataByUserIDRequest(mux goahttp.Muxer, decoder func(*http.Request)
 	return func(r *http.Request) (interface{}, error) {
 		var (
 			userID   string
+			offset   int32
+			limit    int32
 			oauth    *string
 			jwtToken *string
 			err      error
@@ -442,6 +444,28 @@ func DecodeGetDataByUserIDRequest(mux goahttp.Muxer, decoder func(*http.Request)
 		userID = params["user_id"]
 		err = goa.MergeErrors(err, goa.ValidateFormat("userID", userID, goa.FormatUUID))
 
+		{
+			offsetRaw := params["offset"]
+			v, err2 := strconv.ParseInt(offsetRaw, 10, 32)
+			if err2 != nil {
+				err = goa.MergeErrors(err, goa.InvalidFieldTypeError("offset", offsetRaw, "integer"))
+			}
+			offset = int32(v)
+		}
+		if offset < 0 {
+			err = goa.MergeErrors(err, goa.InvalidRangeError("offset", offset, 0, true))
+		}
+		{
+			limitRaw := params["limit"]
+			v, err2 := strconv.ParseInt(limitRaw, 10, 32)
+			if err2 != nil {
+				err = goa.MergeErrors(err, goa.InvalidFieldTypeError("limit", limitRaw, "integer"))
+			}
+			limit = int32(v)
+		}
+		if limit < 0 {
+			err = goa.MergeErrors(err, goa.InvalidRangeError("limit", limit, 0, true))
+		}
 		oauthRaw := r.Header.Get("Authorization")
 		if oauthRaw != "" {
 			oauth = &oauthRaw
@@ -453,7 +477,7 @@ func DecodeGetDataByUserIDRequest(mux goahttp.Muxer, decoder func(*http.Request)
 		if err != nil {
 			return nil, err
 		}
-		payload := NewGetDataByUserIDPayload(userID, oauth, jwtToken)
+		payload := NewGetDataByUserIDPayload(userID, offset, limit, oauth, jwtToken)
 		if payload.Oauth != nil {
 			if strings.Contains(*payload.Oauth, " ") {
 				// Remove authorization scheme prefix (e.g. "Bearer")

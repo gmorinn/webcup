@@ -17,6 +17,7 @@ const (
 	FuturSpace    Futur = "space"
 	FuturBrain    Futur = "brain"
 	FuturAnimals  Futur = "animals"
+	FuturAutre    Futur = "autre"
 )
 
 func (e *Futur) Scan(src interface{}) error {

@@ -10,7 +10,8 @@
     'robotics',
     'space',
     'brain',
-    'animals'
+    'animals',
+    'autre'
   );
 
   CREATE TABLE "files" (

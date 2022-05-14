@@ -21,7 +21,8 @@ LIMIT 1;
 -- name: GetDataByUserID :many
 SELECT * FROM data
 WHERE user_id = $1
-AND deleted_at IS NULL;
+AND deleted_at IS NULL
+LIMIT $2 OFFSET $3;
 
 -- name: ListDataMostRecent :many
 SELECT * FROM data

@@ -149,17 +149,28 @@ var _ = Service("data", func() {
 			AccessTokenField(2, "oauth", String, func() {
 				Description("Use to generate Oauth with /authorization")
 			})
-			Required("user_id")
+			Attribute("offset", Int32, func() {
+				Description("Offset for pagination")
+				Example(0)
+				Minimum(0)
+			})
+			Attribute("limit", Int32, func() {
+				Description("Limit of items listed for pagination")
+				Example(5)
+				Minimum(0)
+			})
+			Required("limit", "offset", "user_id")
 		})
 
 		HTTP(func() {
-			GET("user/{user_id}")
+			GET("user/{user_id}/{offset}/{limit}")
 			Response(StatusOK)
 		})
 		Result(func() {
 			Attribute("data", ArrayOf(resData), "Result is an object")
 			Attribute("success", Boolean)
-			Required("data", "success")
+			Attribute("count", Int64, "total of datas")
+			Required("data", "success", "count")
 		})
 	})
 
@@ -211,7 +222,7 @@ var resData = Type("resData", func() {
 		Description("Url of the logo and stock in db")
 	})
 	Attribute("category", String, func() {
-		Enum("robotics", "space", "brain", "animals")
+		Enum("robotics", "space", "brain", "animals", "autre")
 		Default("robotics")
 	})
 	Attribute("user_id", String, func() {
@@ -236,7 +247,7 @@ var payloadData = Type("payloadData", func() {
 		Description("Url of the logo and stock in db")
 	})
 	Attribute("category", String, func() {
-		Enum("robotics", "space", "brain", "animals")
+		Enum("robotics", "space", "brain", "animals", "autre")
 		Default("robotics")
 	})
 	Attribute("user_id", String, func() {

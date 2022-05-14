@@ -1552,7 +1552,7 @@ paths:
                 $ref: '#/components/schemas/CreateDataResponseBody'
               example:
                 data:
-                  category: robotics
+                  category: animals
                   description: Unique Air max restant au monde
                   id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
                   image: Id vel id rerum fuga nihil.
@@ -1618,7 +1618,7 @@ paths:
                 $ref: '#/components/schemas/CreateDataResponseBody'
               example:
                 data:
-                  category: robotics
+                  category: animals
                   description: Unique Air max restant au monde
                   id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
                   image: Id vel id rerum fuga nihil.
@@ -1677,7 +1677,7 @@ paths:
                 $ref: '#/components/schemas/CreateDataResponseBody'
               example:
                 data:
-                  category: robotics
+                  category: animals
                   description: Unique Air max restant au monde
                   id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
                   image: Id vel id rerum fuga nihil.
@@ -1744,25 +1744,25 @@ paths:
               example:
                 count: 7231342164995042586
                 data:
-                - category: robotics
+                - category: animals
                   description: Unique Air max restant au monde
                   id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
                   image: Id vel id rerum fuga nihil.
                   title: Air max360 d'il y a 10 millions d'années
                   user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-                - category: robotics
+                - category: animals
                   description: Unique Air max restant au monde
                   id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
                   image: Id vel id rerum fuga nihil.
                   title: Air max360 d'il y a 10 millions d'années
                   user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-                - category: robotics
+                - category: animals
                   description: Unique Air max restant au monde
                   id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
                   image: Id vel id rerum fuga nihil.
                   title: Air max360 d'il y a 10 millions d'années
                   user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-                - category: robotics
+                - category: animals
                   description: Unique Air max restant au monde
                   id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
                   image: Id vel id rerum fuga nihil.
@@ -1816,19 +1816,19 @@ paths:
                 $ref: '#/components/schemas/ListDataResponseBody'
               example:
                 data:
-                - category: robotics
+                - category: animals
                   description: Unique Air max restant au monde
                   id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
                   image: Id vel id rerum fuga nihil.
                   title: Air max360 d'il y a 10 millions d'années
                   user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-                - category: robotics
+                - category: animals
                   description: Unique Air max restant au monde
                   id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
                   image: Id vel id rerum fuga nihil.
                   title: Air max360 d'il y a 10 millions d'années
                   user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-                - category: robotics
+                - category: animals
                   description: Unique Air max restant au monde
                   id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
                   image: Id vel id rerum fuga nihil.
@@ -1847,7 +1847,7 @@ paths:
         jwt_header_jwtToken:
         - api:read
         - api:write
-  /web/data/user/{user_id}:
+  /web/data/user/{user_id}/{offset}/{limit}:
     get:
       tags:
       - data
@@ -1865,6 +1865,26 @@ paths:
           example: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
           format: uuid
         example: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+      - name: offset
+        in: path
+        description: Offset for pagination
+        required: true
+        schema:
+          type: integer
+          description: Offset for pagination
+          example: 0
+          minimum: 0
+        example: 0
+      - name: limit
+        in: path
+        description: Limit of items listed for pagination
+        required: true
+        schema:
+          type: integer
+          description: Limit of items listed for pagination
+          example: 5
+          minimum: 0
+        example: 5
       - name: jwtToken
         in: header
         description: Jwt token
@@ -1881,22 +1901,23 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ListDataResponseBody'
+                $ref: '#/components/schemas/ListDataMostRecentResponseBody'
               example:
+                count: 3536243267759173871
                 data:
-                - category: robotics
+                - category: animals
                   description: Unique Air max restant au monde
                   id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
                   image: Id vel id rerum fuga nihil.
                   title: Air max360 d'il y a 10 millions d'années
                   user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-                - category: robotics
+                - category: animals
                   description: Unique Air max restant au monde
                   id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
                   image: Id vel id rerum fuga nihil.
                   title: Air max360 d'il y a 10 millions d'années
                   user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-                - category: robotics
+                - category: animals
                   description: Unique Air max restant au monde
                   id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
                   image: Id vel id rerum fuga nihil.
@@ -1959,7 +1980,7 @@ components:
           example: true
       example:
         data:
-          category: robotics
+          category: animals
           description: Unique Air max restant au monde
           id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
           image: Id vel id rerum fuga nihil.
@@ -2356,13 +2377,13 @@ components:
             $ref: '#/components/schemas/ResData'
           description: Result is an an array of data
           example:
-          - category: robotics
+          - category: animals
             description: Unique Air max restant au monde
             id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
             image: Id vel id rerum fuga nihil.
             title: Air max360 d'il y a 10 millions d'années
             user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-          - category: robotics
+          - category: animals
             description: Unique Air max restant au monde
             id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
             image: Id vel id rerum fuga nihil.
@@ -2374,25 +2395,25 @@ components:
       example:
         count: 8549166338495018680
         data:
-        - category: robotics
+        - category: animals
           description: Unique Air max restant au monde
           id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
           image: Id vel id rerum fuga nihil.
           title: Air max360 d'il y a 10 millions d'années
           user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-        - category: robotics
+        - category: animals
           description: Unique Air max restant au monde
           id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
           image: Id vel id rerum fuga nihil.
           title: Air max360 d'il y a 10 millions d'années
           user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-        - category: robotics
+        - category: animals
           description: Unique Air max restant au monde
           id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
           image: Id vel id rerum fuga nihil.
           title: Air max360 d'il y a 10 millions d'années
           user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-        - category: robotics
+        - category: animals
           description: Unique Air max restant au monde
           id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
           image: Id vel id rerum fuga nihil.
@@ -2422,25 +2443,25 @@ components:
             $ref: '#/components/schemas/ResData'
           description: Result is an an array of user
           example:
-          - category: robotics
+          - category: animals
             description: Unique Air max restant au monde
             id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
             image: Id vel id rerum fuga nihil.
             title: Air max360 d'il y a 10 millions d'années
             user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-          - category: robotics
+          - category: animals
             description: Unique Air max restant au monde
             id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
             image: Id vel id rerum fuga nihil.
             title: Air max360 d'il y a 10 millions d'années
             user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-          - category: robotics
+          - category: animals
             description: Unique Air max restant au monde
             id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
             image: Id vel id rerum fuga nihil.
             title: Air max360 d'il y a 10 millions d'années
             user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-          - category: robotics
+          - category: animals
             description: Unique Air max restant au monde
             id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
             image: Id vel id rerum fuga nihil.
@@ -2451,13 +2472,13 @@ components:
           example: true
       example:
         data:
-        - category: robotics
+        - category: animals
           description: Unique Air max restant au monde
           id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
           image: Id vel id rerum fuga nihil.
           title: Air max360 d'il y a 10 millions d'années
           user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-        - category: robotics
+        - category: animals
           description: Unique Air max restant au monde
           id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
           image: Id vel id rerum fuga nihil.
@@ -2579,12 +2600,13 @@ components:
         category:
           type: string
           default: robotics
-          example: animals
+          example: robotics
           enum:
           - robotics
           - space
           - brain
           - animals
+          - autre
         description:
           type: string
           example: Unique Air max restant au monde
@@ -2604,7 +2626,7 @@ components:
           example: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
           format: uuid
       example:
-        category: animals
+        category: autre
         description: Unique Air max restant au monde
         image: Sequi veritatis fugit est voluptatibus aliquid non.
         title: Air max360 d'il y a 10 millions d'années
@@ -2710,6 +2732,7 @@ components:
           - space
           - brain
           - animals
+          - autre
         description:
           type: string
           example: Unique Air max restant au monde
@@ -2733,7 +2756,7 @@ components:
           example: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
           format: uuid
       example:
-        category: animals
+        category: brain
         description: Unique Air max restant au monde
         id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
         image: Autem soluta.

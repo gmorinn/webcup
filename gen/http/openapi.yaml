@@ -1606,7 +1606,7 @@ paths:
       security:
       - OAuth2_header_Authorization: []
         jwt_header_jwtToken: []
-  /web/data/user/{user_id}:
+  /web/data/user/{user_id}/{offset}/{limit}:
     get:
       tags:
       - data
@@ -1620,6 +1620,18 @@ paths:
         required: true
         type: string
         format: uuid
+      - name: offset
+        in: path
+        description: Offset for pagination
+        required: true
+        type: integer
+        minimum: 0
+      - name: limit
+        in: path
+        description: Limit of items listed for pagination
+        required: true
+        type: integer
+        minimum: 0
       - name: Authorization
         in: header
         description: OAuth token
@@ -1640,6 +1652,7 @@ paths:
             required:
             - data
             - success
+            - count
         "500":
           description: Internal Server Error response.
           schema:
@@ -2405,7 +2418,7 @@ definitions:
         example: false
     example:
       data:
-        category: robotics
+        category: animals
         description: Unique Air max restant au monde
         id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
         image: Id vel id rerum fuga nihil.
@@ -2449,13 +2462,13 @@ definitions:
         example: true
     example:
       data:
-        category: robotics
+        category: animals
         description: Unique Air max restant au monde
         id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
         image: Id vel id rerum fuga nihil.
         title: Air max360 d'il y a 10 millions d'années
         user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-      success: true
+      success: false
     required:
     - data
     - success
@@ -2472,7 +2485,7 @@ definitions:
       success:
         type: boolean
         default: false
-        example: true
+        example: false
     description: Error not identified (500)
     example:
       err: sql no rows affected
@@ -2486,25 +2499,30 @@ definitions:
     title: DataGetDataByUserIDResponseBody
     type: object
     properties:
+      count:
+        type: integer
+        description: total of datas
+        example: 8626734902717171934
+        format: int64
       data:
         type: array
         items:
           $ref: '#/definitions/resDataResponseBody'
         description: Result is an object
         example:
-        - category: robotics
+        - category: animals
           description: Unique Air max restant au monde
           id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
           image: Id vel id rerum fuga nihil.
           title: Air max360 d'il y a 10 millions d'années
           user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-        - category: robotics
+        - category: animals
           description: Unique Air max restant au monde
           id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
           image: Id vel id rerum fuga nihil.
           title: Air max360 d'il y a 10 millions d'années
           user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-        - category: robotics
+        - category: animals
           description: Unique Air max restant au monde
           id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
           image: Id vel id rerum fuga nihil.
@@ -2514,14 +2532,27 @@ definitions:
         type: boolean
         example: true
     example:
+      count: 5843082788605693810
       data:
-      - category: robotics
+      - category: animals
         description: Unique Air max restant au monde
         id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
         image: Id vel id rerum fuga nihil.
         title: Air max360 d'il y a 10 millions d'années
         user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-      - category: robotics
+      - category: animals
+        description: Unique Air max restant au monde
+        id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+        image: Id vel id rerum fuga nihil.
+        title: Air max360 d'il y a 10 millions d'années
+        user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+      - category: animals
+        description: Unique Air max restant au monde
+        id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+        image: Id vel id rerum fuga nihil.
+        title: Air max360 d'il y a 10 millions d'années
+        user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+      - category: animals
         description: Unique Air max restant au monde
         id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
         image: Id vel id rerum fuga nihil.
@@ -2531,6 +2562,7 @@ definitions:
     required:
     - data
     - success
+    - count
   DataGetDataByUserIDUnknownErrorResponseBody:
     title: DataGetDataByUserIDUnknownErrorResponseBody
     type: object
@@ -2569,25 +2601,25 @@ definitions:
           $ref: '#/definitions/resDataResponseBody'
         description: Result is an an array of data
         example:
-        - category: robotics
+        - category: animals
           description: Unique Air max restant au monde
           id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
           image: Id vel id rerum fuga nihil.
           title: Air max360 d'il y a 10 millions d'années
           user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-        - category: robotics
+        - category: animals
           description: Unique Air max restant au monde
           id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
           image: Id vel id rerum fuga nihil.
           title: Air max360 d'il y a 10 millions d'années
           user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-        - category: robotics
+        - category: animals
           description: Unique Air max restant au monde
           id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
           image: Id vel id rerum fuga nihil.
           title: Air max360 d'il y a 10 millions d'années
           user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-        - category: robotics
+        - category: animals
           description: Unique Air max restant au monde
           id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
           image: Id vel id rerum fuga nihil.
@@ -2599,13 +2631,13 @@ definitions:
     example:
       count: 8522889291447494859
       data:
-      - category: robotics
+      - category: animals
         description: Unique Air max restant au monde
         id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
         image: Id vel id rerum fuga nihil.
         title: Air max360 d'il y a 10 millions d'années
         user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-      - category: robotics
+      - category: animals
         description: Unique Air max restant au monde
         id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
         image: Id vel id rerum fuga nihil.
@@ -2660,19 +2692,19 @@ definitions:
           $ref: '#/definitions/resDataResponseBody'
         description: Result is an an array of user
         example:
-        - category: robotics
+        - category: animals
           description: Unique Air max restant au monde
           id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
           image: Id vel id rerum fuga nihil.
           title: Air max360 d'il y a 10 millions d'années
           user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-        - category: robotics
+        - category: animals
           description: Unique Air max restant au monde
           id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
           image: Id vel id rerum fuga nihil.
           title: Air max360 d'il y a 10 millions d'années
           user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-        - category: robotics
+        - category: animals
           description: Unique Air max restant au monde
           id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
           image: Id vel id rerum fuga nihil.
@@ -2683,13 +2715,13 @@ definitions:
         example: false
     example:
       data:
-      - category: robotics
+      - category: animals
         description: Unique Air max restant au monde
         id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
         image: Id vel id rerum fuga nihil.
         title: Air max360 d'il y a 10 millions d'années
         user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-      - category: robotics
+      - category: animals
         description: Unique Air max restant au monde
         id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
         image: Id vel id rerum fuga nihil.
@@ -2748,7 +2780,7 @@ definitions:
         example: false
     example:
       data:
-        category: robotics
+        category: animals
         description: Unique Air max restant au monde
         id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
         image: Id vel id rerum fuga nihil.
@@ -2952,7 +2984,7 @@ definitions:
       url:
         type: string
         description: url file
-        example: Rerum non natus libero quia tempora earum.
+        example: Quia tempora earum.
       w:
         type: integer
         description: width of image if you crop
@@ -3022,12 +3054,12 @@ definitions:
       success:
         type: boolean
         default: false
-        example: false
+        example: true
     description: Error not identified (500)
     example:
       err: sql no rows affected
       error_code: TX_UPDATE_ITEM
-      success: true
+      success: false
     required:
     - err
     - success
@@ -3846,12 +3878,13 @@ definitions:
       category:
         type: string
         default: robotics
-        example: robotics
+        example: autre
         enum:
         - robotics
         - space
         - brain
         - animals
+        - autre
       description:
         type: string
         example: Unique Air max restant au monde
@@ -3964,12 +3997,13 @@ definitions:
       category:
         type: string
         default: robotics
-        example: animals
+        example: robotics
         enum:
         - robotics
         - space
         - brain
         - animals
+        - autre
       description:
         type: string
         example: Unique Air max restant au monde
@@ -3993,7 +4027,7 @@ definitions:
         example: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
         format: uuid
     example:
-      category: robotics
+      category: animals
       description: Unique Air max restant au monde
       id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
       image: Deserunt aut.
@@ -4016,23 +4050,23 @@ definitions:
         format: uuid
       mime:
         type: string
-        example: Quia voluptatem ut quibusdam.
+        example: Ut quibusdam nam animi sit laboriosam.
       name:
         type: string
         example: foo.png
       size:
         type: integer
-        example: 9196837289073531221
+        example: 6047253941595855532
         format: int64
       url:
         type: string
-        example: Est distinctio quia quia iusto molestiae libero.
+        example: Quia quia iusto molestiae libero magnam quia.
     example:
       id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-      mime: Laboriosam quae.
+      mime: Omnis qui beatae.
       name: foo.png
-      size: 5896563731975487121
-      url: Sit laboriosam ea porro in at ducimus.
+      size: 3589360877923256836
+      url: In at ducimus perferendis laboriosam quae.
     required:
     - id
     - name

@@ -75,45 +75,6 @@ func (s *datasrvc) ListData(ctx context.Context, p *data.ListDataPayload) (res *
 	return res, nil
 }
 
-// List data the most recent
-func (s *datasrvc) ListDataMostRecent(ctx context.Context, p *data.ListDataMostRecentPayload) (res *data.ListDataMostRecentResult, err error) {
-	err = s.server.Store.ExecTx(ctx, func(q *db.Queries) error {
-		var result []*data.ResData
-		arg := db.ListDataMostRecentParams{
-			Limit:  p.Limit,
-			Offset: p.Offset,
-		}
-		ds, err := q.ListDataMostRecent(ctx, arg)
-		if err != nil {
-			return fmt.Errorf("error list recent data: %v", err)
-		}
-		for _, v := range ds {
-			result = append(result, &data.ResData{
-				ID:          v.ID.String(),
-				Title:       v.Title,
-				Description: v.Description,
-				Image:       v.Img.String,
-				Category:    string(v.Category),
-				UserID:      v.UserID.String(),
-			})
-		}
-		total, err := q.CountData(ctx)
-		if err != nil {
-			return fmt.Errorf("error count data: %v", err)
-		}
-		res = &data.ListDataMostRecentResult{
-			Data:    result,
-			Success: true,
-			Count:   total,
-		}
-		return nil
-	})
-	if err != nil {
-		return nil, s.errorResponse("TX_GET_ALL_DATA_RECENT", err)
-	}
-	return res, nil
-}
-
 // Create one data
 func (s *datasrvc) CreateData(ctx context.Context, p *data.CreateDataPayload) (res *data.CreateDataResult, err error) {
 	err = s.server.Store.ExecTx(ctx, func(q *db.Queries) error {
@@ -185,10 +146,54 @@ func (s *datasrvc) UpdateData(ctx context.Context, p *data.UpdateDataPayload) (r
 	return res, nil
 }
 
+// List data the most recent
+func (s *datasrvc) ListDataMostRecent(ctx context.Context, p *data.ListDataMostRecentPayload) (res *data.ListDataMostRecentResult, err error) {
+	err = s.server.Store.ExecTx(ctx, func(q *db.Queries) error {
+		var result []*data.ResData
+		arg := db.ListDataMostRecentParams{
+			Limit:  p.Limit,
+			Offset: p.Offset,
+		}
+		ds, err := q.ListDataMostRecent(ctx, arg)
+		if err != nil {
+			return fmt.Errorf("error list recent data: %v", err)
+		}
+		for _, v := range ds {
+			result = append(result, &data.ResData{
+				ID:          v.ID.String(),
+				Title:       v.Title,
+				Description: v.Description,
+				Image:       v.Img.String,
+				Category:    string(v.Category),
+				UserID:      v.UserID.String(),
+			})
+		}
+		total, err := q.CountData(ctx)
+		if err != nil {
+			return fmt.Errorf("error count data: %v", err)
+		}
+		res = &data.ListDataMostRecentResult{
+			Data:    result,
+			Success: true,
+			Count:   total,
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, s.errorResponse("TX_GET_ALL_DATA_RECENT", err)
+	}
+	return res, nil
+}
+
 // Get one data user id
 func (s *datasrvc) GetDataByUserID(ctx context.Context, p *data.GetDataByUserIDPayload) (res *data.GetDataByUserIDResult, err error) {
 	err = s.server.Store.ExecTx(ctx, func(q *db.Queries) error {
-		tab, err := q.GetDataByUserID(ctx, uuid.MustParse(p.UserID))
+		arg := db.GetDataByUserIDParams{
+			Limit:  p.Limit,
+			Offset: p.Offset,
+			UserID: uuid.MustParse(p.UserID),
+		}
+		tab, err := q.GetDataByUserID(ctx, arg)
 		if err != nil {
 			return fmt.Errorf("ERROR_GET_ALL_DATA_BY_USER_ID %v", err)
 		}
@@ -203,8 +208,13 @@ func (s *datasrvc) GetDataByUserID(ctx context.Context, p *data.GetDataByUserIDP
 				UserID:      v.UserID.String(),
 			})
 		}
+		total, err := q.CountData(ctx)
+		if err != nil {
+			return fmt.Errorf("error count data: %v", err)
+		}
 		res = &data.GetDataByUserIDResult{
 			Data:    ds,
+			Count:   total,
 			Success: true,
 		}
 		return nil

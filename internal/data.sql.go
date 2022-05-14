@@ -87,10 +87,17 @@ const getDataByUserID = `-- name: GetDataByUserID :many
 SELECT id, created_at, updated_at, deleted_at, title, description, user_id, img, category FROM data
 WHERE user_id = $1
 AND deleted_at IS NULL
+LIMIT $2 OFFSET $3
 `
 
-func (q *Queries) GetDataByUserID(ctx context.Context, userID uuid.UUID) ([]Datum, error) {
-	rows, err := q.db.QueryContext(ctx, getDataByUserID, userID)
+type GetDataByUserIDParams struct {
+	UserID uuid.UUID `json:"user_id"`
+	Limit  int32     `json:"limit"`
+	Offset int32     `json:"offset"`
+}
+
+func (q *Queries) GetDataByUserID(ctx context.Context, arg GetDataByUserIDParams) ([]Datum, error) {
+	rows, err := q.db.QueryContext(ctx, getDataByUserID, arg.UserID, arg.Limit, arg.Offset)
 	if err != nil {
 		return nil, err
 	}

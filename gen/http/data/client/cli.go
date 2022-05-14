@@ -203,13 +203,43 @@ func BuildUpdateDataPayload(dataUpdateDataBody string, dataUpdateDataID string, 
 
 // BuildGetDataByUserIDPayload builds the payload for the data getDataByUserID
 // endpoint from CLI flags.
-func BuildGetDataByUserIDPayload(dataGetDataByUserIDUserID string, dataGetDataByUserIDOauth string, dataGetDataByUserIDJWTToken string) (*data.GetDataByUserIDPayload, error) {
+func BuildGetDataByUserIDPayload(dataGetDataByUserIDUserID string, dataGetDataByUserIDOffset string, dataGetDataByUserIDLimit string, dataGetDataByUserIDOauth string, dataGetDataByUserIDJWTToken string) (*data.GetDataByUserIDPayload, error) {
 	var err error
 	var userID string
 	{
 		userID = dataGetDataByUserIDUserID
 		err = goa.MergeErrors(err, goa.ValidateFormat("userID", userID, goa.FormatUUID))
 
+		if err != nil {
+			return nil, err
+		}
+	}
+	var offset int32
+	{
+		var v int64
+		v, err = strconv.ParseInt(dataGetDataByUserIDOffset, 10, 32)
+		offset = int32(v)
+		if err != nil {
+			return nil, fmt.Errorf("invalid value for offset, must be INT32")
+		}
+		if offset < 0 {
+			err = goa.MergeErrors(err, goa.InvalidRangeError("offset", offset, 0, true))
+		}
+		if err != nil {
+			return nil, err
+		}
+	}
+	var limit int32
+	{
+		var v int64
+		v, err = strconv.ParseInt(dataGetDataByUserIDLimit, 10, 32)
+		limit = int32(v)
+		if err != nil {
+			return nil, fmt.Errorf("invalid value for limit, must be INT32")
+		}
+		if limit < 0 {
+			err = goa.MergeErrors(err, goa.InvalidRangeError("limit", limit, 0, true))
+		}
 		if err != nil {
 			return nil, err
 		}
@@ -228,6 +258,8 @@ func BuildGetDataByUserIDPayload(dataGetDataByUserIDUserID string, dataGetDataBy
 	}
 	v := &data.GetDataByUserIDPayload{}
 	v.UserID = userID
+	v.Offset = offset
+	v.Limit = limit
 	v.Oauth = oauth
 	v.JWTToken = jwtToken
 

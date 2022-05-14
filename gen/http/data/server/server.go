@@ -67,13 +67,13 @@ func New(
 			{"ListDataMostRecent", "GET", "/web/data/recents/{offset}/{limit}"},
 			{"CreateData", "POST", "/web/data/add"},
 			{"UpdateData", "PUT", "/web/data/{id}"},
-			{"GetDataByUserID", "GET", "/web/data/user/{user_id}"},
+			{"GetDataByUserID", "GET", "/web/data/user/{user_id}/{offset}/{limit}"},
 			{"GetDataByID", "GET", "/web/data/{id}"},
 			{"CORS", "OPTIONS", "/web/data/search"},
 			{"CORS", "OPTIONS", "/web/data/recents/{offset}/{limit}"},
 			{"CORS", "OPTIONS", "/web/data/add"},
 			{"CORS", "OPTIONS", "/web/data/{id}"},
-			{"CORS", "OPTIONS", "/web/data/user/{user_id}"},
+			{"CORS", "OPTIONS", "/web/data/user/{user_id}/{offset}/{limit}"},
 		},
 		ListData:           NewListDataHandler(e.ListData, mux, decoder, encoder, errhandler, formatter),
 		ListDataMostRecent: NewListDataMostRecentHandler(e.ListDataMostRecent, mux, decoder, encoder, errhandler, formatter),
@@ -328,7 +328,7 @@ func MountGetDataByUserIDHandler(mux goahttp.Muxer, h http.Handler) {
 			h.ServeHTTP(w, r)
 		}
 	}
-	mux.Handle("GET", "/web/data/user/{user_id}", f)
+	mux.Handle("GET", "/web/data/user/{user_id}/{offset}/{limit}", f)
 }
 
 // NewGetDataByUserIDHandler creates a HTTP handler which loads the HTTP
@@ -429,7 +429,7 @@ func MountCORSHandler(mux goahttp.Muxer, h http.Handler) {
 	mux.Handle("OPTIONS", "/web/data/recents/{offset}/{limit}", h.ServeHTTP)
 	mux.Handle("OPTIONS", "/web/data/add", h.ServeHTTP)
 	mux.Handle("OPTIONS", "/web/data/{id}", h.ServeHTTP)
-	mux.Handle("OPTIONS", "/web/data/user/{user_id}", h.ServeHTTP)
+	mux.Handle("OPTIONS", "/web/data/user/{user_id}/{offset}/{limit}", h.ServeHTTP)
 }
 
 // NewCORSHandler creates a HTTP handler which returns a simple 200 response.

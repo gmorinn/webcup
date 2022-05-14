@@ -32,8 +32,8 @@ func UpdateDataDataPath(id string) string {
 }
 
 // GetDataByUserIDDataPath returns the URL path to the data service getDataByUserID HTTP endpoint.
-func GetDataByUserIDDataPath(userID string) string {
-	return fmt.Sprintf("/web/data/user/%v", userID)
+func GetDataByUserIDDataPath(userID string, offset int32, limit int32) string {
+	return fmt.Sprintf("/web/data/user/%v/%v/%v", userID, offset, limit)
 }
 
 // GetDataByIDDataPath returns the URL path to the data service getDataByID HTTP endpoint.

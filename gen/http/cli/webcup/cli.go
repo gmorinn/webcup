@@ -154,6 +154,8 @@ func ParseEndpoint(
 
 		dataGetDataByUserIDFlags        = flag.NewFlagSet("get-data-by-user-id", flag.ExitOnError)
 		dataGetDataByUserIDUserIDFlag   = dataGetDataByUserIDFlags.String("user-id", "REQUIRED", "Unique ID of the user")
+		dataGetDataByUserIDOffsetFlag   = dataGetDataByUserIDFlags.String("offset", "REQUIRED", "Offset for pagination")
+		dataGetDataByUserIDLimitFlag    = dataGetDataByUserIDFlags.String("limit", "REQUIRED", "Limit of items listed for pagination")
 		dataGetDataByUserIDOauthFlag    = dataGetDataByUserIDFlags.String("oauth", "", "")
 		dataGetDataByUserIDJWTTokenFlag = dataGetDataByUserIDFlags.String("jwt-token", "", "")
 
@@ -580,7 +582,7 @@ func ParseEndpoint(
 				data, err = datac.BuildUpdateDataPayload(*dataUpdateDataBodyFlag, *dataUpdateDataIDFlag, *dataUpdateDataOauthFlag, *dataUpdateDataJWTTokenFlag)
 			case "get-data-by-user-id":
 				endpoint = c.GetDataByUserID()
-				data, err = datac.BuildGetDataByUserIDPayload(*dataGetDataByUserIDUserIDFlag, *dataGetDataByUserIDOauthFlag, *dataGetDataByUserIDJWTTokenFlag)
+				data, err = datac.BuildGetDataByUserIDPayload(*dataGetDataByUserIDUserIDFlag, *dataGetDataByUserIDOffsetFlag, *dataGetDataByUserIDLimitFlag, *dataGetDataByUserIDOauthFlag, *dataGetDataByUserIDJWTTokenFlag)
 			case "get-data-by-id":
 				endpoint = c.GetDataByID()
 				data, err = datac.BuildGetDataByIDPayload(*dataGetDataByIDIDFlag, *dataGetDataByIDOauthFlag, *dataGetDataByIDJWTTokenFlag)
@@ -932,15 +934,17 @@ Example:
 }
 
 func dataGetDataByUserIDUsage() {
-	fmt.Fprintf(os.Stderr, `%[1]s [flags] data get-data-by-user-id -user-id STRING -oauth STRING -jwt-token STRING
+	fmt.Fprintf(os.Stderr, `%[1]s [flags] data get-data-by-user-id -user-id STRING -offset INT32 -limit INT32 -oauth STRING -jwt-token STRING
 
 Get one data user id
     -user-id STRING: Unique ID of the user
+    -offset INT32: Offset for pagination
+    -limit INT32: Limit of items listed for pagination
     -oauth STRING: 
     -jwt-token STRING: 
 
 Example:
-    %[1]s data get-data-by-user-id --user-id "5dfb0bf7-597a-4250-b7ad-63a43ff59c25" --oauth "Odio quae ipsam a dolores sed." --jwt-token "Omnis similique in."
+    %[1]s data get-data-by-user-id --user-id "5dfb0bf7-597a-4250-b7ad-63a43ff59c25" --offset 0 --limit 5 --oauth "Odio quae ipsam a dolores sed." --jwt-token "Omnis similique in."
 `, os.Args[0])
 }
 
@@ -953,7 +957,7 @@ Get one data by id
     -jwt-token STRING: 
 
 Example:
-    %[1]s data get-data-by-id --id "5dfb0bf7-597a-4250-b7ad-63a43ff59c25" --oauth "Sit molestiae et." --jwt-token "Et et et numquam et est laudantium."
+    %[1]s data get-data-by-id --id "5dfb0bf7-597a-4250-b7ad-63a43ff59c25" --oauth "Molestiae et." --jwt-token "Et et et numquam et est laudantium."
 `, os.Args[0])
 }
 

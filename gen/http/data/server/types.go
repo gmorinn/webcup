@@ -72,6 +72,8 @@ type GetDataByUserIDResponseBody struct {
 	// Result is an object
 	Data    []*ResDataResponseBody `form:"data" json:"data" xml:"data"`
 	Success bool                   `form:"success" json:"success" xml:"success"`
+	// total of datas
+	Count int64 `form:"count" json:"count" xml:"count"`
 }
 
 // GetDataByIDResponseBody is the type of the "data" service "getDataByID"
@@ -212,6 +214,7 @@ func NewUpdateDataResponseBody(res *data.UpdateDataResult) *UpdateDataResponseBo
 func NewGetDataByUserIDResponseBody(res *data.GetDataByUserIDResult) *GetDataByUserIDResponseBody {
 	body := &GetDataByUserIDResponseBody{
 		Success: res.Success,
+		Count:   res.Count,
 	}
 	if res.Data != nil {
 		body.Data = make([]*ResDataResponseBody, len(res.Data))
@@ -346,9 +349,11 @@ func NewUpdateDataPayload(body *UpdateDataRequestBody, id string, oauth *string,
 
 // NewGetDataByUserIDPayload builds a data service getDataByUserID endpoint
 // payload.
-func NewGetDataByUserIDPayload(userID string, oauth *string, jwtToken *string) *data.GetDataByUserIDPayload {
+func NewGetDataByUserIDPayload(userID string, offset int32, limit int32, oauth *string, jwtToken *string) *data.GetDataByUserIDPayload {
 	v := &data.GetDataByUserIDPayload{}
 	v.UserID = userID
+	v.Offset = offset
+	v.Limit = limit
 	v.Oauth = oauth
 	v.JWTToken = jwtToken
 
@@ -438,8 +443,8 @@ func ValidatePayloadDataRequestBody(body *PayloadDataRequestBody) (err error) {
 		}
 	}
 	if body.Category != nil {
-		if !(*body.Category == "robotics" || *body.Category == "space" || *body.Category == "brain" || *body.Category == "animals") {
-			err = goa.MergeErrors(err, goa.InvalidEnumValueError("body.category", *body.Category, []interface{}{"robotics", "space", "brain", "animals"}))
+		if !(*body.Category == "robotics" || *body.Category == "space" || *body.Category == "brain" || *body.Category == "animals" || *body.Category == "autre") {
+			err = goa.MergeErrors(err, goa.InvalidEnumValueError("body.category", *body.Category, []interface{}{"robotics", "space", "brain", "animals", "autre"}))
 		}
 	}
 	if body.UserID != nil {
