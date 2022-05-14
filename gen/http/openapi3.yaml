@@ -497,6 +497,114 @@ paths:
         jwt_header_jwtToken:
         - api:read
         - api:write
+  /v1/bo/datas/{offset}/{limit}:
+    get:
+      tags:
+      - bo
+      summary: getBoData bo
+      description: Get All data
+      operationId: bo#getBoData
+      parameters:
+      - name: field
+        in: query
+        description: Items order by {field}
+        allowEmptyValue: true
+        schema:
+          type: string
+          description: Items order by {field}
+          default: name
+          example: name
+        example: name
+      - name: direction
+        in: query
+        description: Items order by {field} ASC/DESC
+        allowEmptyValue: true
+        schema:
+          type: string
+          description: Items order by {field} ASC/DESC
+          default: asc
+          example: asc
+          enum:
+          - asc
+          - desc
+        example: asc
+      - name: offset
+        in: path
+        description: Offset for pagination
+        required: true
+        schema:
+          type: integer
+          description: Offset for pagination
+          example: 0
+          format: int32
+        example: 0
+      - name: limit
+        in: path
+        description: Limit of items listed for pagination
+        required: true
+        schema:
+          type: integer
+          description: Limit of items listed for pagination
+          example: 9
+          format: int32
+        example: 9
+      - name: jwtToken
+        in: header
+        description: Jwt token
+        allowEmptyValue: true
+        schema:
+          type: string
+          description: Jwt token
+          example: "Bearer \U0007FD8E\U0008989D"
+          pattern: ^Bearer [^ ]+$
+        example: "Bearer \U00049157\U0005B65E\U000D858F\U000CCFA5\U0005C212"
+      responses:
+        "200":
+          description: OK response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListDataMostRecentResponseBody'
+              example:
+                count: 3937526645573723134
+                data:
+                - category: animals
+                  description: Unique Air max restant au monde
+                  id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+                  image: Id vel id rerum fuga nihil.
+                  title: Air max360 d'il y a 10 millions d'années
+                  user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+                - category: animals
+                  description: Unique Air max restant au monde
+                  id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+                  image: Id vel id rerum fuga nihil.
+                  title: Air max360 d'il y a 10 millions d'années
+                  user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+                - category: animals
+                  description: Unique Air max restant au monde
+                  id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+                  image: Id vel id rerum fuga nihil.
+                  title: Air max360 d'il y a 10 millions d'années
+                  user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+                - category: animals
+                  description: Unique Air max restant au monde
+                  id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+                  image: Id vel id rerum fuga nihil.
+                  title: Air max360 d'il y a 10 millions d'années
+                  user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+                success: false
+        "500":
+          description: 'unknown_error: Error not identified (500)'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnknownError'
+      security:
+      - OAuth2_header_Authorization:
+        - api:read
+        jwt_header_jwtToken:
+        - api:read
+        - api:write
   /v1/bo/file/add:
     post:
       tags:
@@ -896,114 +1004,6 @@ paths:
                   lastname: Morin
                   role: Maiores et non dolor facilis et voluptatem.
                   username: guillaumemorin
-        "500":
-          description: 'unknown_error: Error not identified (500)'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UnknownError'
-      security:
-      - OAuth2_header_Authorization:
-        - api:read
-        jwt_header_jwtToken:
-        - api:read
-        - api:write
-  /v1/bo/users/datas/{offset}/{limit}:
-    get:
-      tags:
-      - bo
-      summary: getBoData bo
-      description: Get All data
-      operationId: bo#getBoData
-      parameters:
-      - name: field
-        in: query
-        description: Items order by {field}
-        allowEmptyValue: true
-        schema:
-          type: string
-          description: Items order by {field}
-          default: name
-          example: name
-        example: name
-      - name: direction
-        in: query
-        description: Items order by {field} ASC/DESC
-        allowEmptyValue: true
-        schema:
-          type: string
-          description: Items order by {field} ASC/DESC
-          default: asc
-          example: asc
-          enum:
-          - asc
-          - desc
-        example: asc
-      - name: offset
-        in: path
-        description: Offset for pagination
-        required: true
-        schema:
-          type: integer
-          description: Offset for pagination
-          example: 0
-          format: int32
-        example: 0
-      - name: limit
-        in: path
-        description: Limit of items listed for pagination
-        required: true
-        schema:
-          type: integer
-          description: Limit of items listed for pagination
-          example: 9
-          format: int32
-        example: 9
-      - name: jwtToken
-        in: header
-        description: Jwt token
-        allowEmptyValue: true
-        schema:
-          type: string
-          description: Jwt token
-          example: "Bearer \U0007FD8E\U0008989D"
-          pattern: ^Bearer [^ ]+$
-        example: "Bearer \U00049157\U0005B65E\U000D858F\U000CCFA5\U0005C212"
-      responses:
-        "200":
-          description: OK response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ListDataMostRecentResponseBody'
-              example:
-                count: 3937526645573723134
-                data:
-                - category: animals
-                  description: Unique Air max restant au monde
-                  id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-                  image: Id vel id rerum fuga nihil.
-                  title: Air max360 d'il y a 10 millions d'années
-                  user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-                - category: animals
-                  description: Unique Air max restant au monde
-                  id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-                  image: Id vel id rerum fuga nihil.
-                  title: Air max360 d'il y a 10 millions d'années
-                  user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-                - category: animals
-                  description: Unique Air max restant au monde
-                  id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-                  image: Id vel id rerum fuga nihil.
-                  title: Air max360 d'il y a 10 millions d'années
-                  user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-                - category: animals
-                  description: Unique Air max restant au monde
-                  id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-                  image: Id vel id rerum fuga nihil.
-                  title: Air max360 d'il y a 10 millions d'années
-                  user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-                success: false
         "500":
           description: 'unknown_error: Error not identified (500)'
           content:

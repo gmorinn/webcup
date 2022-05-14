@@ -64,13 +64,13 @@ func New(
 	return &Server{
 		Mounts: []*MountPoint{
 			{"GetBoUsers", "GET", "/v1/bo/users/{offset}/{limit}"},
-			{"GetBoData", "GET", "/v1/bo/users/datas/{offset}/{limit}"},
+			{"GetBoData", "GET", "/v1/bo/datas/{offset}/{limit}"},
 			{"DeleteBoUser", "DELETE", "/v1/bo/user/remove/{id}"},
 			{"DeleteBoManyUsers", "PATCH", "/v1/bo/users/remove"},
 			{"UpdateBoUser", "PUT", "/v1/bo/user/{id}"},
 			{"GetBoUser", "GET", "/v1/bo/user/{id}"},
 			{"CORS", "OPTIONS", "/v1/bo/users/{offset}/{limit}"},
-			{"CORS", "OPTIONS", "/v1/bo/users/datas/{offset}/{limit}"},
+			{"CORS", "OPTIONS", "/v1/bo/datas/{offset}/{limit}"},
 			{"CORS", "OPTIONS", "/v1/bo/user/remove/{id}"},
 			{"CORS", "OPTIONS", "/v1/bo/users/remove"},
 			{"CORS", "OPTIONS", "/v1/bo/user/{id}"},
@@ -175,7 +175,7 @@ func MountGetBoDataHandler(mux goahttp.Muxer, h http.Handler) {
 			h.ServeHTTP(w, r)
 		}
 	}
-	mux.Handle("GET", "/v1/bo/users/datas/{offset}/{limit}", f)
+	mux.Handle("GET", "/v1/bo/datas/{offset}/{limit}", f)
 }
 
 // NewGetBoDataHandler creates a HTTP handler which loads the HTTP request and
@@ -426,7 +426,7 @@ func NewGetBoUserHandler(
 func MountCORSHandler(mux goahttp.Muxer, h http.Handler) {
 	h = HandleBoOrigin(h)
 	mux.Handle("OPTIONS", "/v1/bo/users/{offset}/{limit}", h.ServeHTTP)
-	mux.Handle("OPTIONS", "/v1/bo/users/datas/{offset}/{limit}", h.ServeHTTP)
+	mux.Handle("OPTIONS", "/v1/bo/datas/{offset}/{limit}", h.ServeHTTP)
 	mux.Handle("OPTIONS", "/v1/bo/user/remove/{id}", h.ServeHTTP)
 	mux.Handle("OPTIONS", "/v1/bo/users/remove", h.ServeHTTP)
 	mux.Handle("OPTIONS", "/v1/bo/user/{id}", h.ServeHTTP)

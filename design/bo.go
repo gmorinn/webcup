@@ -111,7 +111,7 @@ var _ = Service("bo", func() {
 			Required("limit", "offset")
 		})
 		HTTP(func() {
-			GET("/users/datas/{offset}/{limit}")
+			GET("/datas/{offset}/{limit}")
 			Params(func() {
 				Param("field", String, func() {
 					Description("Items order by {field}")
