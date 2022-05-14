@@ -36,6 +36,16 @@ type GetBoUsersResponseBody struct {
 	Success bool  `form:"success" json:"success" xml:"success"`
 }
 
+// GetBoDataResponseBody is the type of the "bo" service "getBoData" endpoint
+// HTTP response body.
+type GetBoDataResponseBody struct {
+	// All datas
+	Data []*ResDataResponseBody `form:"data" json:"data" xml:"data"`
+	// total of data
+	Count   int64 `form:"count" json:"count" xml:"count"`
+	Success bool  `form:"success" json:"success" xml:"success"`
+}
+
 // DeleteBoUserResponseBody is the type of the "bo" service "deleteBoUser"
 // endpoint HTTP response body.
 type DeleteBoUserResponseBody struct {
@@ -67,6 +77,14 @@ type GetBoUserResponseBody struct {
 // GetBoUsersUnknownErrorResponseBody is the type of the "bo" service
 // "getBoUsers" endpoint HTTP response body for the "unknown_error" error.
 type GetBoUsersUnknownErrorResponseBody struct {
+	Err       string `form:"err" json:"err" xml:"err"`
+	ErrorCode string `form:"error_code" json:"error_code" xml:"error_code"`
+	Success   bool   `form:"success" json:"success" xml:"success"`
+}
+
+// GetBoDataUnknownErrorResponseBody is the type of the "bo" service
+// "getBoData" endpoint HTTP response body for the "unknown_error" error.
+type GetBoDataUnknownErrorResponseBody struct {
 	Err       string `form:"err" json:"err" xml:"err"`
 	ErrorCode string `form:"error_code" json:"error_code" xml:"error_code"`
 	Success   bool   `form:"success" json:"success" xml:"success"`
@@ -117,6 +135,17 @@ type ResUserResponseBody struct {
 	Avatar string `form:"avatar" json:"avatar" xml:"avatar"`
 }
 
+// ResDataResponseBody is used to define fields on response body types.
+type ResDataResponseBody struct {
+	ID          string `form:"id" json:"id" xml:"id"`
+	Title       string `form:"title" json:"title" xml:"title"`
+	Description string `form:"description" json:"description" xml:"description"`
+	// Url of the logo and stock in db
+	Image    string `form:"image" json:"image" xml:"image"`
+	Category string `form:"category" json:"category" xml:"category"`
+	UserID   string `form:"user_id" json:"user_id" xml:"user_id"`
+}
+
 // PayloadUserRequestBody is used to define fields on request body types.
 type PayloadUserRequestBody struct {
 	Email     *string `form:"email,omitempty" json:"email,omitempty" xml:"email,omitempty"`
@@ -140,6 +169,22 @@ func NewGetBoUsersResponseBody(res *bo.GetBoUsersResult) *GetBoUsersResponseBody
 		body.Users = make([]*ResUserResponseBody, len(res.Users))
 		for i, val := range res.Users {
 			body.Users[i] = marshalBoResUserToResUserResponseBody(val)
+		}
+	}
+	return body
+}
+
+// NewGetBoDataResponseBody builds the HTTP response body from the result of
+// the "getBoData" endpoint of the "bo" service.
+func NewGetBoDataResponseBody(res *bo.GetBoDataResult) *GetBoDataResponseBody {
+	body := &GetBoDataResponseBody{
+		Count:   res.Count,
+		Success: res.Success,
+	}
+	if res.Data != nil {
+		body.Data = make([]*ResDataResponseBody, len(res.Data))
+		for i, val := range res.Data {
+			body.Data[i] = marshalBoResDataToResDataResponseBody(val)
 		}
 	}
 	return body
@@ -198,6 +243,17 @@ func NewGetBoUsersUnknownErrorResponseBody(res *bo.UnknownError) *GetBoUsersUnkn
 	return body
 }
 
+// NewGetBoDataUnknownErrorResponseBody builds the HTTP response body from the
+// result of the "getBoData" endpoint of the "bo" service.
+func NewGetBoDataUnknownErrorResponseBody(res *bo.UnknownError) *GetBoDataUnknownErrorResponseBody {
+	body := &GetBoDataUnknownErrorResponseBody{
+		Err:       res.Err,
+		ErrorCode: res.ErrorCode,
+		Success:   res.Success,
+	}
+	return body
+}
+
 // NewDeleteBoUserUnknownErrorResponseBody builds the HTTP response body from
 // the result of the "deleteBoUser" endpoint of the "bo" service.
 func NewDeleteBoUserUnknownErrorResponseBody(res *bo.UnknownError) *DeleteBoUserUnknownErrorResponseBody {
@@ -245,6 +301,19 @@ func NewGetBoUserUnknownErrorResponseBody(res *bo.UnknownError) *GetBoUserUnknow
 // NewGetBoUsersPayload builds a bo service getBoUsers endpoint payload.
 func NewGetBoUsersPayload(offset int32, limit int32, field string, direction string, oauth *string, jwtToken *string) *bo.GetBoUsersPayload {
 	v := &bo.GetBoUsersPayload{}
+	v.Offset = offset
+	v.Limit = limit
+	v.Field = field
+	v.Direction = direction
+	v.Oauth = oauth
+	v.JWTToken = jwtToken
+
+	return v
+}
+
+// NewGetBoDataPayload builds a bo service getBoData endpoint payload.
+func NewGetBoDataPayload(offset int32, limit int32, field string, direction string, oauth *string, jwtToken *string) *bo.GetBoDataPayload {
+	v := &bo.GetBoDataPayload{}
 	v.Offset = offset
 	v.Limit = limit
 	v.Field = field

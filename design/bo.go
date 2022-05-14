@@ -80,6 +80,61 @@ var _ = Service("bo", func() {
 		})
 	})
 
+	Method("getBoData", func() {
+		Description("Get All data")
+		Payload(func() {
+			Attribute("offset", Int32, func() {
+				Description("Offset for pagination")
+				Example(0)
+			})
+			Attribute("limit", Int32, func() {
+				Description("Limit of items listed for pagination")
+				Example(9)
+			})
+			Attribute("field", String, func() {
+				Description("Items order by {field}")
+				Example("name")
+				Default("name")
+			})
+			Attribute("direction", String, func() {
+				Description("Items order by {field} ASC/DESC")
+				Enum("asc", "desc")
+				Example("asc")
+				Default("asc")
+			})
+			TokenField(1, "jwtToken", String, func() {
+				Description("JWT used for authentication after Signin/Signup")
+			})
+			AccessTokenField(2, "oauth", String, func() {
+				Description("Use to generate Oauth with /authorization")
+			})
+			Required("limit", "offset")
+		})
+		HTTP(func() {
+			GET("/users/datas/{offset}/{limit}")
+			Params(func() {
+				Param("field", String, func() {
+					Description("Items order by {field}")
+					Example("name")
+					Default("name")
+				})
+				Param("direction", String, func() {
+					Description("Items order by {field} ASC/DESC")
+					Enum("asc", "desc")
+					Example("asc")
+					Default("asc")
+				})
+			})
+			Response(StatusOK)
+		})
+		Result(func() {
+			Attribute("data", ArrayOf(resData), "All datas")
+			Attribute("count", Int64, "total of data")
+			Attribute("success", Boolean)
+			Required("data", "success", "count")
+		})
+	})
+
 	Method("deleteBoUser", func() {
 		Description("Delete one User by ID")
 		Payload(func() {

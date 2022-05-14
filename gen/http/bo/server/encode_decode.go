@@ -138,6 +138,124 @@ func EncodeGetBoUsersError(encoder func(context.Context, http.ResponseWriter) go
 	}
 }
 
+// EncodeGetBoDataResponse returns an encoder for responses returned by the bo
+// getBoData endpoint.
+func EncodeGetBoDataResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
+	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
+		res, _ := v.(*bo.GetBoDataResult)
+		enc := encoder(ctx, w)
+		body := NewGetBoDataResponseBody(res)
+		w.WriteHeader(http.StatusOK)
+		return enc.Encode(body)
+	}
+}
+
+// DecodeGetBoDataRequest returns a decoder for requests sent to the bo
+// getBoData endpoint.
+func DecodeGetBoDataRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
+	return func(r *http.Request) (interface{}, error) {
+		var (
+			offset    int32
+			limit     int32
+			field     string
+			direction string
+			oauth     *string
+			jwtToken  *string
+			err       error
+
+			params = mux.Vars(r)
+		)
+		{
+			offsetRaw := params["offset"]
+			v, err2 := strconv.ParseInt(offsetRaw, 10, 32)
+			if err2 != nil {
+				err = goa.MergeErrors(err, goa.InvalidFieldTypeError("offset", offsetRaw, "integer"))
+			}
+			offset = int32(v)
+		}
+		{
+			limitRaw := params["limit"]
+			v, err2 := strconv.ParseInt(limitRaw, 10, 32)
+			if err2 != nil {
+				err = goa.MergeErrors(err, goa.InvalidFieldTypeError("limit", limitRaw, "integer"))
+			}
+			limit = int32(v)
+		}
+		fieldRaw := r.URL.Query().Get("field")
+		if fieldRaw != "" {
+			field = fieldRaw
+		} else {
+			field = "name"
+		}
+		directionRaw := r.URL.Query().Get("direction")
+		if directionRaw != "" {
+			direction = directionRaw
+		} else {
+			direction = "asc"
+		}
+		if !(direction == "asc" || direction == "desc") {
+			err = goa.MergeErrors(err, goa.InvalidEnumValueError("direction", direction, []interface{}{"asc", "desc"}))
+		}
+		oauthRaw := r.Header.Get("Authorization")
+		if oauthRaw != "" {
+			oauth = &oauthRaw
+		}
+		jwtTokenRaw := r.Header.Get("jwtToken")
+		if jwtTokenRaw != "" {
+			jwtToken = &jwtTokenRaw
+		}
+		if err != nil {
+			return nil, err
+		}
+		payload := NewGetBoDataPayload(offset, limit, field, direction, oauth, jwtToken)
+		if payload.Oauth != nil {
+			if strings.Contains(*payload.Oauth, " ") {
+				// Remove authorization scheme prefix (e.g. "Bearer")
+				cred := strings.SplitN(*payload.Oauth, " ", 2)[1]
+				payload.Oauth = &cred
+			}
+		}
+		if payload.JWTToken != nil {
+			if strings.Contains(*payload.JWTToken, " ") {
+				// Remove authorization scheme prefix (e.g. "Bearer")
+				cred := strings.SplitN(*payload.JWTToken, " ", 2)[1]
+				payload.JWTToken = &cred
+			}
+		}
+
+		return payload, nil
+	}
+}
+
+// EncodeGetBoDataError returns an encoder for errors returned by the getBoData
+// bo endpoint.
+func EncodeGetBoDataError(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder, formatter func(err error) goahttp.Statuser) func(context.Context, http.ResponseWriter, error) error {
+	encodeError := goahttp.ErrorEncoder(encoder, formatter)
+	return func(ctx context.Context, w http.ResponseWriter, v error) error {
+		var en ErrorNamer
+		if !errors.As(v, &en) {
+			return encodeError(ctx, w, v)
+		}
+		switch en.ErrorName() {
+		case "unknown_error":
+			var res *bo.UnknownError
+			errors.As(v, &res)
+			enc := encoder(ctx, w)
+			var body interface{}
+			if formatter != nil {
+				body = formatter(res)
+			} else {
+				body = NewGetBoDataUnknownErrorResponseBody(res)
+			}
+			w.Header().Set("goa-error", res.ErrorName())
+			w.WriteHeader(http.StatusInternalServerError)
+			return enc.Encode(body)
+		default:
+			return encodeError(ctx, w, v)
+		}
+	}
+}
+
 // EncodeDeleteBoUserResponse returns an encoder for responses returned by the
 // bo deleteBoUser endpoint.
 func EncodeDeleteBoUserResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
@@ -518,6 +636,21 @@ func marshalBoResUserToResUserResponseBody(v *bo.ResUser) *ResUserResponseBody {
 		Email:     v.Email,
 		Role:      v.Role,
 		Avatar:    v.Avatar,
+	}
+
+	return res
+}
+
+// marshalBoResDataToResDataResponseBody builds a value of type
+// *ResDataResponseBody from a value of type *bo.ResData.
+func marshalBoResDataToResDataResponseBody(v *bo.ResData) *ResDataResponseBody {
+	res := &ResDataResponseBody{
+		ID:          v.ID,
+		Title:       v.Title,
+		Description: v.Description,
+		Image:       v.Image,
+		Category:    v.Category,
+		UserID:      v.UserID,
 	}
 
 	return res

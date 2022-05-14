@@ -17,6 +17,7 @@ import (
 // Endpoints wraps the "bo" service endpoints.
 type Endpoints struct {
 	GetBoUsers        goa.Endpoint
+	GetBoData         goa.Endpoint
 	DeleteBoUser      goa.Endpoint
 	DeleteBoManyUsers goa.Endpoint
 	UpdateBoUser      goa.Endpoint
@@ -29,6 +30,7 @@ func NewEndpoints(s Service) *Endpoints {
 	a := s.(Auther)
 	return &Endpoints{
 		GetBoUsers:        NewGetBoUsersEndpoint(s, a.OAuth2Auth, a.JWTAuth),
+		GetBoData:         NewGetBoDataEndpoint(s, a.OAuth2Auth, a.JWTAuth),
 		DeleteBoUser:      NewDeleteBoUserEndpoint(s, a.OAuth2Auth, a.JWTAuth),
 		DeleteBoManyUsers: NewDeleteBoManyUsersEndpoint(s, a.OAuth2Auth, a.JWTAuth),
 		UpdateBoUser:      NewUpdateBoUserEndpoint(s, a.OAuth2Auth, a.JWTAuth),
@@ -39,6 +41,7 @@ func NewEndpoints(s Service) *Endpoints {
 // Use applies the given middleware to all the "bo" service endpoints.
 func (e *Endpoints) Use(m func(goa.Endpoint) goa.Endpoint) {
 	e.GetBoUsers = m(e.GetBoUsers)
+	e.GetBoData = m(e.GetBoData)
 	e.DeleteBoUser = m(e.DeleteBoUser)
 	e.DeleteBoManyUsers = m(e.DeleteBoManyUsers)
 	e.UpdateBoUser = m(e.UpdateBoUser)
@@ -84,6 +87,48 @@ func NewGetBoUsersEndpoint(s Service, authOAuth2Fn security.AuthOAuth2Func, auth
 			return nil, err
 		}
 		return s.GetBoUsers(ctx, p)
+	}
+}
+
+// NewGetBoDataEndpoint returns an endpoint function that calls the method
+// "getBoData" of service "bo".
+func NewGetBoDataEndpoint(s Service, authOAuth2Fn security.AuthOAuth2Func, authJWTFn security.AuthJWTFunc) goa.Endpoint {
+	return func(ctx context.Context, req interface{}) (interface{}, error) {
+		p := req.(*GetBoDataPayload)
+		var err error
+		sc := security.OAuth2Scheme{
+			Name:           "OAuth2",
+			Scopes:         []string{"api:read"},
+			RequiredScopes: []string{},
+			Flows: []*security.OAuthFlow{
+				&security.OAuthFlow{
+					Type:       "client_credentials",
+					TokenURL:   "/authorization",
+					RefreshURL: "/refresh",
+				},
+			},
+		}
+		var token string
+		if p.Oauth != nil {
+			token = *p.Oauth
+		}
+		ctx, err = authOAuth2Fn(ctx, token, &sc)
+		if err == nil {
+			sc := security.JWTScheme{
+				Name:           "jwt",
+				Scopes:         []string{"api:read", "api:write"},
+				RequiredScopes: []string{},
+			}
+			var token string
+			if p.JWTToken != nil {
+				token = *p.JWTToken
+			}
+			ctx, err = authJWTFn(ctx, token, &sc)
+		}
+		if err != nil {
+			return nil, err
+		}
+		return s.GetBoData(ctx, p)
 	}
 }
 

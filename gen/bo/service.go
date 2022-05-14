@@ -18,6 +18,8 @@ import (
 type Service interface {
 	// Get All users
 	GetBoUsers(context.Context, *GetBoUsersPayload) (res *GetBoUsersResult, err error)
+	// Get All data
+	GetBoData(context.Context, *GetBoDataPayload) (res *GetBoDataResult, err error)
 	// Delete one User by ID
 	DeleteBoUser(context.Context, *DeleteBoUserPayload) (res *DeleteBoUserResult, err error)
 	// Delete many users with IDs send in body
@@ -44,7 +46,7 @@ const ServiceName = "bo"
 // MethodNames lists the service method names as defined in the design. These
 // are the same values that are set in the endpoint request contexts under the
 // MethodKey key.
-var MethodNames = [5]string{"getBoUsers", "deleteBoUser", "deleteBoManyUsers", "updateBoUser", "getBoUser"}
+var MethodNames = [6]string{"getBoUsers", "getBoData", "deleteBoUser", "deleteBoManyUsers", "updateBoUser", "getBoUser"}
 
 // DeleteBoManyUsersPayload is the payload type of the bo service
 // deleteBoManyUsers method.
@@ -74,6 +76,31 @@ type DeleteBoUserPayload struct {
 
 // DeleteBoUserResult is the result type of the bo service deleteBoUser method.
 type DeleteBoUserResult struct {
+	Success bool
+}
+
+// GetBoDataPayload is the payload type of the bo service getBoData method.
+type GetBoDataPayload struct {
+	// Offset for pagination
+	Offset int32
+	// Limit of items listed for pagination
+	Limit int32
+	// Items order by {field}
+	Field string
+	// Items order by {field} ASC/DESC
+	Direction string
+	// JWT used for authentication after Signin/Signup
+	JWTToken *string
+	// Use to generate Oauth with /authorization
+	Oauth *string
+}
+
+// GetBoDataResult is the result type of the bo service getBoData method.
+type GetBoDataResult struct {
+	// All datas
+	Data []*ResData
+	// total of data
+	Count   int64
 	Success bool
 }
 
@@ -128,6 +155,16 @@ type PayloadUser struct {
 	Avatar string
 	// role of the user
 	Role string
+}
+
+type ResData struct {
+	ID          string
+	Title       string
+	Description string
+	// Url of the logo and stock in db
+	Image    string
+	Category string
+	UserID   string
 }
 
 type ResUser struct {

@@ -22,6 +22,7 @@ import (
 type Server struct {
 	Mounts            []*MountPoint
 	GetBoUsers        http.Handler
+	GetBoData         http.Handler
 	DeleteBoUser      http.Handler
 	DeleteBoManyUsers http.Handler
 	UpdateBoUser      http.Handler
@@ -63,16 +64,19 @@ func New(
 	return &Server{
 		Mounts: []*MountPoint{
 			{"GetBoUsers", "GET", "/v1/bo/users/{offset}/{limit}"},
+			{"GetBoData", "GET", "/v1/bo/users/datas/{offset}/{limit}"},
 			{"DeleteBoUser", "DELETE", "/v1/bo/user/remove/{id}"},
 			{"DeleteBoManyUsers", "PATCH", "/v1/bo/users/remove"},
 			{"UpdateBoUser", "PUT", "/v1/bo/user/{id}"},
 			{"GetBoUser", "GET", "/v1/bo/user/{id}"},
 			{"CORS", "OPTIONS", "/v1/bo/users/{offset}/{limit}"},
+			{"CORS", "OPTIONS", "/v1/bo/users/datas/{offset}/{limit}"},
 			{"CORS", "OPTIONS", "/v1/bo/user/remove/{id}"},
 			{"CORS", "OPTIONS", "/v1/bo/users/remove"},
 			{"CORS", "OPTIONS", "/v1/bo/user/{id}"},
 		},
 		GetBoUsers:        NewGetBoUsersHandler(e.GetBoUsers, mux, decoder, encoder, errhandler, formatter),
+		GetBoData:         NewGetBoDataHandler(e.GetBoData, mux, decoder, encoder, errhandler, formatter),
 		DeleteBoUser:      NewDeleteBoUserHandler(e.DeleteBoUser, mux, decoder, encoder, errhandler, formatter),
 		DeleteBoManyUsers: NewDeleteBoManyUsersHandler(e.DeleteBoManyUsers, mux, decoder, encoder, errhandler, formatter),
 		UpdateBoUser:      NewUpdateBoUserHandler(e.UpdateBoUser, mux, decoder, encoder, errhandler, formatter),
@@ -87,6 +91,7 @@ func (s *Server) Service() string { return "bo" }
 // Use wraps the server handlers with the given middleware.
 func (s *Server) Use(m func(http.Handler) http.Handler) {
 	s.GetBoUsers = m(s.GetBoUsers)
+	s.GetBoData = m(s.GetBoData)
 	s.DeleteBoUser = m(s.DeleteBoUser)
 	s.DeleteBoManyUsers = m(s.DeleteBoManyUsers)
 	s.UpdateBoUser = m(s.UpdateBoUser)
@@ -97,6 +102,7 @@ func (s *Server) Use(m func(http.Handler) http.Handler) {
 // Mount configures the mux to serve the bo endpoints.
 func Mount(mux goahttp.Muxer, h *Server) {
 	MountGetBoUsersHandler(mux, h.GetBoUsers)
+	MountGetBoDataHandler(mux, h.GetBoData)
 	MountDeleteBoUserHandler(mux, h.DeleteBoUser)
 	MountDeleteBoManyUsersHandler(mux, h.DeleteBoManyUsers)
 	MountUpdateBoUserHandler(mux, h.UpdateBoUser)
@@ -139,6 +145,57 @@ func NewGetBoUsersHandler(
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
 		ctx = context.WithValue(ctx, goa.MethodKey, "getBoUsers")
+		ctx = context.WithValue(ctx, goa.ServiceKey, "bo")
+		payload, err := decodeRequest(r)
+		if err != nil {
+			if err := encodeError(ctx, w, err); err != nil {
+				errhandler(ctx, w, err)
+			}
+			return
+		}
+		res, err := endpoint(ctx, payload)
+		if err != nil {
+			if err := encodeError(ctx, w, err); err != nil {
+				errhandler(ctx, w, err)
+			}
+			return
+		}
+		if err := encodeResponse(ctx, w, res); err != nil {
+			errhandler(ctx, w, err)
+		}
+	})
+}
+
+// MountGetBoDataHandler configures the mux to serve the "bo" service
+// "getBoData" endpoint.
+func MountGetBoDataHandler(mux goahttp.Muxer, h http.Handler) {
+	f, ok := HandleBoOrigin(h).(http.HandlerFunc)
+	if !ok {
+		f = func(w http.ResponseWriter, r *http.Request) {
+			h.ServeHTTP(w, r)
+		}
+	}
+	mux.Handle("GET", "/v1/bo/users/datas/{offset}/{limit}", f)
+}
+
+// NewGetBoDataHandler creates a HTTP handler which loads the HTTP request and
+// calls the "bo" service "getBoData" endpoint.
+func NewGetBoDataHandler(
+	endpoint goa.Endpoint,
+	mux goahttp.Muxer,
+	decoder func(*http.Request) goahttp.Decoder,
+	encoder func(context.Context, http.ResponseWriter) goahttp.Encoder,
+	errhandler func(context.Context, http.ResponseWriter, error),
+	formatter func(err error) goahttp.Statuser,
+) http.Handler {
+	var (
+		decodeRequest  = DecodeGetBoDataRequest(mux, decoder)
+		encodeResponse = EncodeGetBoDataResponse(encoder)
+		encodeError    = EncodeGetBoDataError(encoder, formatter)
+	)
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
+		ctx = context.WithValue(ctx, goa.MethodKey, "getBoData")
 		ctx = context.WithValue(ctx, goa.ServiceKey, "bo")
 		payload, err := decodeRequest(r)
 		if err != nil {
@@ -369,6 +426,7 @@ func NewGetBoUserHandler(
 func MountCORSHandler(mux goahttp.Muxer, h http.Handler) {
 	h = HandleBoOrigin(h)
 	mux.Handle("OPTIONS", "/v1/bo/users/{offset}/{limit}", h.ServeHTTP)
+	mux.Handle("OPTIONS", "/v1/bo/users/datas/{offset}/{limit}", h.ServeHTTP)
 	mux.Handle("OPTIONS", "/v1/bo/user/remove/{id}", h.ServeHTTP)
 	mux.Handle("OPTIONS", "/v1/bo/users/remove", h.ServeHTTP)
 	mux.Handle("OPTIONS", "/v1/bo/user/{id}", h.ServeHTTP)

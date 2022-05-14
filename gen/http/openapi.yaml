@@ -806,6 +806,75 @@ paths:
       security:
       - OAuth2_header_Authorization: []
         jwt_header_jwtToken: []
+  /v1/bo/users/datas/{offset}/{limit}:
+    get:
+      tags:
+      - bo
+      summary: getBoData bo
+      description: Get All data
+      operationId: bo#getBoData
+      parameters:
+      - name: field
+        in: query
+        description: Items order by {field}
+        required: false
+        type: string
+        default: name
+      - name: direction
+        in: query
+        description: Items order by {field} ASC/DESC
+        required: false
+        type: string
+        default: asc
+        enum:
+        - asc
+        - desc
+      - name: offset
+        in: path
+        description: Offset for pagination
+        required: true
+        type: integer
+        format: int32
+      - name: limit
+        in: path
+        description: Limit of items listed for pagination
+        required: true
+        type: integer
+        format: int32
+      - name: Authorization
+        in: header
+        description: OAuth token
+        required: false
+        type: string
+        pattern: ^Bearer [^ ]+$
+      - name: jwtToken
+        in: header
+        description: Jwt token
+        required: false
+        type: string
+        pattern: ^Bearer [^ ]+$
+      responses:
+        "200":
+          description: OK response.
+          schema:
+            $ref: '#/definitions/BoGetBoDataResponseBody'
+            required:
+            - data
+            - success
+            - count
+        "500":
+          description: Internal Server Error response.
+          schema:
+            $ref: '#/definitions/BoGetBoDataUnknownErrorResponseBody'
+            required:
+            - err
+            - success
+            - error_code
+      schemes:
+      - http
+      security:
+      - OAuth2_header_Authorization: []
+        jwt_header_jwtToken: []
   /v1/bo/users/remove:
     patch:
       tags:
@@ -1685,13 +1754,13 @@ definitions:
     properties:
       exist:
         type: boolean
-        example: true
+        example: false
       success:
         type: boolean
-        example: true
+        example: false
     example:
-      exist: false
-      success: false
+      exist: true
+      success: true
     required:
     - exist
     - success
@@ -1708,7 +1777,7 @@ definitions:
       success:
         type: boolean
         default: false
-        example: true
+        example: false
     description: Error not identified (500)
     example:
       err: sql no rows affected
@@ -1759,9 +1828,9 @@ definitions:
     properties:
       success:
         type: boolean
-        example: false
+        example: true
     example:
-      success: false
+      success: true
     required:
     - success
   AuthResetPasswordUnknownErrorResponseBody:
@@ -1777,7 +1846,7 @@ definitions:
       success:
         type: boolean
         default: false
-        example: true
+        example: false
     description: Error not identified (500)
     example:
       err: sql no rows affected
@@ -1805,13 +1874,13 @@ definitions:
     properties:
       exist:
         type: boolean
-        example: true
+        example: false
       success:
         type: boolean
-        example: false
+        example: true
     example:
-      exist: false
-      success: true
+      exist: true
+      success: false
     required:
     - exist
     - success
@@ -1862,12 +1931,12 @@ definitions:
       success:
         type: boolean
         default: false
-        example: false
+        example: true
     description: Error not identified (500)
     example:
       err: sql no rows affected
       error_code: TX_UPDATE_ITEM
-      success: true
+      success: false
     required:
     - err
     - success
@@ -1880,16 +1949,16 @@ definitions:
         type: array
         items:
           type: string
-          example: Sequi rerum suscipit asperiores debitis.
+          example: Autem atque perspiciatis molestiae.
         example:
-        - Perspiciatis molestiae.
-        - Vero voluptas.
-        - Delectus cumque exercitationem numquam id ut.
+        - Voluptas veniam.
+        - Cumque exercitationem numquam id ut.
         - Nihil reiciendis voluptas.
+        - Debitis sit.
     example:
       tab:
-      - Sit eveniet sed et.
-      - Illum voluptatibus et iusto ab.
+      - Et nam illum.
+      - Et iusto ab.
     required:
     - tab
   BoContactDeleteBoManyContactResponseBody:
@@ -1916,12 +1985,12 @@ definitions:
       success:
         type: boolean
         default: false
-        example: true
+        example: false
     description: Error not identified (500)
     example:
       err: sql no rows affected
       error_code: TX_UPDATE_ITEM
-      success: true
+      success: false
     required:
     - err
     - success
@@ -1941,7 +2010,7 @@ definitions:
         id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
         message: Vous embauchez ?
         user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-      success: false
+      success: true
     required:
     - success
   BoContactGetBoContactByIDUnknownErrorResponseBody:
@@ -1957,7 +2026,7 @@ definitions:
       success:
         type: boolean
         default: false
-        example: false
+        example: true
     description: Error not identified (500)
     example:
       err: sql no rows affected
@@ -1985,10 +2054,14 @@ definitions:
           id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
           message: Vous embauchez ?
           user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+        - email: guillaume@gmail.com
+          id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+          message: Vous embauchez ?
+          user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
       count:
         type: integer
         description: total of messages
-        example: 3107723947614361780
+        example: 4019507655236651971
         format: int64
       success:
         type: boolean
@@ -2003,16 +2076,8 @@ definitions:
         id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
         message: Vous embauchez ?
         user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-      - email: guillaume@gmail.com
-        id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-        message: Vous embauchez ?
-        user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-      - email: guillaume@gmail.com
-        id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-        message: Vous embauchez ?
-        user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-      count: 1956550490909028307
-      success: true
+      count: 2215801478755730955
+      success: false
     required:
     - contacts
     - success
@@ -2030,12 +2095,12 @@ definitions:
       success:
         type: boolean
         default: false
-        example: false
+        example: true
     description: Error not identified (500)
     example:
       err: sql no rows affected
       error_code: TX_UPDATE_ITEM
-      success: true
+      success: false
     required:
     - err
     - success
@@ -2048,15 +2113,17 @@ definitions:
         type: array
         items:
           type: string
-          example: Sed error neque.
+          example: Esse vitae.
         example:
-        - Quasi ea cumque esse vitae.
-        - Natus molestiae sed dignissimos ipsam.
-        - Consectetur rem optio asperiores veniam aliquam tempore.
+        - Molestiae sed dignissimos ipsam minus consectetur.
+        - Optio asperiores.
+        - Aliquam tempore possimus.
+        - Non corrupti praesentium perspiciatis suscipit aut adipisci.
     example:
       tab:
-      - Non corrupti praesentium perspiciatis suscipit aut adipisci.
-      - Aut odit rerum occaecati quo nesciunt.
+      - Odit rerum occaecati quo nesciunt nemo molestias.
+      - Laboriosam totam quasi harum.
+      - Provident cumque iusto laborum.
     required:
     - tab
   BoDeleteBoManyUsersResponseBody:
@@ -2083,7 +2150,7 @@ definitions:
       success:
         type: boolean
         default: false
-        example: true
+        example: false
     description: Error not identified (500)
     example:
       err: sql no rows affected
@@ -2101,11 +2168,96 @@ definitions:
         type: boolean
         example: true
     example:
-      success: false
+      success: true
     required:
     - success
   BoDeleteBoUserUnknownErrorResponseBody:
     title: BoDeleteBoUserUnknownErrorResponseBody
+    type: object
+    properties:
+      err:
+        type: string
+        example: sql no rows affected
+      error_code:
+        type: string
+        example: TX_UPDATE_ITEM
+      success:
+        type: boolean
+        default: false
+        example: false
+    description: Error not identified (500)
+    example:
+      err: sql no rows affected
+      error_code: TX_UPDATE_ITEM
+      success: false
+    required:
+    - err
+    - success
+    - error_code
+  BoGetBoDataResponseBody:
+    title: BoGetBoDataResponseBody
+    type: object
+    properties:
+      count:
+        type: integer
+        description: total of data
+        example: 9022662199310314699
+        format: int64
+      data:
+        type: array
+        items:
+          $ref: '#/definitions/resDataResponseBody'
+        description: All datas
+        example:
+        - category: animals
+          description: Unique Air max restant au monde
+          id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+          image: Id vel id rerum fuga nihil.
+          title: Air max360 d'il y a 10 millions d'années
+          user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+        - category: animals
+          description: Unique Air max restant au monde
+          id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+          image: Id vel id rerum fuga nihil.
+          title: Air max360 d'il y a 10 millions d'années
+          user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+      success:
+        type: boolean
+        example: true
+    example:
+      count: 1979757079859331728
+      data:
+      - category: animals
+        description: Unique Air max restant au monde
+        id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+        image: Id vel id rerum fuga nihil.
+        title: Air max360 d'il y a 10 millions d'années
+        user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+      - category: animals
+        description: Unique Air max restant au monde
+        id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+        image: Id vel id rerum fuga nihil.
+        title: Air max360 d'il y a 10 millions d'années
+        user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+      - category: animals
+        description: Unique Air max restant au monde
+        id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+        image: Id vel id rerum fuga nihil.
+        title: Air max360 d'il y a 10 millions d'années
+        user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+      - category: animals
+        description: Unique Air max restant au monde
+        id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+        image: Id vel id rerum fuga nihil.
+        title: Air max360 d'il y a 10 millions d'années
+        user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+      success: true
+    required:
+    - data
+    - success
+    - count
+  BoGetBoDataUnknownErrorResponseBody:
+    title: BoGetBoDataUnknownErrorResponseBody
     type: object
     properties:
       err:
@@ -2162,12 +2314,12 @@ definitions:
       success:
         type: boolean
         default: false
-        example: true
+        example: false
     description: Error not identified (500)
     example:
       err: sql no rows affected
       error_code: TX_UPDATE_ITEM
-      success: false
+      success: true
     required:
     - err
     - success
@@ -2285,7 +2437,7 @@ definitions:
         $ref: '#/definitions/payloadUserRequestBody'
     example:
       user:
-        avatar: Architecto dolorem autem.
+        avatar: Laborum ea cum ad ipsam facere.
         email: guillaume@gmail.com
         firstname: Guillaume
         lastname: Morin
@@ -2299,11 +2451,11 @@ definitions:
     properties:
       success:
         type: boolean
-        example: true
+        example: false
       user:
         $ref: '#/definitions/resUserResponseBody'
     example:
-      success: false
+      success: true
       user:
         avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
         email: guillaume@gmail.com
@@ -2328,7 +2480,7 @@ definitions:
       success:
         type: boolean
         default: false
-        example: false
+        example: true
     description: Error not identified (500)
     example:
       err: sql no rows affected
@@ -2842,14 +2994,14 @@ definitions:
       timeout:
         type: boolean
         description: Is the error a timeout?
-        example: false
+        example: true
     description: Error response result type (default view)
     example:
-      fault: false
+      fault: true
       id: 123abc
       message: parameter 'p' must be an integer
       name: bad_request
-      temporary: true
+      temporary: false
       timeout: false
     required:
     - name
@@ -3430,7 +3582,7 @@ definitions:
     properties:
       success:
         type: boolean
-        example: true
+        example: false
       user:
         $ref: '#/definitions/resUserResponseBody'
     example:
@@ -3476,11 +3628,11 @@ definitions:
       count:
         type: integer
         description: total of users
-        example: 4545111465470067225
+        example: 6415823379680100346
         format: int64
       success:
         type: boolean
-        example: false
+        example: true
       users:
         type: array
         items:
@@ -3502,7 +3654,7 @@ definitions:
           role: Maiores et non dolor facilis et voluptatem.
           username: guillaumemorin
     example:
-      count: 7602437219320083114
+      count: 5321009824262484858
       success: true
       users:
       - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
@@ -3599,8 +3751,15 @@ definitions:
           role: Maiores et non dolor facilis et voluptatem.
           username: guillaumemorin
     example:
-      success: false
+      success: true
       users:
+      - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
+        email: guillaume@gmail.com
+        firstname: Guillaume
+        id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+        lastname: Morin
+        role: Maiores et non dolor facilis et voluptatem.
+        username: guillaumemorin
       - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
         email: guillaume@gmail.com
         firstname: Guillaume
@@ -3638,7 +3797,7 @@ definitions:
       success:
         type: boolean
         default: false
-        example: true
+        example: false
     description: Error not identified (500)
     example:
       err: sql no rows affected
@@ -3654,7 +3813,7 @@ definitions:
     properties:
       success:
         type: boolean
-        example: true
+        example: false
     example:
       success: false
     required:
@@ -3672,7 +3831,7 @@ definitions:
       success:
         type: boolean
         default: false
-        example: false
+        example: true
     description: Error not identified (500)
     example:
       err: sql no rows affected
@@ -3692,7 +3851,7 @@ definitions:
       user:
         $ref: '#/definitions/resUserResponseBody'
     example:
-      success: false
+      success: true
       user:
         avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
         email: guillaume@gmail.com
@@ -3717,7 +3876,7 @@ definitions:
       success:
         type: boolean
         default: false
-        example: false
+        example: true
     description: Error not identified (500)
     example:
       err: sql no rows affected
@@ -3734,13 +3893,13 @@ definitions:
       avatar:
         type: string
         description: Url of the avatar and stock in db
-        example: Corporis fuga.
+        example: Veritatis voluptas beatae quibusdam fugit.
       id:
         type: string
         example: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
         format: uuid
     example:
-      avatar: Repellat dicta in rerum occaecati excepturi non.
+      avatar: Itaque a veniam ut perspiciatis officiis.
       id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
     required:
     - id
@@ -3751,7 +3910,7 @@ definitions:
     properties:
       success:
         type: boolean
-        example: true
+        example: false
       user:
         $ref: '#/definitions/resUserResponseBody'
     example:
@@ -3779,7 +3938,7 @@ definitions:
       success:
         type: boolean
         default: false
-        example: false
+        example: true
     description: Error not identified (500)
     example:
       err: sql no rows affected
@@ -3837,7 +3996,7 @@ definitions:
       user:
         $ref: '#/definitions/resUserResponseBody'
     example:
-      success: false
+      success: true
       user:
         avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
         email: guillaume@gmail.com
@@ -3861,12 +4020,12 @@ definitions:
       success:
         type: boolean
         default: false
-        example: true
+        example: false
     description: Error not identified (500)
     example:
       err: sql no rows affected
       error_code: TX_UPDATE_ITEM
-      success: true
+      success: false
     required:
     - err
     - success
@@ -3921,7 +4080,7 @@ definitions:
       avatar:
         type: string
         description: Url of the avatar and stock in db
-        example: Quasi harum aut provident cumque iusto laborum.
+        example: Numquam eum nemo.
       email:
         type: string
         example: guillaume@gmail.com
@@ -3939,7 +4098,7 @@ definitions:
       role:
         type: string
         description: role of the user
-        example: admin
+        example: pro
         enum:
         - admin
         - user
@@ -3951,7 +4110,7 @@ definitions:
         minLength: 2
         maxLength: 20
     example:
-      avatar: Quos consectetur.
+      avatar: Laudantium sequi officia itaque autem.
       email: guillaume@gmail.com
       firstname: Guillaume
       lastname: Morin

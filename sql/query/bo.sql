@@ -24,3 +24,13 @@ ORDER BY
   CASE WHEN sqlc.arg('role_asc')::bool THEN role END asc,
   CASE WHEN sqlc.arg('role_desc')::bool THEN role END desc
 LIMIT sqlc.arg('limit') OFFSET sqlc.arg('offset');
+
+-- name: GetBoAllDatas :many
+SELECT * FROM data
+WHERE deleted_at IS NULL
+ORDER BY
+  CASE WHEN sqlc.arg('title_asc')::bool THEN title END asc,
+  CASE WHEN sqlc.arg('title_desc')::bool THEN title END desc,
+  CASE WHEN sqlc.arg('description_asc')::bool THEN description END asc,
+  CASE WHEN sqlc.arg('description_desc')::bool THEN description END desc
+LIMIT sqlc.arg('limit') OFFSET sqlc.arg('offset');

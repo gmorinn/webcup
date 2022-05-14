@@ -90,6 +90,52 @@ func (s *bosrvc) JWTAuth(ctx context.Context, token string, scheme *security.JWT
 }
 
 // Get All users
+func (s *bosrvc) GetBoData(ctx context.Context, p *bo.GetBoDataPayload) (res *bo.GetBoDataResult, err error) {
+	if p == nil {
+		return nil, s.errorResponse("ERROR_UPDATE_USER_PAYLOAD_NIL", ErrNullPayload)
+	}
+	err = s.server.Store.ExecTx(ctx, func(q *db.Queries) error {
+		arg := db.GetBoAllDatasParams{
+			Limit:           p.Limit,
+			Offset:          p.Offset,
+			TitleAsc:        utils.FilterOrderBy(p.Field, p.Direction, "TitleAsc"),
+			TitleDesc:       utils.FilterOrderBy(p.Field, p.Direction, "TitleDesc"),
+			DescriptionAsc:  utils.FilterOrderBy(p.Field, p.Direction, "DescriptionAsc"),
+			DescriptionDesc: utils.FilterOrderBy(p.Field, p.Direction, "DescriptionDesc"),
+		}
+		uS, err := q.GetBoAllDatas(ctx, arg)
+		if err != nil {
+			return fmt.Errorf("ERROR_GET_ALL_USERS %v", err)
+		}
+		var allData []*bo.ResData
+		for _, v := range uS {
+			allData = append(allData, &bo.ResData{
+				ID:          v.ID.String(),
+				Title:       v.Title,
+				Description: v.Description,
+				Image:       v.Img.String,
+				Category:    string(v.Category),
+				UserID:      v.UserID.String(),
+			})
+		}
+		total, err := q.CountData(ctx)
+		if err != nil {
+			return fmt.Errorf("ERROR_COUNT_DATA %v", err)
+		}
+		res = &bo.GetBoDataResult{
+			Data:    allData,
+			Count:   total,
+			Success: true,
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, s.errorResponse("TX_GET_ALL_DATA", err)
+	}
+	return res, nil
+}
+
+// Get All users
 func (s *bosrvc) GetBoUsers(ctx context.Context, p *bo.GetBoUsersPayload) (res *bo.GetBoUsersResult, err error) {
 	if p == nil {
 		return nil, s.errorResponse("ERROR_UPDATE_USER_PAYLOAD_NIL", ErrNullPayload)

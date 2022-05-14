@@ -79,6 +79,69 @@ func BuildGetBoUsersPayload(boGetBoUsersOffset string, boGetBoUsersLimit string,
 	return v, nil
 }
 
+// BuildGetBoDataPayload builds the payload for the bo getBoData endpoint from
+// CLI flags.
+func BuildGetBoDataPayload(boGetBoDataOffset string, boGetBoDataLimit string, boGetBoDataField string, boGetBoDataDirection string, boGetBoDataOauth string, boGetBoDataJWTToken string) (*bo.GetBoDataPayload, error) {
+	var err error
+	var offset int32
+	{
+		var v int64
+		v, err = strconv.ParseInt(boGetBoDataOffset, 10, 32)
+		offset = int32(v)
+		if err != nil {
+			return nil, fmt.Errorf("invalid value for offset, must be INT32")
+		}
+	}
+	var limit int32
+	{
+		var v int64
+		v, err = strconv.ParseInt(boGetBoDataLimit, 10, 32)
+		limit = int32(v)
+		if err != nil {
+			return nil, fmt.Errorf("invalid value for limit, must be INT32")
+		}
+	}
+	var field string
+	{
+		if boGetBoDataField != "" {
+			field = boGetBoDataField
+		}
+	}
+	var direction string
+	{
+		if boGetBoDataDirection != "" {
+			direction = boGetBoDataDirection
+			if !(direction == "asc" || direction == "desc") {
+				err = goa.MergeErrors(err, goa.InvalidEnumValueError("direction", direction, []interface{}{"asc", "desc"}))
+			}
+			if err != nil {
+				return nil, err
+			}
+		}
+	}
+	var oauth *string
+	{
+		if boGetBoDataOauth != "" {
+			oauth = &boGetBoDataOauth
+		}
+	}
+	var jwtToken *string
+	{
+		if boGetBoDataJWTToken != "" {
+			jwtToken = &boGetBoDataJWTToken
+		}
+	}
+	v := &bo.GetBoDataPayload{}
+	v.Offset = offset
+	v.Limit = limit
+	v.Field = field
+	v.Direction = direction
+	v.Oauth = oauth
+	v.JWTToken = jwtToken
+
+	return v, nil
+}
+
 // BuildDeleteBoUserPayload builds the payload for the bo deleteBoUser endpoint
 // from CLI flags.
 func BuildDeleteBoUserPayload(boDeleteBoUserID string, boDeleteBoUserOauth string, boDeleteBoUserJWTToken string) (*bo.DeleteBoUserPayload, error) {
@@ -120,7 +183,7 @@ func BuildDeleteBoManyUsersPayload(boDeleteBoManyUsersBody string, boDeleteBoMan
 	{
 		err = json.Unmarshal([]byte(boDeleteBoManyUsersBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"tab\": [\n         \"Nemo eos soluta sed.\",\n         \"Necessitatibus sint.\",\n         \"Est sed molestiae et et quidem quae.\",\n         \"Est quis sapiente consequuntur aut est alias.\"\n      ]\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"tab\": [\n         \"Et et quidem quae quos est.\",\n         \"Sapiente consequuntur aut est alias eaque cupiditate.\",\n         \"Architecto vel soluta necessitatibus animi quaerat architecto.\"\n      ]\n   }'")
 		}
 		if body.Tab == nil {
 			err = goa.MergeErrors(err, goa.MissingFieldError("tab", "body"))
@@ -162,7 +225,7 @@ func BuildUpdateBoUserPayload(boUpdateBoUserBody string, boUpdateBoUserID string
 	{
 		err = json.Unmarshal([]byte(boUpdateBoUserBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"user\": {\n         \"avatar\": \"Architecto dolorem autem.\",\n         \"email\": \"guillaume@gmail.com\",\n         \"firstname\": \"Guillaume\",\n         \"lastname\": \"Morin\",\n         \"role\": \"admin\",\n         \"username\": \"guillaumemoriin\"\n      }\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"user\": {\n         \"avatar\": \"Laborum ea cum ad ipsam facere.\",\n         \"email\": \"guillaume@gmail.com\",\n         \"firstname\": \"Guillaume\",\n         \"lastname\": \"Morin\",\n         \"role\": \"admin\",\n         \"username\": \"guillaumemoriin\"\n      }\n   }'")
 		}
 		if body.User == nil {
 			err = goa.MergeErrors(err, goa.MissingFieldError("user", "body"))

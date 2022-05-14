@@ -153,7 +153,7 @@ func BuildDeleteBoManyContactPayload(boContactDeleteBoManyContactBody string, bo
 	{
 		err = json.Unmarshal([]byte(boContactDeleteBoManyContactBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"tab\": [\n         \"Consequatur rerum autem necessitatibus dolorem animi.\",\n         \"Ipsa veniam fuga eos repellat.\"\n      ]\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"tab\": [\n         \"Quo mollitia consequatur.\",\n         \"Autem necessitatibus dolorem animi vero ipsa.\",\n         \"Fuga eos repellat.\"\n      ]\n   }'")
 		}
 		if body.Tab == nil {
 			err = goa.MergeErrors(err, goa.MissingFieldError("tab", "body"))

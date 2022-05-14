@@ -10,6 +10,66 @@ import (
 	"github.com/google/uuid"
 )
 
+const getBoAllDatas = `-- name: GetBoAllDatas :many
+SELECT id, created_at, updated_at, deleted_at, title, description, user_id, img, category FROM data
+WHERE deleted_at IS NULL
+ORDER BY
+  CASE WHEN $1::bool THEN title END asc,
+  CASE WHEN $2::bool THEN title END desc,
+  CASE WHEN $3::bool THEN description END asc,
+  CASE WHEN $4::bool THEN description END desc
+LIMIT $6 OFFSET $5
+`
+
+type GetBoAllDatasParams struct {
+	TitleAsc        bool  `json:"title_asc"`
+	TitleDesc       bool  `json:"title_desc"`
+	DescriptionAsc  bool  `json:"description_asc"`
+	DescriptionDesc bool  `json:"description_desc"`
+	Offset          int32 `json:"offset"`
+	Limit           int32 `json:"limit"`
+}
+
+func (q *Queries) GetBoAllDatas(ctx context.Context, arg GetBoAllDatasParams) ([]Datum, error) {
+	rows, err := q.db.QueryContext(ctx, getBoAllDatas,
+		arg.TitleAsc,
+		arg.TitleDesc,
+		arg.DescriptionAsc,
+		arg.DescriptionDesc,
+		arg.Offset,
+		arg.Limit,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []Datum{}
+	for rows.Next() {
+		var i Datum
+		if err := rows.Scan(
+			&i.ID,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.DeletedAt,
+			&i.Title,
+			&i.Description,
+			&i.UserID,
+			&i.Img,
+			&i.Category,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getBoAllUsers = `-- name: GetBoAllUsers :many
 SELECT id, created_at, updated_at, deleted_at, email, password, firstname, lastname, username, password_confirm_code, role, avatar FROM users
 WHERE deleted_at IS NULL

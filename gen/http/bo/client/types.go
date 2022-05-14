@@ -36,6 +36,16 @@ type GetBoUsersResponseBody struct {
 	Success *bool  `form:"success,omitempty" json:"success,omitempty" xml:"success,omitempty"`
 }
 
+// GetBoDataResponseBody is the type of the "bo" service "getBoData" endpoint
+// HTTP response body.
+type GetBoDataResponseBody struct {
+	// All datas
+	Data []*ResDataResponseBody `form:"data,omitempty" json:"data,omitempty" xml:"data,omitempty"`
+	// total of data
+	Count   *int64 `form:"count,omitempty" json:"count,omitempty" xml:"count,omitempty"`
+	Success *bool  `form:"success,omitempty" json:"success,omitempty" xml:"success,omitempty"`
+}
+
 // DeleteBoUserResponseBody is the type of the "bo" service "deleteBoUser"
 // endpoint HTTP response body.
 type DeleteBoUserResponseBody struct {
@@ -67,6 +77,14 @@ type GetBoUserResponseBody struct {
 // GetBoUsersUnknownErrorResponseBody is the type of the "bo" service
 // "getBoUsers" endpoint HTTP response body for the "unknown_error" error.
 type GetBoUsersUnknownErrorResponseBody struct {
+	Err       *string `form:"err,omitempty" json:"err,omitempty" xml:"err,omitempty"`
+	ErrorCode *string `form:"error_code,omitempty" json:"error_code,omitempty" xml:"error_code,omitempty"`
+	Success   *bool   `form:"success,omitempty" json:"success,omitempty" xml:"success,omitempty"`
+}
+
+// GetBoDataUnknownErrorResponseBody is the type of the "bo" service
+// "getBoData" endpoint HTTP response body for the "unknown_error" error.
+type GetBoDataUnknownErrorResponseBody struct {
 	Err       *string `form:"err,omitempty" json:"err,omitempty" xml:"err,omitempty"`
 	ErrorCode *string `form:"error_code,omitempty" json:"error_code,omitempty" xml:"error_code,omitempty"`
 	Success   *bool   `form:"success,omitempty" json:"success,omitempty" xml:"success,omitempty"`
@@ -115,6 +133,17 @@ type ResUserResponseBody struct {
 	// User is admin or not
 	Role   *string `form:"role,omitempty" json:"role,omitempty" xml:"role,omitempty"`
 	Avatar *string `form:"avatar,omitempty" json:"avatar,omitempty" xml:"avatar,omitempty"`
+}
+
+// ResDataResponseBody is used to define fields on response body types.
+type ResDataResponseBody struct {
+	ID          *string `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
+	Title       *string `form:"title,omitempty" json:"title,omitempty" xml:"title,omitempty"`
+	Description *string `form:"description,omitempty" json:"description,omitempty" xml:"description,omitempty"`
+	// Url of the logo and stock in db
+	Image    *string `form:"image,omitempty" json:"image,omitempty" xml:"image,omitempty"`
+	Category *string `form:"category,omitempty" json:"category,omitempty" xml:"category,omitempty"`
+	UserID   *string `form:"user_id,omitempty" json:"user_id,omitempty" xml:"user_id,omitempty"`
 }
 
 // PayloadUserRequestBody is used to define fields on request body types.
@@ -170,6 +199,33 @@ func NewGetBoUsersResultOK(body *GetBoUsersResponseBody) *bo.GetBoUsersResult {
 // NewGetBoUsersUnknownError builds a bo service getBoUsers endpoint
 // unknown_error error.
 func NewGetBoUsersUnknownError(body *GetBoUsersUnknownErrorResponseBody) *bo.UnknownError {
+	v := &bo.UnknownError{
+		Err:       *body.Err,
+		ErrorCode: *body.ErrorCode,
+		Success:   *body.Success,
+	}
+
+	return v
+}
+
+// NewGetBoDataResultOK builds a "bo" service "getBoData" endpoint result from
+// a HTTP "OK" response.
+func NewGetBoDataResultOK(body *GetBoDataResponseBody) *bo.GetBoDataResult {
+	v := &bo.GetBoDataResult{
+		Count:   *body.Count,
+		Success: *body.Success,
+	}
+	v.Data = make([]*bo.ResData, len(body.Data))
+	for i, val := range body.Data {
+		v.Data[i] = unmarshalResDataResponseBodyToBoResData(val)
+	}
+
+	return v
+}
+
+// NewGetBoDataUnknownError builds a bo service getBoData endpoint
+// unknown_error error.
+func NewGetBoDataUnknownError(body *GetBoDataUnknownErrorResponseBody) *bo.UnknownError {
 	v := &bo.UnknownError{
 		Err:       *body.Err,
 		ErrorCode: *body.ErrorCode,
@@ -291,6 +347,28 @@ func ValidateGetBoUsersResponseBody(body *GetBoUsersResponseBody) (err error) {
 	return
 }
 
+// ValidateGetBoDataResponseBody runs the validations defined on
+// GetBoDataResponseBody
+func ValidateGetBoDataResponseBody(body *GetBoDataResponseBody) (err error) {
+	if body.Data == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("data", "body"))
+	}
+	if body.Success == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("success", "body"))
+	}
+	if body.Count == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("count", "body"))
+	}
+	for _, e := range body.Data {
+		if e != nil {
+			if err2 := ValidateResDataResponseBody(e); err2 != nil {
+				err = goa.MergeErrors(err, err2)
+			}
+		}
+	}
+	return
+}
+
 // ValidateDeleteBoUserResponseBody runs the validations defined on
 // DeleteBoUserResponseBody
 func ValidateDeleteBoUserResponseBody(body *DeleteBoUserResponseBody) (err error) {
@@ -346,6 +424,21 @@ func ValidateGetBoUserResponseBody(body *GetBoUserResponseBody) (err error) {
 // ValidateGetBoUsersUnknownErrorResponseBody runs the validations defined on
 // getBoUsers_unknown_error_response_body
 func ValidateGetBoUsersUnknownErrorResponseBody(body *GetBoUsersUnknownErrorResponseBody) (err error) {
+	if body.Err == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("err", "body"))
+	}
+	if body.Success == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("success", "body"))
+	}
+	if body.ErrorCode == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("error_code", "body"))
+	}
+	return
+}
+
+// ValidateGetBoDataUnknownErrorResponseBody runs the validations defined on
+// getBoData_unknown_error_response_body
+func ValidateGetBoDataUnknownErrorResponseBody(body *GetBoDataUnknownErrorResponseBody) (err error) {
 	if body.Err == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("err", "body"))
 	}
@@ -441,6 +534,61 @@ func ValidateResUserResponseBody(body *ResUserResponseBody) (err error) {
 	}
 	if body.Role == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("role", "body"))
+	}
+	return
+}
+
+// ValidateResDataResponseBody runs the validations defined on
+// resDataResponseBody
+func ValidateResDataResponseBody(body *ResDataResponseBody) (err error) {
+	if body.ID == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("id", "body"))
+	}
+	if body.Title == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("title", "body"))
+	}
+	if body.Description == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("description", "body"))
+	}
+	if body.Image == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("image", "body"))
+	}
+	if body.Category == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("category", "body"))
+	}
+	if body.UserID == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("user_id", "body"))
+	}
+	if body.ID != nil {
+		err = goa.MergeErrors(err, goa.ValidateFormat("body.id", *body.ID, goa.FormatUUID))
+	}
+	if body.Title != nil {
+		if utf8.RuneCountInString(*body.Title) < 3 {
+			err = goa.MergeErrors(err, goa.InvalidLengthError("body.title", *body.Title, utf8.RuneCountInString(*body.Title), 3, true))
+		}
+	}
+	if body.Title != nil {
+		if utf8.RuneCountInString(*body.Title) > 20 {
+			err = goa.MergeErrors(err, goa.InvalidLengthError("body.title", *body.Title, utf8.RuneCountInString(*body.Title), 20, false))
+		}
+	}
+	if body.Description != nil {
+		if utf8.RuneCountInString(*body.Description) < 2 {
+			err = goa.MergeErrors(err, goa.InvalidLengthError("body.description", *body.Description, utf8.RuneCountInString(*body.Description), 2, true))
+		}
+	}
+	if body.Description != nil {
+		if utf8.RuneCountInString(*body.Description) > 500 {
+			err = goa.MergeErrors(err, goa.InvalidLengthError("body.description", *body.Description, utf8.RuneCountInString(*body.Description), 500, false))
+		}
+	}
+	if body.Category != nil {
+		if !(*body.Category == "robotics" || *body.Category == "space" || *body.Category == "brain" || *body.Category == "animals" || *body.Category == "autre") {
+			err = goa.MergeErrors(err, goa.InvalidEnumValueError("body.category", *body.Category, []interface{}{"robotics", "space", "brain", "animals", "autre"}))
+		}
+	}
+	if body.UserID != nil {
+		err = goa.MergeErrors(err, goa.ValidateFormat("body.user_id", *body.UserID, goa.FormatUUID))
 	}
 	return
 }

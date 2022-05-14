@@ -21,6 +21,10 @@ type Client struct {
 	// endpoint.
 	GetBoUsersDoer goahttp.Doer
 
+	// GetBoData Doer is the HTTP client used to make requests to the getBoData
+	// endpoint.
+	GetBoDataDoer goahttp.Doer
+
 	// DeleteBoUser Doer is the HTTP client used to make requests to the
 	// deleteBoUser endpoint.
 	DeleteBoUserDoer goahttp.Doer
@@ -61,6 +65,7 @@ func NewClient(
 ) *Client {
 	return &Client{
 		GetBoUsersDoer:        doer,
+		GetBoDataDoer:         doer,
 		DeleteBoUserDoer:      doer,
 		DeleteBoManyUsersDoer: doer,
 		UpdateBoUserDoer:      doer,
@@ -93,6 +98,30 @@ func (c *Client) GetBoUsers() goa.Endpoint {
 		resp, err := c.GetBoUsersDoer.Do(req)
 		if err != nil {
 			return nil, goahttp.ErrRequestError("bo", "getBoUsers", err)
+		}
+		return decodeResponse(resp)
+	}
+}
+
+// GetBoData returns an endpoint that makes HTTP requests to the bo service
+// getBoData server.
+func (c *Client) GetBoData() goa.Endpoint {
+	var (
+		encodeRequest  = EncodeGetBoDataRequest(c.encoder)
+		decodeResponse = DecodeGetBoDataResponse(c.decoder, c.RestoreResponseBody)
+	)
+	return func(ctx context.Context, v interface{}) (interface{}, error) {
+		req, err := c.BuildGetBoDataRequest(ctx, v)
+		if err != nil {
+			return nil, err
+		}
+		err = encodeRequest(req, v)
+		if err != nil {
+			return nil, err
+		}
+		resp, err := c.GetBoDataDoer.Do(req)
+		if err != nil {
+			return nil, goahttp.ErrRequestError("bo", "getBoData", err)
 		}
 		return decodeResponse(resp)
 	}

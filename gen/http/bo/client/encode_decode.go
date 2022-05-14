@@ -131,6 +131,118 @@ func DecodeGetBoUsersResponse(decoder func(*http.Response) goahttp.Decoder, rest
 	}
 }
 
+// BuildGetBoDataRequest instantiates a HTTP request object with method and
+// path set to call the "bo" service "getBoData" endpoint
+func (c *Client) BuildGetBoDataRequest(ctx context.Context, v interface{}) (*http.Request, error) {
+	var (
+		offset int32
+		limit  int32
+	)
+	{
+		p, ok := v.(*bo.GetBoDataPayload)
+		if !ok {
+			return nil, goahttp.ErrInvalidType("bo", "getBoData", "*bo.GetBoDataPayload", v)
+		}
+		offset = p.Offset
+		limit = p.Limit
+	}
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: GetBoDataBoPath(offset, limit)}
+	req, err := http.NewRequest("GET", u.String(), nil)
+	if err != nil {
+		return nil, goahttp.ErrInvalidURL("bo", "getBoData", u.String(), err)
+	}
+	if ctx != nil {
+		req = req.WithContext(ctx)
+	}
+
+	return req, nil
+}
+
+// EncodeGetBoDataRequest returns an encoder for requests sent to the bo
+// getBoData server.
+func EncodeGetBoDataRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.Request, interface{}) error {
+	return func(req *http.Request, v interface{}) error {
+		p, ok := v.(*bo.GetBoDataPayload)
+		if !ok {
+			return goahttp.ErrInvalidType("bo", "getBoData", "*bo.GetBoDataPayload", v)
+		}
+		if p.Oauth != nil {
+			head := *p.Oauth
+			if !strings.Contains(head, " ") {
+				req.Header.Set("Authorization", "Bearer "+head)
+			} else {
+				req.Header.Set("Authorization", head)
+			}
+		}
+		if p.JWTToken != nil {
+			head := *p.JWTToken
+			req.Header.Set("jwtToken", head)
+		}
+		values := req.URL.Query()
+		values.Add("field", p.Field)
+		values.Add("direction", p.Direction)
+		req.URL.RawQuery = values.Encode()
+		return nil
+	}
+}
+
+// DecodeGetBoDataResponse returns a decoder for responses returned by the bo
+// getBoData endpoint. restoreBody controls whether the response body should be
+// restored after having been read.
+// DecodeGetBoDataResponse may return the following errors:
+//	- "unknown_error" (type *bo.UnknownError): http.StatusInternalServerError
+//	- error: internal error
+func DecodeGetBoDataResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
+	return func(resp *http.Response) (interface{}, error) {
+		if restoreBody {
+			b, err := ioutil.ReadAll(resp.Body)
+			if err != nil {
+				return nil, err
+			}
+			resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			defer func() {
+				resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			}()
+		} else {
+			defer resp.Body.Close()
+		}
+		switch resp.StatusCode {
+		case http.StatusOK:
+			var (
+				body GetBoDataResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("bo", "getBoData", err)
+			}
+			err = ValidateGetBoDataResponseBody(&body)
+			if err != nil {
+				return nil, goahttp.ErrValidationError("bo", "getBoData", err)
+			}
+			res := NewGetBoDataResultOK(&body)
+			return res, nil
+		case http.StatusInternalServerError:
+			var (
+				body GetBoDataUnknownErrorResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("bo", "getBoData", err)
+			}
+			err = ValidateGetBoDataUnknownErrorResponseBody(&body)
+			if err != nil {
+				return nil, goahttp.ErrValidationError("bo", "getBoData", err)
+			}
+			return nil, NewGetBoDataUnknownError(&body)
+		default:
+			body, _ := ioutil.ReadAll(resp.Body)
+			return nil, goahttp.ErrInvalidResponse("bo", "getBoData", resp.StatusCode, string(body))
+		}
+	}
+}
+
 // BuildDeleteBoUserRequest instantiates a HTTP request object with method and
 // path set to call the "bo" service "deleteBoUser" endpoint
 func (c *Client) BuildDeleteBoUserRequest(ctx context.Context, v interface{}) (*http.Request, error) {
@@ -564,6 +676,21 @@ func unmarshalResUserResponseBodyToBoResUser(v *ResUserResponseBody) *bo.ResUser
 		Email:     *v.Email,
 		Role:      *v.Role,
 		Avatar:    *v.Avatar,
+	}
+
+	return res
+}
+
+// unmarshalResDataResponseBodyToBoResData builds a value of type *bo.ResData
+// from a value of type *ResDataResponseBody.
+func unmarshalResDataResponseBodyToBoResData(v *ResDataResponseBody) *bo.ResData {
+	res := &bo.ResData{
+		ID:          *v.ID,
+		Title:       *v.Title,
+		Description: *v.Description,
+		Image:       *v.Image,
+		Category:    *v.Category,
+		UserID:      *v.UserID,
 	}
 
 	return res

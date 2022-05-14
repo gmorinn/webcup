@@ -57,7 +57,7 @@ func BuildUpdateAvatarPayload(usersUpdateAvatarBody string, usersUpdateAvatarOau
 	{
 		err = json.Unmarshal([]byte(usersUpdateAvatarBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"avatar\": \"Est consequatur inventore minima consequatur nesciunt.\",\n      \"id\": \"5dfb0bf7-597a-4250-b7ad-63a43ff59c25\"\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"avatar\": \"Cumque quia optio rerum.\",\n      \"id\": \"5dfb0bf7-597a-4250-b7ad-63a43ff59c25\"\n   }'")
 		}
 		err = goa.MergeErrors(err, goa.ValidateFormat("body.id", body.ID, goa.FormatUUID))
 

@@ -26,6 +26,7 @@ type Querier interface {
 	DeleteUserByID(ctx context.Context, id uuid.UUID) error
 	ExistUserByEmailAndConfirmCode(ctx context.Context, arg ExistUserByEmailAndConfirmCodeParams) (bool, error)
 	FindUserByEmail(ctx context.Context, email string) (User, error)
+	GetBoAllDatas(ctx context.Context, arg GetBoAllDatasParams) ([]Datum, error)
 	GetBoAllUsers(ctx context.Context, arg GetBoAllUsersParams) ([]User, error)
 	GetCodeByEmail(ctx context.Context, email string) (sql.NullString, error)
 	GetDataByID(ctx context.Context, id uuid.UUID) (Datum, error)

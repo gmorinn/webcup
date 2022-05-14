@@ -16,6 +16,7 @@ import (
 // Client is the "bo" service client.
 type Client struct {
 	GetBoUsersEndpoint        goa.Endpoint
+	GetBoDataEndpoint         goa.Endpoint
 	DeleteBoUserEndpoint      goa.Endpoint
 	DeleteBoManyUsersEndpoint goa.Endpoint
 	UpdateBoUserEndpoint      goa.Endpoint
@@ -23,9 +24,10 @@ type Client struct {
 }
 
 // NewClient initializes a "bo" service client given the endpoints.
-func NewClient(getBoUsers, deleteBoUser, deleteBoManyUsers, updateBoUser, getBoUser goa.Endpoint) *Client {
+func NewClient(getBoUsers, getBoData, deleteBoUser, deleteBoManyUsers, updateBoUser, getBoUser goa.Endpoint) *Client {
 	return &Client{
 		GetBoUsersEndpoint:        getBoUsers,
+		GetBoDataEndpoint:         getBoData,
 		DeleteBoUserEndpoint:      deleteBoUser,
 		DeleteBoManyUsersEndpoint: deleteBoManyUsers,
 		UpdateBoUserEndpoint:      updateBoUser,
@@ -41,6 +43,16 @@ func (c *Client) GetBoUsers(ctx context.Context, p *GetBoUsersPayload) (res *Get
 		return
 	}
 	return ires.(*GetBoUsersResult), nil
+}
+
+// GetBoData calls the "getBoData" endpoint of the "bo" service.
+func (c *Client) GetBoData(ctx context.Context, p *GetBoDataPayload) (res *GetBoDataResult, err error) {
+	var ires interface{}
+	ires, err = c.GetBoDataEndpoint(ctx, p)
+	if err != nil {
+		return
+	}
+	return ires.(*GetBoDataResult), nil
 }
 
 // DeleteBoUser calls the "deleteBoUser" endpoint of the "bo" service.

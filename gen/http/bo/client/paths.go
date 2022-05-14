@@ -16,6 +16,11 @@ func GetBoUsersBoPath(offset int32, limit int32) string {
 	return fmt.Sprintf("/v1/bo/users/%v/%v", offset, limit)
 }
 
+// GetBoDataBoPath returns the URL path to the bo service getBoData HTTP endpoint.
+func GetBoDataBoPath(offset int32, limit int32) string {
+	return fmt.Sprintf("/v1/bo/users/datas/%v/%v", offset, limit)
+}
+
 // DeleteBoUserBoPath returns the URL path to the bo service deleteBoUser HTTP endpoint.
 func DeleteBoUserBoPath(id string) string {
 	return fmt.Sprintf("/v1/bo/user/remove/%v", id)
