@@ -10,6 +10,27 @@ import (
 	"github.com/google/uuid"
 )
 
+type Futur string
+
+const (
+	FuturRobotics Futur = "robotics"
+	FuturSpace    Futur = "space"
+	FuturBrain    Futur = "brain"
+	FuturAnimals  Futur = "animals"
+)
+
+func (e *Futur) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = Futur(s)
+	case string:
+		*e = Futur(s)
+	default:
+		return fmt.Errorf("unsupported scan type for Futur: %T", src)
+	}
+	return nil
+}
+
 type Role string
 
 const (
@@ -38,6 +59,18 @@ type Contact struct {
 	Email     string       `json:"email"`
 	Msg       string       `json:"msg"`
 	UserID    uuid.UUID    `json:"user_id"`
+}
+
+type Datum struct {
+	ID          uuid.UUID      `json:"id"`
+	CreatedAt   time.Time      `json:"created_at"`
+	UpdatedAt   time.Time      `json:"updated_at"`
+	DeletedAt   sql.NullTime   `json:"deleted_at"`
+	Title       string         `json:"title"`
+	Description string         `json:"description"`
+	UserID      uuid.UUID      `json:"user_id"`
+	Img         sql.NullString `json:"img"`
+	Category    Futur          `json:"category"`
 }
 
 type File struct {

@@ -6,6 +6,13 @@
     'user'
   );
 
+  CREATE TYPE "futur" AS ENUM (
+    'robotics',
+    'space',
+    'brain',
+    'animals'
+  );
+
   CREATE TABLE "files" (
     "id" uuid PRIMARY KEY DEFAULT (gen_random_uuid()),
     "created_at" timestamptz NOT NULL DEFAULT (NOW()),
@@ -43,7 +50,6 @@ CREATE TABLE "contacts" (
   "user_id" uuid NOT NULL
 );
 
-
 CREATE TABLE "refresh_token" (
   "id" uuid PRIMARY KEY DEFAULT (gen_random_uuid()),
   "created_at" timestamptz NOT NULL DEFAULT (NOW()),
@@ -54,5 +60,18 @@ CREATE TABLE "refresh_token" (
   "user_id" uuid NOT NULL
 );
 
+CREATE TABLE "data" (
+  "id" uuid PRIMARY KEY DEFAULT (gen_random_uuid()),
+  "created_at" timestamp NOT NULL DEFAULT (now()),
+  "updated_at" timestamp NOT NULL DEFAULT (now()),
+  "deleted_at" timestamp CONSTRAINT deletedchk CHECK (deleted_at > created_at),
+  "title" text NOT NULL CONSTRAINT titlechk CHECK (char_length(title) >= 3 AND char_length(title) <= 20),
+  "description" text NOT NULL,
+  "user_id" uuid NOT NULL,
+  "img" text DEFAULT NULL,
+  "category" futur NOT NULL DEFAULT 'robotics'
+);
+
+ALTER TABLE "data" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id") ON DELETE CASCADE;
 ALTER TABLE "refresh_token" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id") ON DELETE CASCADE;
 ALTER TABLE "contacts" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id") ON DELETE CASCADE;

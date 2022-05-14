@@ -16,6 +16,11 @@ func DeleteUserUsersPath(id string) string {
 	return fmt.Sprintf("/v1/web/user/remove/%v", id)
 }
 
+// UpdateAvatarUsersPath returns the URL path to the users service updateAvatar HTTP endpoint.
+func UpdateAvatarUsersPath() string {
+	return "/v1/web/user/edit/avatar"
+}
+
 // GetUserByIDUsersPath returns the URL path to the users service getUserByID HTTP endpoint.
 func GetUserByIDUsersPath(id string) string {
 	return fmt.Sprintf("/v1/web/user/%v", id)

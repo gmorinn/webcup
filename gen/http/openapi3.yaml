@@ -27,9 +27,9 @@ paths:
             schema:
               $ref: '#/components/schemas/OAuthRequestBody'
             example:
-              client_id: Quo mollitia consequatur.
-              client_secret: Autem necessitatibus dolorem animi vero ipsa.
-              grant_type: Fuga eos repellat.
+              client_id: Sapiente enim aliquam labore doloribus quis numquam.
+              client_secret: Sint a et exercitationem autem.
+              grant_type: Necessitatibus vel.
       responses:
         "201":
           description: Created response.
@@ -38,10 +38,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/OAuthResponse'
               example:
-                access_token: Dolorem quia molestias est exercitationem.
-                expires_in: 4650264894356005535
+                access_token: Consequuntur sint saepe qui.
+                expires_in: 7369066258329995669
                 success: true
-                token_type: Harum ipsum quidem in beatae.
+                token_type: Nisi voluptas nostrum qui magnam rem labore.
         "400":
           description: Bad Request response.
           content:
@@ -49,24 +49,24 @@ paths:
               schema:
                 $ref: '#/components/schemas/OAuthResponse'
               example:
-                access_token: Accusantium aliquid provident.
-                expires_in: 7970106614419599573
+                access_token: Quis dolorem ut dolores tenetur corrupti.
+                expires_in: 6982182626850047623
                 success: true
-                token_type: Iste sed eos sed.
+                token_type: Et perferendis sapiente.
         "401":
           description: 'unauthorized: Unauthorized response.'
           content:
             application/json:
               schema:
                 type: string
-                example: Cumque necessitatibus quos.
+                example: Dignissimos corrupti ut cum voluptatem odit ratione.
         "403":
           description: 'oauth_error: Forbidden response.'
           content:
             application/json:
               schema:
                 type: string
-                example: Sunt vel qui non iure soluta.
+                example: Qui non aperiam adipisci molestiae libero.
         "500":
           description: 'unknown_error: Error not identified (500)'
           content:
@@ -99,7 +99,7 @@ paths:
               example:
                 access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ
                 refresh_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ
-                success: false
+                success: true
         "500":
           description: 'unknown_error: Error not identified (500)'
           content:
@@ -200,7 +200,7 @@ paths:
               example:
                 access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ
                 refresh_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ
-                success: false
+                success: true
         "500":
           description: 'unknown_error: Error not identified (500)'
           content:
@@ -238,7 +238,7 @@ paths:
               example:
                 access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ
                 refresh_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ
-                success: true
+                success: false
         "500":
           description: 'unknown_error: Error not identified (500)'
           content:
@@ -287,7 +287,7 @@ paths:
                   id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
                   message: Vous embauchez ?
                   user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-                success: false
+                success: true
         "500":
           description: 'unknown_error: Error not identified (500)'
           content:
@@ -382,7 +382,11 @@ paths:
                   id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
                   message: Vous embauchez ?
                   user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-                count: 7279443565013727231
+                - email: guillaume@gmail.com
+                  id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+                  message: Vous embauchez ?
+                  user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+                count: 5057714206480673215
                 success: true
         "500":
           description: 'unknown_error: Error not identified (500)'
@@ -422,8 +426,10 @@ paths:
               $ref: '#/components/schemas/DeleteBoManyContactRequestBody'
             example:
               tab:
-              - Quod enim occaecati aliquam ducimus omnis temporibus.
-              - Vitae consequatur qui nostrum quia temporibus.
+              - Assumenda quas sapiente.
+              - Ducimus tenetur quos aut.
+              - Sunt quo mollitia.
+              - Rerum autem necessitatibus dolorem animi.
       responses:
         "200":
           description: OK response.
@@ -432,7 +438,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ResetPasswordResponseBody'
               example:
-                success: false
+                success: true
         "500":
           description: 'unknown_error: Error not identified (500)'
           content:
@@ -507,9 +513,9 @@ paths:
         schema:
           type: string
           description: Jwt token
-          example: "Bearer \U000A4AAA\U00094DB1\U0009DE6D\U0006E1D8"
+          example: "Bearer \U000E6DCE"
           pattern: ^Bearer [^ ]+$
-        example: "Bearer \U00073A8F\U0004093F\U0005301D뭘"
+        example: "Bearer \U000B9D08\U000DDE24"
       requestBody:
         required: true
         content:
@@ -518,47 +524,48 @@ paths:
               $ref: '#/components/schemas/ImportFileRequestBody'
             example:
               content:
-              - 83
-              - 105
+              - 69
+              - 116
+              - 32
+              - 101
+              - 116
+              - 32
+              - 101
+              - 116
+              - 32
+              - 110
+              - 117
               - 109
-              - 105
-              - 108
-              - 105
               - 113
               - 117
-              - 101
-              - 32
-              - 111
-              - 109
-              - 110
-              - 105
-              - 115
-              - 32
-              - 101
-              - 120
-              - 32
               - 97
-              - 98
+              - 109
               - 32
-              - 112
               - 101
-              - 114
-              - 102
+              - 116
+              - 32
               - 101
-              - 114
-              - 101
-              - 110
-              - 100
-              - 105
               - 115
+              - 116
+              - 32
+              - 108
+              - 97
+              - 117
+              - 100
+              - 97
+              - 110
+              - 116
+              - 105
+              - 117
+              - 109
               - 46
               filename: foo.jpg
               format: image/jpeg
-              h: 4120041173756761915
-              mime: Nihil omnis quia.
-              size: 2604187601591124273
-              url: Quo neque.
-              w: 5717018036527026994
+              h: 8299294903207092100
+              mime: Ut sit molestiae et.
+              size: 3374177423091986767
+              url: Sed voluptas omnis similique in.
+              w: 1080674065235429941
       responses:
         "201":
           description: Created response.
@@ -569,11 +576,11 @@ paths:
               example:
                 file:
                   id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-                  mime: Cumque at aut eveniet quibusdam.
+                  mime: Facilis consequatur itaque.
                   name: foo.png
-                  size: 8463046965258278579
-                  url: Velit pariatur mollitia quisquam blanditiis.
-                success: false
+                  size: 838602125407019516
+                  url: Vitae eum incidunt ipsam.
+                success: true
         "500":
           description: 'unknown_error: Error not identified (500)'
           content:
@@ -601,9 +608,9 @@ paths:
         schema:
           type: string
           description: Jwt token
-          example: "Bearer \U0010846B\U000BC184\U000ACF17"
+          example: "Bearer \U001033D2\U0005831D缒\U00025102"
           pattern: ^Bearer [^ ]+$
-        example: "Bearer \U0001DAC9\U0002B68D\U00058EF7\U0004EB2F\U00065C70\U00021439"
+        example: "Bearer \U00054D0F\U000B981Dꇸ\U00056603"
       requestBody:
         required: true
         content:
@@ -620,7 +627,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ResetPasswordResponseBody'
               example:
-                success: false
+                success: true
         "500":
           description: 'unknown_error: Error not identified (500)'
           content:
@@ -658,9 +665,9 @@ paths:
         schema:
           type: string
           description: Jwt token
-          example: "Bearer \U001033D2\U0005831D缒\U00025102"
+          example: "Bearer \U000B19D2\U00077C41\U00072646\U00022043"
           pattern: ^Bearer [^ ]+$
-        example: "Bearer \U00054D0F\U000B981Dꇸ\U00056603"
+        example: "Bearer \U0010AC6B\U000E89C6\U000660DB桒\U000C1039"
       responses:
         "200":
           description: OK response.
@@ -676,7 +683,7 @@ paths:
                   firstname: Guillaume
                   id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
                   lastname: Morin
-                  role: Nobis recusandae rerum voluptatibus est officiis.
+                  role: Assumenda sed.
                   username: guillaumemorin
         "500":
           description: 'unknown_error: Error not identified (500)'
@@ -712,9 +719,9 @@ paths:
         schema:
           type: string
           description: Jwt token
-          example: "Bearer \U000E6DCE"
+          example: "Bearer \U0007B8F3\U00052C8F\U00017C88\U00059813"
           pattern: ^Bearer [^ ]+$
-        example: "Bearer \U000B9D08\U000DDE24"
+        example: "Bearer \U000C36CA\U00097315"
       requestBody:
         required: true
         content:
@@ -723,11 +730,11 @@ paths:
               $ref: '#/components/schemas/UpdateBoUserRequestBody'
             example:
               user:
-                avatar: Nostrum enim.
+                avatar: Voluptatem nemo eos soluta.
                 email: guillaume@gmail.com
                 firstname: Guillaume
                 lastname: Morin
-                role: user
+                role: pro
                 username: guillaumemoriin
       responses:
         "200":
@@ -744,7 +751,7 @@ paths:
                   firstname: Guillaume
                   id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
                   lastname: Morin
-                  role: Nobis recusandae rerum voluptatibus est officiis.
+                  role: Assumenda sed.
                   username: guillaumemorin
         "500":
           description: 'unknown_error: Error not identified (500)'
@@ -781,9 +788,9 @@ paths:
         schema:
           type: string
           description: Jwt token
-          example: "Bearer \U0008E261\U000B01FC\U00026B1C\U00091858\U0001980E"
+          example: "Bearer \U00099594\U0008572E\U000A3DF9\U00023A7F\U000402B0\U0003B577"
           pattern: ^Bearer [^ ]+$
-        example: "Bearer \U000E4423"
+        example: "Bearer \U00053D84\U00053F11"
       responses:
         "200":
           description: OK response.
@@ -792,7 +799,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ResetPasswordResponseBody'
               example:
-                success: true
+                success: false
         "500":
           description: 'unknown_error: Error not identified (500)'
           content:
@@ -863,9 +870,9 @@ paths:
         schema:
           type: string
           description: Jwt token
-          example: "Bearer \U000C1595\U000E383B\U00017267"
+          example: "Bearer \U000FE762\U000F7069鯬\U0009B65E\U0010D28B\U0010842D"
           pattern: ^Bearer [^ ]+$
-        example: "Bearer \U00103049\U0003E8E7눻\U000E37F0\U0006CF89\U00044382"
+        example: "Bearer \U00032DC4\U000599FA\U0001D1D3\U00057A5E\U000B1A96\U000E83A2"
       responses:
         "200":
           description: OK response.
@@ -874,7 +881,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/GetBoUsersResponseBody'
               example:
-                count: 5254701374454642060
+                count: 6866730512073996396
                 success: false
                 users:
                 - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
@@ -882,28 +889,21 @@ paths:
                   firstname: Guillaume
                   id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
                   lastname: Morin
-                  role: Nobis recusandae rerum voluptatibus est officiis.
+                  role: Assumenda sed.
                   username: guillaumemorin
                 - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
                   email: guillaume@gmail.com
                   firstname: Guillaume
                   id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
                   lastname: Morin
-                  role: Nobis recusandae rerum voluptatibus est officiis.
+                  role: Assumenda sed.
                   username: guillaumemorin
                 - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
                   email: guillaume@gmail.com
                   firstname: Guillaume
                   id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
                   lastname: Morin
-                  role: Nobis recusandae rerum voluptatibus est officiis.
-                  username: guillaumemorin
-                - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
-                  email: guillaume@gmail.com
-                  firstname: Guillaume
-                  id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-                  lastname: Morin
-                  role: Nobis recusandae rerum voluptatibus est officiis.
+                  role: Assumenda sed.
                   username: guillaumemorin
         "500":
           description: 'unknown_error: Error not identified (500)'
@@ -932,9 +932,9 @@ paths:
         schema:
           type: string
           description: Jwt token
-          example: "Bearer �\U00088786\U00080C65\U0010DA1D"
+          example: "Bearer \U0007FD8E\U0008989D"
           pattern: ^Bearer [^ ]+$
-        example: "Bearer \U00024B30\U00021C16\U0003F7DE\U00077D87\U00105B0D\U000F0D46"
+        example: "Bearer \U00049157\U0005B65E\U000D858F\U000CCFA5\U0005C212"
       requestBody:
         required: true
         content:
@@ -943,9 +943,8 @@ paths:
               $ref: '#/components/schemas/DeleteBoManyContactRequestBody'
             example:
               tab:
-              - Quae ipsam a dolores sed voluptas.
-              - Similique in ratione ratione fuga ut.
-              - Molestiae et.
+              - Molestiae quos quo est nihil sapiente.
+              - Suscipit ut aliquid.
       responses:
         "200":
           description: OK response.
@@ -954,7 +953,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ResetPasswordResponseBody'
               example:
-                success: true
+                success: false
         "500":
           description: 'unknown_error: Error not identified (500)'
           content:
@@ -990,7 +989,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/EmailExistResponseBody'
               example:
-                exist: true
+                exist: false
                 success: false
         "500":
           description: 'unknown_error: Error not identified (500)'
@@ -1025,7 +1024,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/EmailExistResponseBody'
               example:
-                exist: true
+                exist: false
                 success: false
         "500":
           description: 'unknown_error: Error not identified (500)'
@@ -1107,7 +1106,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ResetPasswordResponseBody'
               example:
-                success: false
+                success: true
         "500":
           description: 'unknown_error: Error not identified (500)'
           content:
@@ -1146,14 +1145,14 @@ paths:
               schema:
                 $ref: '#/components/schemas/UpdateBoUserResponseBody'
               example:
-                success: false
+                success: true
                 user:
                   avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
                   email: guillaume@gmail.com
                   firstname: Guillaume
                   id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
                   lastname: Morin
-                  role: Nobis recusandae rerum voluptatibus est officiis.
+                  role: Assumenda sed.
                   username: guillaumemorin
         "403":
           description: 'oauth_error: Forbidden response.'
@@ -1161,7 +1160,7 @@ paths:
             application/json:
               schema:
                 type: string
-                example: Doloremque fugit odio perspiciatis qui repellat sapiente.
+                example: Dolorem voluptatibus.
         "500":
           description: 'unknown_error: Error not identified (500)'
           content:
@@ -1207,22 +1206,29 @@ paths:
               schema:
                 $ref: '#/components/schemas/GetBoUsersResponseBody'
               example:
-                count: 4190108163610728084
-                success: true
+                count: 768824627821877140
+                success: false
                 users:
                 - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
                   email: guillaume@gmail.com
                   firstname: Guillaume
                   id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
                   lastname: Morin
-                  role: Nobis recusandae rerum voluptatibus est officiis.
+                  role: Assumenda sed.
                   username: guillaumemorin
                 - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
                   email: guillaume@gmail.com
                   firstname: Guillaume
                   id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
                   lastname: Morin
-                  role: Nobis recusandae rerum voluptatibus est officiis.
+                  role: Assumenda sed.
+                  username: guillaumemorin
+                - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
+                  email: guillaume@gmail.com
+                  firstname: Guillaume
+                  id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+                  lastname: Morin
+                  role: Assumenda sed.
                   username: guillaumemorin
         "403":
           description: 'oauth_error: Forbidden response.'
@@ -1230,7 +1236,7 @@ paths:
             application/json:
               schema:
                 type: string
-                example: Quos perferendis veniam cupiditate et.
+                example: Quis id pariatur qui.
         "500":
           description: 'unknown_error: Error not identified (500)'
           content:
@@ -1270,28 +1276,14 @@ paths:
                   firstname: Guillaume
                   id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
                   lastname: Morin
-                  role: Nobis recusandae rerum voluptatibus est officiis.
+                  role: Assumenda sed.
                   username: guillaumemorin
                 - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
                   email: guillaume@gmail.com
                   firstname: Guillaume
                   id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
                   lastname: Morin
-                  role: Nobis recusandae rerum voluptatibus est officiis.
-                  username: guillaumemorin
-                - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
-                  email: guillaume@gmail.com
-                  firstname: Guillaume
-                  id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-                  lastname: Morin
-                  role: Nobis recusandae rerum voluptatibus est officiis.
-                  username: guillaumemorin
-                - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
-                  email: guillaume@gmail.com
-                  firstname: Guillaume
-                  id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-                  lastname: Morin
-                  role: Nobis recusandae rerum voluptatibus est officiis.
+                  role: Assumenda sed.
                   username: guillaumemorin
         "403":
           description: 'oauth_error: Forbidden response.'
@@ -1299,7 +1291,7 @@ paths:
             application/json:
               schema:
                 type: string
-                example: Quo et.
+                example: Sint pariatur.
         "500":
           description: 'unknown_error: Error not identified (500)'
           content:
@@ -1334,9 +1326,9 @@ paths:
         schema:
           type: string
           description: Jwt token
-          example: "Bearer \U00099594\U0008572E\U000A3DF9\U00023A7F\U000402B0\U0003B577"
+          example: "Bearer \U0007C9BA\U00070BFA\U00068603\U000FB027\U0008276C"
           pattern: ^Bearer [^ ]+$
-        example: "Bearer \U00053D84\U00053F11"
+        example: "Bearer \U0005C022\U000758BA\U000415EF"
       responses:
         "200":
           description: OK response.
@@ -1352,7 +1344,7 @@ paths:
                   firstname: Guillaume
                   id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
                   lastname: Morin
-                  role: Nobis recusandae rerum voluptatibus est officiis.
+                  role: Assumenda sed.
                   username: guillaumemorin
         "500":
           description: 'unknown_error: Error not identified (500)'
@@ -1381,9 +1373,9 @@ paths:
         schema:
           type: string
           description: Jwt token
-          example: "Bearer \U0007FD8E\U0008989D"
+          example: "Bearer \U000ADA18"
           pattern: ^Bearer [^ ]+$
-        example: "Bearer \U00049157\U0005B65E\U000D858F\U000CCFA5\U0005C212"
+        example: "Bearer \U000491C5\U0007B29B\U000EB6F9\U000BAC5A\U000D83AF"
       requestBody:
         required: true
         content:
@@ -1402,7 +1394,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UpdateDescriptionResponseBody'
+                $ref: '#/components/schemas/UpdateAvatarResponseBody'
               example:
                 success: false
                 user:
@@ -1411,7 +1403,63 @@ paths:
                   firstname: Guillaume
                   id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
                   lastname: Morin
-                  role: Nobis recusandae rerum voluptatibus est officiis.
+                  role: Assumenda sed.
+                  username: guillaumemorin
+        "500":
+          description: 'unknown_error: Error not identified (500)'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnknownError'
+      security:
+      - OAuth2_header_Authorization:
+        - api:read
+        jwt_header_jwtToken:
+        - api:read
+        - api:write
+  /v1/web/user/edit/avatar:
+    put:
+      tags:
+      - users
+      summary: updateAvatar users
+      description: Update avatar
+      operationId: users#updateAvatar
+      parameters:
+      - name: jwtToken
+        in: header
+        description: Jwt token
+        allowEmptyValue: true
+        schema:
+          type: string
+          description: Jwt token
+          example: "Bearer \U00108E95\U000C0352\U0003C367\U000BEA18墦\U00065CEA"
+          pattern: ^Bearer [^ ]+$
+        example: "Bearer \U000F8E86"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateAvatarRequestBody'
+            example:
+              avatar: Et vitae aut non blanditiis sunt.
+              id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+      responses:
+        "200":
+          description: OK response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateAvatarResponseBody'
+              example:
+                success: false
+                user:
+                  avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
+                  email: guillaume@gmail.com
+                  firstname: Guillaume
+                  id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+                  lastname: Morin
+                  role: Assumenda sed.
                   username: guillaumemorin
         "500":
           description: 'unknown_error: Error not identified (500)'
@@ -1448,9 +1496,9 @@ paths:
         schema:
           type: string
           description: Jwt token
-          example: "Bearer \U000FE762\U000F7069鯬\U0009B65E\U0010D28B\U0010842D"
+          example: "Bearer \U000F0BD5\U0006D41C\U000E9FF3\U0002ADB8\U000CFE01\U000F2C57"
           pattern: ^Bearer [^ ]+$
-        example: "Bearer \U00032DC4\U000599FA\U0001D1D3\U00057A5E\U000B1A96\U000E83A2"
+        example: "Bearer \U00044C2D"
       responses:
         "200":
           description: OK response.
@@ -1460,6 +1508,328 @@ paths:
                 $ref: '#/components/schemas/ResetPasswordResponseBody'
               example:
                 success: false
+        "500":
+          description: 'unknown_error: Error not identified (500)'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnknownError'
+      security:
+      - OAuth2_header_Authorization:
+        - api:read
+        jwt_header_jwtToken:
+        - api:read
+        - api:write
+  /web/data/{id}:
+    get:
+      tags:
+      - data
+      summary: getDataByID data
+      description: Get one data by id
+      operationId: data#getDataByID
+      parameters:
+      - name: id
+        in: path
+        description: Unique ID of the data
+        required: true
+        schema:
+          type: string
+          description: Unique ID of the data
+          example: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+          format: uuid
+        example: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+      - name: jwtToken
+        in: header
+        description: Jwt token
+        allowEmptyValue: true
+        schema:
+          type: string
+          description: Jwt token
+          example: "Bearer �\U00088786\U00080C65\U0010DA1D"
+          pattern: ^Bearer [^ ]+$
+        example: "Bearer \U00024B30\U00021C16\U0003F7DE\U00077D87\U00105B0D\U000F0D46"
+      responses:
+        "200":
+          description: OK response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateDataResponseBody'
+              example:
+                data:
+                  category: brain
+                  description: Unique Air max restant au monde
+                  id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+                  image: Reprehenderit quia modi esse ducimus.
+                  title: Air max360 d'il y a 10 millions d'années
+                  user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+                success: true
+        "500":
+          description: 'unknown_error: Error not identified (500)'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnknownError'
+      security:
+      - OAuth2_header_Authorization:
+        - api:read
+        jwt_header_jwtToken:
+        - api:read
+        - api:write
+    put:
+      tags:
+      - data
+      summary: updateData data
+      description: Update one data
+      operationId: data#updateData
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          example: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+          format: uuid
+        example: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+      - name: jwtToken
+        in: header
+        description: Jwt token
+        allowEmptyValue: true
+        schema:
+          type: string
+          description: Jwt token
+          example: "Bearer \U000C1595\U000E383B\U00017267"
+          pattern: ^Bearer [^ ]+$
+        example: "Bearer \U00103049\U0003E8E7눻\U000E37F0\U0006CF89\U00044382"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateDataRequestBody'
+            example:
+              data:
+                category: space
+                description: Unique Air max restant au monde
+                image: Id rerum fuga.
+                title: Air max360 d'il y a 10 millions d'années
+                user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+      responses:
+        "200":
+          description: OK response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateDataResponseBody'
+              example:
+                data:
+                  category: brain
+                  description: Unique Air max restant au monde
+                  id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+                  image: Reprehenderit quia modi esse ducimus.
+                  title: Air max360 d'il y a 10 millions d'années
+                  user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+                success: false
+        "500":
+          description: 'unknown_error: Error not identified (500)'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnknownError'
+      security:
+      - OAuth2_header_Authorization:
+        - api:read
+        jwt_header_jwtToken:
+        - api:read
+        - api:write
+  /web/data/add:
+    post:
+      tags:
+      - data
+      summary: createData data
+      description: Create one data
+      operationId: data#createData
+      parameters:
+      - name: jwtToken
+        in: header
+        description: Jwt token
+        allowEmptyValue: true
+        schema:
+          type: string
+          description: Jwt token
+          example: "Bearer \U0010846B\U000BC184\U000ACF17"
+          pattern: ^Bearer [^ ]+$
+        example: "Bearer \U0001DAC9\U0002B68D\U00058EF7\U0004EB2F\U00065C70\U00021439"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateDataRequestBody'
+            example:
+              data:
+                category: space
+                description: Unique Air max restant au monde
+                image: Id rerum fuga.
+                title: Air max360 d'il y a 10 millions d'années
+                user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+      responses:
+        "201":
+          description: Created response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateDataResponseBody'
+              example:
+                data:
+                  category: brain
+                  description: Unique Air max restant au monde
+                  id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+                  image: Reprehenderit quia modi esse ducimus.
+                  title: Air max360 d'il y a 10 millions d'années
+                  user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+                success: false
+        "500":
+          description: 'unknown_error: Error not identified (500)'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnknownError'
+      security:
+      - OAuth2_header_Authorization:
+        - api:read
+        jwt_header_jwtToken:
+        - api:read
+        - api:write
+  /web/data/recents/{offset}/{limit}:
+    get:
+      tags:
+      - data
+      summary: listDataMostRecent data
+      description: List data the most recent
+      operationId: data#listDataMostRecent
+      parameters:
+      - name: offset
+        in: path
+        description: Offset for pagination
+        required: true
+        schema:
+          type: integer
+          description: Offset for pagination
+          example: 0
+          minimum: 0
+        example: 0
+      - name: limit
+        in: path
+        description: Limit of items listed for pagination
+        required: true
+        schema:
+          type: integer
+          description: Limit of items listed for pagination
+          example: 5
+          minimum: 0
+        example: 5
+      - name: jwtToken
+        in: header
+        description: Jwt token
+        allowEmptyValue: true
+        schema:
+          type: string
+          description: Jwt token
+          example: "Bearer \U000A4AAA\U00094DB1\U0009DE6D\U0006E1D8"
+          pattern: ^Bearer [^ ]+$
+        example: "Bearer \U00073A8F\U0004093F\U0005301D뭘"
+      responses:
+        "200":
+          description: OK response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListDataMostRecentResponseBody'
+              example:
+                count: 7324766189736928559
+                data:
+                - category: brain
+                  description: Unique Air max restant au monde
+                  id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+                  image: Reprehenderit quia modi esse ducimus.
+                  title: Air max360 d'il y a 10 millions d'années
+                  user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+                - category: brain
+                  description: Unique Air max restant au monde
+                  id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+                  image: Reprehenderit quia modi esse ducimus.
+                  title: Air max360 d'il y a 10 millions d'années
+                  user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+                success: true
+        "500":
+          description: 'unknown_error: Error not identified (500)'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnknownError'
+      security:
+      - OAuth2_header_Authorization:
+        - api:read
+        jwt_header_jwtToken:
+        - api:read
+        - api:write
+  /web/data/user/{user_id}:
+    get:
+      tags:
+      - data
+      summary: getDataByUserID data
+      description: Get one data user id
+      operationId: data#getDataByUserID
+      parameters:
+      - name: user_id
+        in: path
+        description: Unique ID of the user
+        required: true
+        schema:
+          type: string
+          description: Unique ID of the user
+          example: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+          format: uuid
+        example: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+      - name: jwtToken
+        in: header
+        description: Jwt token
+        allowEmptyValue: true
+        schema:
+          type: string
+          description: Jwt token
+          example: "Bearer \U0008E261\U000B01FC\U00026B1C\U00091858\U0001980E"
+          pattern: ^Bearer [^ ]+$
+        example: "Bearer \U000E4423"
+      responses:
+        "200":
+          description: OK response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetDataByUserIDResponseBody'
+              example:
+                data:
+                - category: brain
+                  description: Unique Air max restant au monde
+                  id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+                  image: Reprehenderit quia modi esse ducimus.
+                  title: Air max360 d'il y a 10 millions d'années
+                  user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+                - category: brain
+                  description: Unique Air max restant au monde
+                  id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+                  image: Reprehenderit quia modi esse ducimus.
+                  title: Air max360 d'il y a 10 millions d'années
+                  user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+                - category: brain
+                  description: Unique Air max restant au monde
+                  id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+                  image: Reprehenderit quia modi esse ducimus.
+                  title: Air max360 d'il y a 10 millions d'années
+                  user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+                success: true
         "500":
           description: 'unknown_error: Error not identified (500)'
           content:
@@ -1492,6 +1862,40 @@ components:
       required:
       - user_id
       - msg
+    CreateDataRequestBody:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/PayloadData'
+      example:
+        data:
+          category: space
+          description: Unique Air max restant au monde
+          image: Id rerum fuga.
+          title: Air max360 d'il y a 10 millions d'années
+          user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+      required:
+      - data
+    CreateDataResponseBody:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/ResData'
+        success:
+          type: boolean
+          example: true
+      example:
+        data:
+          category: brain
+          description: Unique Air max restant au monde
+          id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+          image: Reprehenderit quia modi esse ducimus.
+          title: Air max360 d'il y a 10 millions d'années
+          user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+        success: false
+      required:
+      - data
+      - success
     DeleteBoManyContactRequestBody:
       type: object
       properties:
@@ -1499,15 +1903,16 @@ components:
           type: array
           items:
             type: string
-            example: Est maxime aliquid ipsa debitis autem.
+            example: Iusto laborum.
           example:
-          - Veritatis molestias magnam non ex enim totam.
-          - Eligendi aut fugiat.
-          - Provident quis.
+          - Quos consectetur.
+          - Numquam eum nemo.
       example:
         tab:
-        - Dolores sed repellat.
-        - Quas quia ullam.
+        - Laudantium sequi officia itaque autem.
+        - Et minima consectetur natus.
+        - Assumenda porro.
+        - Et ipsa ab.
       required:
       - tab
     DeleteFileRequestBody:
@@ -1536,7 +1941,7 @@ components:
       properties:
         exist:
           type: boolean
-          example: false
+          example: true
         success:
           type: boolean
           example: true
@@ -1560,7 +1965,7 @@ components:
           id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
           message: Vous embauchez ?
           user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-        success: false
+        success: true
       required:
       - success
     GetBoContactResponseBody:
@@ -1580,14 +1985,22 @@ components:
             id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
             message: Vous embauchez ?
             user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+          - email: guillaume@gmail.com
+            id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+            message: Vous embauchez ?
+            user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+          - email: guillaume@gmail.com
+            id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+            message: Vous embauchez ?
+            user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
         count:
           type: integer
           description: total of messages
-          example: 1923532848995119821
+          example: 977121856105431257
           format: int64
         success:
           type: boolean
-          example: true
+          example: false
       example:
         contacts:
         - email: guillaume@gmail.com
@@ -1598,7 +2011,11 @@ components:
           id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
           message: Vous embauchez ?
           user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-        count: 8030613840281320028
+        - email: guillaume@gmail.com
+          id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+          message: Vous embauchez ?
+          user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+        count: 7365109465861265792
         success: true
       required:
       - contacts
@@ -1610,11 +2027,11 @@ components:
         count:
           type: integer
           description: total of users
-          example: 3854554440749211721
+          example: 4773203990958333783
           format: int64
         success:
           type: boolean
-          example: false
+          example: true
         users:
           type: array
           items:
@@ -1626,24 +2043,17 @@ components:
             firstname: Guillaume
             id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
             lastname: Morin
-            role: Nobis recusandae rerum voluptatibus est officiis.
+            role: Assumenda sed.
             username: guillaumemorin
           - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
             email: guillaume@gmail.com
             firstname: Guillaume
             id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
             lastname: Morin
-            role: Nobis recusandae rerum voluptatibus est officiis.
-            username: guillaumemorin
-          - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
-            email: guillaume@gmail.com
-            firstname: Guillaume
-            id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-            lastname: Morin
-            role: Nobis recusandae rerum voluptatibus est officiis.
+            role: Assumenda sed.
             username: guillaumemorin
       example:
-        count: 6615153050981237776
+        count: 3489196666038707984
         success: true
         users:
         - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
@@ -1651,19 +2061,79 @@ components:
           firstname: Guillaume
           id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
           lastname: Morin
-          role: Nobis recusandae rerum voluptatibus est officiis.
+          role: Assumenda sed.
           username: guillaumemorin
         - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
           email: guillaume@gmail.com
           firstname: Guillaume
           id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
           lastname: Morin
-          role: Nobis recusandae rerum voluptatibus est officiis.
+          role: Assumenda sed.
           username: guillaumemorin
       required:
       - users
       - success
       - count
+    GetDataByUserIDResponseBody:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResData'
+          description: Result is an object
+          example:
+          - category: brain
+            description: Unique Air max restant au monde
+            id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+            image: Reprehenderit quia modi esse ducimus.
+            title: Air max360 d'il y a 10 millions d'années
+            user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+          - category: brain
+            description: Unique Air max restant au monde
+            id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+            image: Reprehenderit quia modi esse ducimus.
+            title: Air max360 d'il y a 10 millions d'années
+            user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+          - category: brain
+            description: Unique Air max restant au monde
+            id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+            image: Reprehenderit quia modi esse ducimus.
+            title: Air max360 d'il y a 10 millions d'années
+            user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+          - category: brain
+            description: Unique Air max restant au monde
+            id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+            image: Reprehenderit quia modi esse ducimus.
+            title: Air max360 d'il y a 10 millions d'années
+            user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+        success:
+          type: boolean
+          example: false
+      example:
+        data:
+        - category: brain
+          description: Unique Air max restant au monde
+          id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+          image: Reprehenderit quia modi esse ducimus.
+          title: Air max360 d'il y a 10 millions d'années
+          user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+        - category: brain
+          description: Unique Air max restant au monde
+          id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+          image: Reprehenderit quia modi esse ducimus.
+          title: Air max360 d'il y a 10 millions d'années
+          user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+        - category: brain
+          description: Unique Air max restant au monde
+          id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+          image: Reprehenderit quia modi esse ducimus.
+          title: Air max360 d'il y a 10 millions d'années
+          user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+        success: false
+      required:
+      - data
+      - success
     ImportFileRequestBody:
       type: object
       properties:
@@ -1671,43 +2141,31 @@ components:
           type: string
           description: content of image
           example:
-          - 83
+          - 77
+          - 111
+          - 108
+          - 108
           - 105
           - 116
-          - 32
-          - 108
-          - 97
-          - 98
-          - 111
-          - 114
           - 105
-          - 111
-          - 115
           - 97
+          - 32
+          - 111
           - 109
+          - 110
+          - 105
+          - 115
           - 32
           - 101
           - 97
           - 32
-          - 112
-          - 111
-          - 114
-          - 114
-          - 111
-          - 32
-          - 105
-          - 110
-          - 32
           - 97
+          - 117
           - 116
           - 32
-          - 100
+          - 97
           - 117
-          - 99
-          - 105
-          - 109
-          - 117
-          - 115
+          - 116
           - 46
           format: binary
         filename:
@@ -1721,54 +2179,63 @@ components:
         h:
           type: integer
           description: height of image if you crop
-          example: 7905598670857642619
+          example: 9024331826156984613
           format: int64
         mime:
           type: string
           description: url file
-          example: Libero magnam quia voluptatem ut quibusdam nam.
+          example: Maiores aut qui optio ratione est veritatis.
         size:
           type: integer
           description: size of image
-          example: 9207431603884740369
+          example: 5751751941211160451
           format: int64
         url:
           type: string
           description: url file
-          example: Quas sapiente est distinctio quia.
+          example: Magnam et quam nihil eum libero.
         w:
           type: integer
           description: width of image if you crop
-          example: 3851153339623786695
+          example: 8219725569747263436
           format: int64
       example:
         content:
-        - 81
-        - 117
-        - 105
-        - 97
-        - 32
-        - 116
+        - 84
         - 101
         - 109
         - 112
         - 111
         - 114
-        - 97
-        - 32
         - 101
+        - 32
+        - 112
+        - 97
+        - 114
+        - 105
+        - 97
+        - 116
+        - 117
+        - 114
+        - 32
+        - 104
         - 97
         - 114
         - 117
         - 109
+        - 32
+        - 113
+        - 117
+        - 105
+        - 97
         - 46
         filename: foo.jpg
         format: image/jpeg
-        h: 6403530369267105611
-        mime: Non natus.
-        size: 5815012610362759365
-        url: Quae unde omnis qui beatae.
-        w: 3589360877923256836
+        h: 2584562108234782657
+        mime: Minus mollitia praesentium accusamus qui aut maxime.
+        size: 39763376292067463
+        url: Et repellat.
+        w: 439469609467517461
       required:
       - filename
       - content
@@ -1780,18 +2247,91 @@ components:
           $ref: '#/components/schemas/ResFile'
         success:
           type: boolean
-          example: true
+          example: false
       example:
         file:
           id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-          mime: Cumque at aut eveniet quibusdam.
+          mime: Facilis consequatur itaque.
           name: foo.png
-          size: 8463046965258278579
-          url: Velit pariatur mollitia quisquam blanditiis.
-        success: true
+          size: 838602125407019516
+          url: Vitae eum incidunt ipsam.
+        success: false
       required:
       - success
       - file
+    ListDataMostRecentResponseBody:
+      type: object
+      properties:
+        count:
+          type: integer
+          description: total of datas
+          example: 5076085598062702469
+          format: int64
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResData'
+          description: Result is an an array of data
+          example:
+          - category: brain
+            description: Unique Air max restant au monde
+            id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+            image: Reprehenderit quia modi esse ducimus.
+            title: Air max360 d'il y a 10 millions d'années
+            user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+          - category: brain
+            description: Unique Air max restant au monde
+            id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+            image: Reprehenderit quia modi esse ducimus.
+            title: Air max360 d'il y a 10 millions d'années
+            user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+          - category: brain
+            description: Unique Air max restant au monde
+            id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+            image: Reprehenderit quia modi esse ducimus.
+            title: Air max360 d'il y a 10 millions d'années
+            user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+          - category: brain
+            description: Unique Air max restant au monde
+            id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+            image: Reprehenderit quia modi esse ducimus.
+            title: Air max360 d'il y a 10 millions d'années
+            user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+        success:
+          type: boolean
+          example: false
+      example:
+        count: 8408486568872425552
+        data:
+        - category: brain
+          description: Unique Air max restant au monde
+          id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+          image: Reprehenderit quia modi esse ducimus.
+          title: Air max360 d'il y a 10 millions d'années
+          user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+        - category: brain
+          description: Unique Air max restant au monde
+          id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+          image: Reprehenderit quia modi esse ducimus.
+          title: Air max360 d'il y a 10 millions d'années
+          user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+        - category: brain
+          description: Unique Air max restant au monde
+          id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+          image: Reprehenderit quia modi esse ducimus.
+          title: Air max360 d'il y a 10 millions d'années
+          user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+        - category: brain
+          description: Unique Air max restant au monde
+          id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+          image: Reprehenderit quia modi esse ducimus.
+          title: Air max360 d'il y a 10 millions d'années
+          user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+        success: true
+      required:
+      - data
+      - success
+      - count
     ListUsersRequestBody:
       type: object
       properties:
@@ -1819,21 +2359,28 @@ components:
             firstname: Guillaume
             id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
             lastname: Morin
-            role: Nobis recusandae rerum voluptatibus est officiis.
+            role: Assumenda sed.
             username: guillaumemorin
           - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
             email: guillaume@gmail.com
             firstname: Guillaume
             id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
             lastname: Morin
-            role: Nobis recusandae rerum voluptatibus est officiis.
+            role: Assumenda sed.
             username: guillaumemorin
           - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
             email: guillaume@gmail.com
             firstname: Guillaume
             id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
             lastname: Morin
-            role: Nobis recusandae rerum voluptatibus est officiis.
+            role: Assumenda sed.
+            username: guillaumemorin
+          - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
+            email: guillaume@gmail.com
+            firstname: Guillaume
+            id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+            lastname: Morin
+            role: Assumenda sed.
             username: guillaumemorin
       example:
         success: true
@@ -1843,21 +2390,14 @@ components:
           firstname: Guillaume
           id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
           lastname: Morin
-          role: Nobis recusandae rerum voluptatibus est officiis.
+          role: Assumenda sed.
           username: guillaumemorin
         - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
           email: guillaume@gmail.com
           firstname: Guillaume
           id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
           lastname: Morin
-          role: Nobis recusandae rerum voluptatibus est officiis.
-          username: guillaumemorin
-        - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
-          email: guillaume@gmail.com
-          firstname: Guillaume
-          id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-          lastname: Morin
-          role: Nobis recusandae rerum voluptatibus est officiis.
+          role: Assumenda sed.
           username: guillaumemorin
       required:
       - users
@@ -1867,17 +2407,17 @@ components:
       properties:
         client_id:
           type: string
-          example: Et provident iusto quo a sit.
+          example: Molestias ipsa.
         client_secret:
           type: string
-          example: Hic debitis aut ipsum et.
+          example: Eos enim earum.
         grant_type:
           type: string
-          example: Id in.
+          example: Commodi quidem dolores.
       example:
-        client_id: Architecto error et corrupti sed.
-        client_secret: Enim placeat dignissimos.
-        grant_type: Et atque doloremque odit sunt nam dolores.
+        client_id: Dolore eaque assumenda.
+        client_secret: Veritatis fugit est voluptatibus aliquid non fugit.
+        grant_type: At eligendi dolores nihil.
       required:
       - client_id
       - client_secret
@@ -1887,34 +2427,76 @@ components:
       properties:
         access_token:
           type: string
-          example: Numquam ratione.
+          example: Autem autem numquam aut.
         expires_in:
           type: integer
-          example: 7907662984415308684
+          example: 6454203336574649346
           format: int64
         success:
           type: boolean
           example: false
         token_type:
           type: string
-          example: Quod quis quidem eum inventore et quo.
+          example: At aut laboriosam distinctio et.
       example:
-        access_token: Sit numquam ea quos eaque cupiditate.
-        expires_in: 284056342402974006
-        success: true
-        token_type: Totam repellendus omnis distinctio voluptatem sit.
+        access_token: Sequi consequatur ratione praesentium repellat sit sit.
+        expires_in: 381923752277754138
+        success: false
+        token_type: Ut est assumenda id qui vitae quis.
       required:
       - access_token
       - token_type
       - expires_in
       - success
+    PayloadData:
+      type: object
+      properties:
+        category:
+          type: string
+          default: robotics
+          example: brain
+          enum:
+          - robotics
+          - space
+          - brain
+          - animals
+        description:
+          type: string
+          example: Unique Air max restant au monde
+          minLength: 2
+          maxLength: 500
+        image:
+          type: string
+          description: Url of the logo and stock in db
+          example: Veritatis voluptas beatae quibusdam fugit.
+        title:
+          type: string
+          example: Air max360 d'il y a 10 millions d'années
+          minLength: 3
+          maxLength: 20
+        user_id:
+          type: string
+          example: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+          format: uuid
+      example:
+        category: robotics
+        description: Unique Air max restant au monde
+        image: A veniam ut perspiciatis officiis adipisci aliquid.
+        title: Air max360 d'il y a 10 millions d'années
+        user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+      required:
+      - title
+      - description
+      - image
+      - category
+      - user_id
     PayloadUser:
       type: object
       properties:
         avatar:
           type: string
           description: Url of the avatar and stock in db
-          example: Illo ipsam excepturi suscipit non.
+          example: Possimus voluptas omnis maiores laborum maiores harum.
         email:
           type: string
           example: guillaume@gmail.com
@@ -1932,7 +2514,7 @@ components:
         role:
           type: string
           description: role of the user
-          example: pro
+          example: user
           enum:
           - admin
           - user
@@ -1944,7 +2526,7 @@ components:
           minLength: 2
           maxLength: 20
       example:
-        avatar: Sed eos soluta nemo atque.
+        avatar: Possimus fugit fugit quisquam.
         email: guillaume@gmail.com
         firstname: Guillaume
         lastname: Morin
@@ -1992,6 +2574,54 @@ components:
       - email
       - user_id
       - message
+    ResData:
+      type: object
+      properties:
+        category:
+          type: string
+          default: robotics
+          example: animals
+          enum:
+          - robotics
+          - space
+          - brain
+          - animals
+        description:
+          type: string
+          example: Unique Air max restant au monde
+          minLength: 2
+          maxLength: 500
+        id:
+          type: string
+          example: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+          format: uuid
+        image:
+          type: string
+          description: Url of the logo and stock in db
+          example: Ipsa est.
+        title:
+          type: string
+          example: Air max360 d'il y a 10 millions d'années
+          minLength: 3
+          maxLength: 20
+        user_id:
+          type: string
+          example: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+          format: uuid
+      example:
+        category: animals
+        description: Unique Air max restant au monde
+        id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+        image: Earum voluptatibus repellat atque corporis fuga voluptate.
+        title: Air max360 d'il y a 10 millions d'années
+        user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+      required:
+      - id
+      - title
+      - description
+      - image
+      - category
+      - user_id
     ResFile:
       type: object
       properties:
@@ -2001,23 +2631,23 @@ components:
           format: uuid
         mime:
           type: string
-          example: Sint aut deleniti dolores voluptatibus iusto.
+          example: Quis eius sed voluptatum nisi sit.
         name:
           type: string
           example: foo.png
         size:
           type: integer
-          example: 6838238732989430607
+          example: 897086098530494343
           format: int64
         url:
           type: string
-          example: Nisi totam.
+          example: Blanditiis esse.
       example:
         id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-        mime: Libero sed.
+        mime: Ad vitae alias.
         name: foo.png
-        size: 8880041394114800655
-        url: Non architecto quod.
+        size: 8332634117501906941
+        url: Explicabo voluptatum.
       required:
       - id
       - name
@@ -2043,7 +2673,7 @@ components:
         role:
           type: string
           description: User is admin or not
-          example: Qui delectus et veniam sunt voluptatibus.
+          example: Voluptas dicta aut ut.
         username:
           type: string
           example: guillaumemorin
@@ -2053,7 +2683,7 @@ components:
         firstname: Guillaume
         id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
         lastname: Morin
-        role: Ea porro qui quidem voluptas quam odit.
+        role: Repellendus dolor rem alias unde ad in.
         username: guillaumemorin
       required:
       - id
@@ -2118,7 +2748,7 @@ components:
           example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ
         success:
           type: boolean
-          example: true
+          example: false
       example:
         access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ
         refresh_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ
@@ -2192,32 +2822,34 @@ components:
         success:
           type: boolean
           default: false
-          example: true
+          example: false
       description: Error not identified (500)
       example:
         err: sql no rows affected
         error_code: TX_UPDATE_ITEM
-        success: false
+        success: true
       required:
       - err
       - success
       - error_code
-    UpdateBoUserRequestBody:
+    UpdateAvatarRequestBody:
       type: object
       properties:
-        user:
-          $ref: '#/components/schemas/PayloadUser'
+        avatar:
+          type: string
+          description: Url of the avatar and stock in db
+          example: Et molestias nobis temporibus quis.
+        id:
+          type: string
+          example: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+          format: uuid
       example:
-        user:
-          avatar: Nostrum enim.
-          email: guillaume@gmail.com
-          firstname: Guillaume
-          lastname: Morin
-          role: user
-          username: guillaumemoriin
+        avatar: Itaque ducimus sed.
+        id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
       required:
-      - user
-    UpdateBoUserResponseBody:
+      - id
+      - avatar
+    UpdateAvatarResponseBody:
       type: object
       properties:
         success:
@@ -2233,7 +2865,42 @@ components:
           firstname: Guillaume
           id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
           lastname: Morin
-          role: Nobis recusandae rerum voluptatibus est officiis.
+          role: Assumenda sed.
+          username: guillaumemorin
+      required:
+      - success
+    UpdateBoUserRequestBody:
+      type: object
+      properties:
+        user:
+          $ref: '#/components/schemas/PayloadUser'
+      example:
+        user:
+          avatar: Voluptatem nemo eos soluta.
+          email: guillaume@gmail.com
+          firstname: Guillaume
+          lastname: Morin
+          role: pro
+          username: guillaumemoriin
+      required:
+      - user
+    UpdateBoUserResponseBody:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        user:
+          $ref: '#/components/schemas/ResUser'
+      example:
+        success: true
+        user:
+          avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
+          email: guillaume@gmail.com
+          firstname: Guillaume
+          id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+          lastname: Morin
+          role: Assumenda sed.
           username: guillaumemorin
       required:
       - user
@@ -2275,26 +2942,6 @@ components:
       - email
       - id
       - username
-    UpdateDescriptionResponseBody:
-      type: object
-      properties:
-        success:
-          type: boolean
-          example: true
-        user:
-          $ref: '#/components/schemas/ResUser'
-      example:
-        success: false
-        user:
-          avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
-          email: guillaume@gmail.com
-          firstname: Guillaume
-          id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-          lastname: Morin
-          role: Nobis recusandae rerum voluptatibus est officiis.
-          username: guillaumemorin
-      required:
-      - success
   securitySchemes:
     OAuth2_header_Authorization:
       type: oauth2
@@ -2319,6 +2966,8 @@ tags:
   description: back office contacts of the api
 - name: contacts
   description: contacts of the api
+- name: data
+  description: futristics data of the api
 - name: files
   description: files of the api
 - name: jwtToken

@@ -15,6 +15,7 @@ import (
 	bosvr "webcup/gen/http/bo/server"
 	bocontactsvr "webcup/gen/http/bo_contact/server"
 	contactssvr "webcup/gen/http/contacts/server"
+	datasvr "webcup/gen/http/data/server"
 	fileapisvr "webcup/gen/http/fileapi/server"
 	filessvr "webcup/gen/http/files/server"
 	jwttokensvr "webcup/gen/http/jwt_token/server"
@@ -77,6 +78,7 @@ func handleHTTPServer(ctx context.Context, u *url.URL, api *ApiEndpoints, wg *sy
 		usersServer        *userssvr.Server        = userssvr.New(api.usersEndpoints, mux, dec, enc, eh, nil)
 		filesServer        *filessvr.Server        = filessvr.New(api.filesEndpoints, mux, dec, enc, eh, nil, filesclient.FilesImportFileDecoderFunc)
 		jwtTokenServer     *jwttokensvr.Server     = jwttokensvr.New(api.jwtTokenEndpoints, mux, dec, enc, eh, nil)
+		dataServer         *datasvr.Server         = datasvr.New(api.dataEndpoints, mux, dec, enc, eh, nil)
 		contactsServer     *contactssvr.Server     = contactssvr.New(api.contactsEndpoints, mux, dec, enc, eh, nil)
 		public_usersServer *public_userssvr.Server = public_userssvr.New(api.public_usersEndpoints, mux, dec, enc, eh, nil)
 		fileapiServer      *fileapisvr.Server      = fileapisvr.New(nil, mux, dec, enc, nil, nil, http.Dir(filePath))
@@ -88,6 +90,7 @@ func handleHTTPServer(ctx context.Context, u *url.URL, api *ApiEndpoints, wg *sy
 	{
 		if debug {
 			servers := goahttp.Servers{
+				dataServer,
 				contactsServer,
 				public_usersServer,
 				usersServer,
@@ -105,6 +108,7 @@ func handleHTTPServer(ctx context.Context, u *url.URL, api *ApiEndpoints, wg *sy
 	}
 	// Configure the mux.
 	openapisvr.Mount(mux, openapiServer)
+	datasvr.Mount(mux, dataServer)
 	contactssvr.Mount(mux, contactsServer)
 	public_userssvr.Mount(mux, public_usersServer)
 	userssvr.Mount(mux, usersServer)

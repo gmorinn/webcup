@@ -125,6 +125,106 @@ func DecodeDeleteUserResponse(decoder func(*http.Response) goahttp.Decoder, rest
 	}
 }
 
+// BuildUpdateAvatarRequest instantiates a HTTP request object with method and
+// path set to call the "users" service "updateAvatar" endpoint
+func (c *Client) BuildUpdateAvatarRequest(ctx context.Context, v interface{}) (*http.Request, error) {
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: UpdateAvatarUsersPath()}
+	req, err := http.NewRequest("PUT", u.String(), nil)
+	if err != nil {
+		return nil, goahttp.ErrInvalidURL("users", "updateAvatar", u.String(), err)
+	}
+	if ctx != nil {
+		req = req.WithContext(ctx)
+	}
+
+	return req, nil
+}
+
+// EncodeUpdateAvatarRequest returns an encoder for requests sent to the users
+// updateAvatar server.
+func EncodeUpdateAvatarRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.Request, interface{}) error {
+	return func(req *http.Request, v interface{}) error {
+		p, ok := v.(*users.UpdateAvatarPayload)
+		if !ok {
+			return goahttp.ErrInvalidType("users", "updateAvatar", "*users.UpdateAvatarPayload", v)
+		}
+		if p.Oauth != nil {
+			head := *p.Oauth
+			if !strings.Contains(head, " ") {
+				req.Header.Set("Authorization", "Bearer "+head)
+			} else {
+				req.Header.Set("Authorization", head)
+			}
+		}
+		if p.JWTToken != nil {
+			head := *p.JWTToken
+			req.Header.Set("jwtToken", head)
+		}
+		body := NewUpdateAvatarRequestBody(p)
+		if err := encoder(req).Encode(&body); err != nil {
+			return goahttp.ErrEncodingError("users", "updateAvatar", err)
+		}
+		return nil
+	}
+}
+
+// DecodeUpdateAvatarResponse returns a decoder for responses returned by the
+// users updateAvatar endpoint. restoreBody controls whether the response body
+// should be restored after having been read.
+// DecodeUpdateAvatarResponse may return the following errors:
+//	- "unknown_error" (type *users.UnknownError): http.StatusInternalServerError
+//	- error: internal error
+func DecodeUpdateAvatarResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
+	return func(resp *http.Response) (interface{}, error) {
+		if restoreBody {
+			b, err := ioutil.ReadAll(resp.Body)
+			if err != nil {
+				return nil, err
+			}
+			resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			defer func() {
+				resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			}()
+		} else {
+			defer resp.Body.Close()
+		}
+		switch resp.StatusCode {
+		case http.StatusOK:
+			var (
+				body UpdateAvatarResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("users", "updateAvatar", err)
+			}
+			err = ValidateUpdateAvatarResponseBody(&body)
+			if err != nil {
+				return nil, goahttp.ErrValidationError("users", "updateAvatar", err)
+			}
+			res := NewUpdateAvatarResultOK(&body)
+			return res, nil
+		case http.StatusInternalServerError:
+			var (
+				body UpdateAvatarUnknownErrorResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("users", "updateAvatar", err)
+			}
+			err = ValidateUpdateAvatarUnknownErrorResponseBody(&body)
+			if err != nil {
+				return nil, goahttp.ErrValidationError("users", "updateAvatar", err)
+			}
+			return nil, NewUpdateAvatarUnknownError(&body)
+		default:
+			body, _ := ioutil.ReadAll(resp.Body)
+			return nil, goahttp.ErrInvalidResponse("users", "updateAvatar", resp.StatusCode, string(body))
+		}
+	}
+}
+
 // BuildGetUserByIDRequest instantiates a HTTP request object with method and
 // path set to call the "users" service "getUserByID" endpoint
 func (c *Client) BuildGetUserByIDRequest(ctx context.Context, v interface{}) (*http.Request, error) {
@@ -334,6 +434,9 @@ func DecodeUpdateDescriptionResponse(decoder func(*http.Response) goahttp.Decode
 // unmarshalResUserResponseBodyToUsersResUser builds a value of type
 // *users.ResUser from a value of type *ResUserResponseBody.
 func unmarshalResUserResponseBodyToUsersResUser(v *ResUserResponseBody) *users.ResUser {
+	if v == nil {
+		return nil
+	}
 	res := &users.ResUser{
 		ID:        *v.ID,
 		Firstname: *v.Firstname,

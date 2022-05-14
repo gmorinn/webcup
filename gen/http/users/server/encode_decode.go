@@ -106,6 +106,99 @@ func EncodeDeleteUserError(encoder func(context.Context, http.ResponseWriter) go
 	}
 }
 
+// EncodeUpdateAvatarResponse returns an encoder for responses returned by the
+// users updateAvatar endpoint.
+func EncodeUpdateAvatarResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
+	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
+		res, _ := v.(*users.UpdateAvatarResult)
+		enc := encoder(ctx, w)
+		body := NewUpdateAvatarResponseBody(res)
+		w.WriteHeader(http.StatusOK)
+		return enc.Encode(body)
+	}
+}
+
+// DecodeUpdateAvatarRequest returns a decoder for requests sent to the users
+// updateAvatar endpoint.
+func DecodeUpdateAvatarRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
+	return func(r *http.Request) (interface{}, error) {
+		var (
+			body UpdateAvatarRequestBody
+			err  error
+		)
+		err = decoder(r).Decode(&body)
+		if err != nil {
+			if err == io.EOF {
+				return nil, goa.MissingPayloadError()
+			}
+			return nil, goa.DecodePayloadError(err.Error())
+		}
+		err = ValidateUpdateAvatarRequestBody(&body)
+		if err != nil {
+			return nil, err
+		}
+
+		var (
+			oauth    *string
+			jwtToken *string
+		)
+		oauthRaw := r.Header.Get("Authorization")
+		if oauthRaw != "" {
+			oauth = &oauthRaw
+		}
+		jwtTokenRaw := r.Header.Get("jwtToken")
+		if jwtTokenRaw != "" {
+			jwtToken = &jwtTokenRaw
+		}
+		payload := NewUpdateAvatarPayload(&body, oauth, jwtToken)
+		if payload.Oauth != nil {
+			if strings.Contains(*payload.Oauth, " ") {
+				// Remove authorization scheme prefix (e.g. "Bearer")
+				cred := strings.SplitN(*payload.Oauth, " ", 2)[1]
+				payload.Oauth = &cred
+			}
+		}
+		if payload.JWTToken != nil {
+			if strings.Contains(*payload.JWTToken, " ") {
+				// Remove authorization scheme prefix (e.g. "Bearer")
+				cred := strings.SplitN(*payload.JWTToken, " ", 2)[1]
+				payload.JWTToken = &cred
+			}
+		}
+
+		return payload, nil
+	}
+}
+
+// EncodeUpdateAvatarError returns an encoder for errors returned by the
+// updateAvatar users endpoint.
+func EncodeUpdateAvatarError(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder, formatter func(err error) goahttp.Statuser) func(context.Context, http.ResponseWriter, error) error {
+	encodeError := goahttp.ErrorEncoder(encoder, formatter)
+	return func(ctx context.Context, w http.ResponseWriter, v error) error {
+		var en ErrorNamer
+		if !errors.As(v, &en) {
+			return encodeError(ctx, w, v)
+		}
+		switch en.ErrorName() {
+		case "unknown_error":
+			var res *users.UnknownError
+			errors.As(v, &res)
+			enc := encoder(ctx, w)
+			var body interface{}
+			if formatter != nil {
+				body = formatter(res)
+			} else {
+				body = NewUpdateAvatarUnknownErrorResponseBody(res)
+			}
+			w.Header().Set("goa-error", res.ErrorName())
+			w.WriteHeader(http.StatusInternalServerError)
+			return enc.Encode(body)
+		default:
+			return encodeError(ctx, w, v)
+		}
+	}
+}
+
 // EncodeGetUserByIDResponse returns an encoder for responses returned by the
 // users getUserByID endpoint.
 func EncodeGetUserByIDResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
@@ -289,6 +382,9 @@ func EncodeUpdateDescriptionError(encoder func(context.Context, http.ResponseWri
 // marshalUsersResUserToResUserResponseBody builds a value of type
 // *ResUserResponseBody from a value of type *users.ResUser.
 func marshalUsersResUserToResUserResponseBody(v *users.ResUser) *ResUserResponseBody {
+	if v == nil {
+		return nil
+	}
 	res := &ResUserResponseBody{
 		ID:        v.ID,
 		Firstname: v.Firstname,

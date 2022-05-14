@@ -22,6 +22,7 @@ import (
 type Server struct {
 	Mounts            []*MountPoint
 	DeleteUser        http.Handler
+	UpdateAvatar      http.Handler
 	GetUserByID       http.Handler
 	UpdateDescription http.Handler
 	CORS              http.Handler
@@ -61,13 +62,16 @@ func New(
 	return &Server{
 		Mounts: []*MountPoint{
 			{"DeleteUser", "DELETE", "/v1/web/user/remove/{id}"},
+			{"UpdateAvatar", "PUT", "/v1/web/user/edit/avatar"},
 			{"GetUserByID", "GET", "/v1/web/user/{id}"},
 			{"UpdateDescription", "PUT", "/v1/web/user/edit"},
 			{"CORS", "OPTIONS", "/v1/web/user/remove/{id}"},
+			{"CORS", "OPTIONS", "/v1/web/user/edit/avatar"},
 			{"CORS", "OPTIONS", "/v1/web/user/{id}"},
 			{"CORS", "OPTIONS", "/v1/web/user/edit"},
 		},
 		DeleteUser:        NewDeleteUserHandler(e.DeleteUser, mux, decoder, encoder, errhandler, formatter),
+		UpdateAvatar:      NewUpdateAvatarHandler(e.UpdateAvatar, mux, decoder, encoder, errhandler, formatter),
 		GetUserByID:       NewGetUserByIDHandler(e.GetUserByID, mux, decoder, encoder, errhandler, formatter),
 		UpdateDescription: NewUpdateDescriptionHandler(e.UpdateDescription, mux, decoder, encoder, errhandler, formatter),
 		CORS:              NewCORSHandler(),
@@ -80,6 +84,7 @@ func (s *Server) Service() string { return "users" }
 // Use wraps the server handlers with the given middleware.
 func (s *Server) Use(m func(http.Handler) http.Handler) {
 	s.DeleteUser = m(s.DeleteUser)
+	s.UpdateAvatar = m(s.UpdateAvatar)
 	s.GetUserByID = m(s.GetUserByID)
 	s.UpdateDescription = m(s.UpdateDescription)
 	s.CORS = m(s.CORS)
@@ -88,6 +93,7 @@ func (s *Server) Use(m func(http.Handler) http.Handler) {
 // Mount configures the mux to serve the users endpoints.
 func Mount(mux goahttp.Muxer, h *Server) {
 	MountDeleteUserHandler(mux, h.DeleteUser)
+	MountUpdateAvatarHandler(mux, h.UpdateAvatar)
 	MountGetUserByIDHandler(mux, h.GetUserByID)
 	MountUpdateDescriptionHandler(mux, h.UpdateDescription)
 	MountCORSHandler(mux, h.CORS)
@@ -128,6 +134,57 @@ func NewDeleteUserHandler(
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
 		ctx = context.WithValue(ctx, goa.MethodKey, "deleteUser")
+		ctx = context.WithValue(ctx, goa.ServiceKey, "users")
+		payload, err := decodeRequest(r)
+		if err != nil {
+			if err := encodeError(ctx, w, err); err != nil {
+				errhandler(ctx, w, err)
+			}
+			return
+		}
+		res, err := endpoint(ctx, payload)
+		if err != nil {
+			if err := encodeError(ctx, w, err); err != nil {
+				errhandler(ctx, w, err)
+			}
+			return
+		}
+		if err := encodeResponse(ctx, w, res); err != nil {
+			errhandler(ctx, w, err)
+		}
+	})
+}
+
+// MountUpdateAvatarHandler configures the mux to serve the "users" service
+// "updateAvatar" endpoint.
+func MountUpdateAvatarHandler(mux goahttp.Muxer, h http.Handler) {
+	f, ok := HandleUsersOrigin(h).(http.HandlerFunc)
+	if !ok {
+		f = func(w http.ResponseWriter, r *http.Request) {
+			h.ServeHTTP(w, r)
+		}
+	}
+	mux.Handle("PUT", "/v1/web/user/edit/avatar", f)
+}
+
+// NewUpdateAvatarHandler creates a HTTP handler which loads the HTTP request
+// and calls the "users" service "updateAvatar" endpoint.
+func NewUpdateAvatarHandler(
+	endpoint goa.Endpoint,
+	mux goahttp.Muxer,
+	decoder func(*http.Request) goahttp.Decoder,
+	encoder func(context.Context, http.ResponseWriter) goahttp.Encoder,
+	errhandler func(context.Context, http.ResponseWriter, error),
+	formatter func(err error) goahttp.Statuser,
+) http.Handler {
+	var (
+		decodeRequest  = DecodeUpdateAvatarRequest(mux, decoder)
+		encodeResponse = EncodeUpdateAvatarResponse(encoder)
+		encodeError    = EncodeUpdateAvatarError(encoder, formatter)
+	)
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
+		ctx = context.WithValue(ctx, goa.MethodKey, "updateAvatar")
 		ctx = context.WithValue(ctx, goa.ServiceKey, "users")
 		payload, err := decodeRequest(r)
 		if err != nil {
@@ -256,6 +313,7 @@ func NewUpdateDescriptionHandler(
 func MountCORSHandler(mux goahttp.Muxer, h http.Handler) {
 	h = HandleUsersOrigin(h)
 	mux.Handle("OPTIONS", "/v1/web/user/remove/{id}", h.ServeHTTP)
+	mux.Handle("OPTIONS", "/v1/web/user/edit/avatar", h.ServeHTTP)
 	mux.Handle("OPTIONS", "/v1/web/user/{id}", h.ServeHTTP)
 	mux.Handle("OPTIONS", "/v1/web/user/edit", h.ServeHTTP)
 }

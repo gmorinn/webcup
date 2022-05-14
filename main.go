@@ -16,6 +16,7 @@ import (
 	bo "webcup/gen/bo"
 	bo_contact "webcup/gen/bo_contact"
 	contacts "webcup/gen/contacts"
+	data "webcup/gen/data"
 	fileapi "webcup/gen/fileapi"
 	files "webcup/gen/files"
 	jwttoken "webcup/gen/jwt_token"
@@ -25,6 +26,7 @@ import (
 )
 
 type ApiEndpoints struct {
+	dataEndpoints         *data.Endpoints
 	contactsEndpoints     *contacts.Endpoints
 	public_usersEndpoints *public_users.Endpoints
 	usersEndpoints        *users.Endpoints
@@ -52,6 +54,7 @@ func main() {
 	var (
 		authSvc         auth.Service         = api.NewAuth(logger, server)
 		jwtTokenSvc     jwttoken.Service     = api.NewJWTToken(logger, server)
+		dataSvc         data.Service         = api.NewData(logger, server)
 		boSvc           bo.Service           = api.NewBo(logger, server)
 		contactsSvc     contacts.Service     = api.NewContacts(logger, server)
 		public_usersSvc public_users.Service = api.NewPublicUsers(logger, server)
@@ -66,6 +69,7 @@ func main() {
 	// potentially running in different processes.
 	var (
 		apiEndpoints ApiEndpoints = ApiEndpoints{
+			dataEndpoints:         data.NewEndpoints(dataSvc),
 			contactsEndpoints:     contacts.NewEndpoints(contactsSvc),
 			public_usersEndpoints: public_users.NewEndpoints(public_usersSvc),
 			usersEndpoints:        users.NewEndpoints(usersSvc),

@@ -1,2 +1,4 @@
 cert.pem
 key.pem
+tmp/build-errors.log
+bin/public/uploads

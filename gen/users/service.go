@@ -18,6 +18,8 @@ import (
 type Service interface {
 	// Delete one User by ID
 	DeleteUser(context.Context, *DeleteUserPayload) (res *DeleteUserResult, err error)
+	// Update avatar
+	UpdateAvatar(context.Context, *UpdateAvatarPayload) (res *UpdateAvatarResult, err error)
 	// Get one User
 	GetUserByID(context.Context, *GetUserByIDPayload) (res *GetUserByIDResult, err error)
 	// Update main info like email, username, firstname, lastname
@@ -40,7 +42,7 @@ const ServiceName = "users"
 // MethodNames lists the service method names as defined in the design. These
 // are the same values that are set in the endpoint request contexts under the
 // MethodKey key.
-var MethodNames = [3]string{"deleteUser", "getUserByID", "updateDescription"}
+var MethodNames = [4]string{"deleteUser", "updateAvatar", "getUserByID", "updateDescription"}
 
 // DeleteUserPayload is the payload type of the users service deleteUser method.
 type DeleteUserPayload struct {
@@ -83,6 +85,26 @@ type ResUser struct {
 	// User is admin or not
 	Role   string
 	Avatar string
+}
+
+// UpdateAvatarPayload is the payload type of the users service updateAvatar
+// method.
+type UpdateAvatarPayload struct {
+	ID string
+	// Url of the avatar and stock in db
+	Avatar string
+	// JWT used for authentication after Signin/Signup
+	JWTToken *string
+	// Use to generate Oauth with /authorization
+	Oauth *string
+}
+
+// UpdateAvatarResult is the result type of the users service updateAvatar
+// method.
+type UpdateAvatarResult struct {
+	Success bool
+	// Result is an Object
+	User *ResUser
 }
 
 // UpdateDescriptionPayload is the payload type of the users service

@@ -49,6 +49,44 @@ func BuildDeleteUserPayload(usersDeleteUserID string, usersDeleteUserOauth strin
 	return v, nil
 }
 
+// BuildUpdateAvatarPayload builds the payload for the users updateAvatar
+// endpoint from CLI flags.
+func BuildUpdateAvatarPayload(usersUpdateAvatarBody string, usersUpdateAvatarOauth string, usersUpdateAvatarJWTToken string) (*users.UpdateAvatarPayload, error) {
+	var err error
+	var body UpdateAvatarRequestBody
+	{
+		err = json.Unmarshal([]byte(usersUpdateAvatarBody), &body)
+		if err != nil {
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"avatar\": \"Et vitae aut non blanditiis sunt.\",\n      \"id\": \"5dfb0bf7-597a-4250-b7ad-63a43ff59c25\"\n   }'")
+		}
+		err = goa.MergeErrors(err, goa.ValidateFormat("body.id", body.ID, goa.FormatUUID))
+
+		if err != nil {
+			return nil, err
+		}
+	}
+	var oauth *string
+	{
+		if usersUpdateAvatarOauth != "" {
+			oauth = &usersUpdateAvatarOauth
+		}
+	}
+	var jwtToken *string
+	{
+		if usersUpdateAvatarJWTToken != "" {
+			jwtToken = &usersUpdateAvatarJWTToken
+		}
+	}
+	v := &users.UpdateAvatarPayload{
+		ID:     body.ID,
+		Avatar: body.Avatar,
+	}
+	v.Oauth = oauth
+	v.JWTToken = jwtToken
+
+	return v, nil
+}
+
 // BuildGetUserByIDPayload builds the payload for the users getUserByID
 // endpoint from CLI flags.
 func BuildGetUserByIDPayload(usersGetUserByIDID string, usersGetUserByIDOauth string, usersGetUserByIDJWTToken string) (*users.GetUserByIDPayload, error) {

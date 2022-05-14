@@ -16,14 +16,16 @@ import (
 // Client is the "users" service client.
 type Client struct {
 	DeleteUserEndpoint        goa.Endpoint
+	UpdateAvatarEndpoint      goa.Endpoint
 	GetUserByIDEndpoint       goa.Endpoint
 	UpdateDescriptionEndpoint goa.Endpoint
 }
 
 // NewClient initializes a "users" service client given the endpoints.
-func NewClient(deleteUser, getUserByID, updateDescription goa.Endpoint) *Client {
+func NewClient(deleteUser, updateAvatar, getUserByID, updateDescription goa.Endpoint) *Client {
 	return &Client{
 		DeleteUserEndpoint:        deleteUser,
+		UpdateAvatarEndpoint:      updateAvatar,
 		GetUserByIDEndpoint:       getUserByID,
 		UpdateDescriptionEndpoint: updateDescription,
 	}
@@ -37,6 +39,16 @@ func (c *Client) DeleteUser(ctx context.Context, p *DeleteUserPayload) (res *Del
 		return
 	}
 	return ires.(*DeleteUserResult), nil
+}
+
+// UpdateAvatar calls the "updateAvatar" endpoint of the "users" service.
+func (c *Client) UpdateAvatar(ctx context.Context, p *UpdateAvatarPayload) (res *UpdateAvatarResult, err error) {
+	var ires interface{}
+	ires, err = c.UpdateAvatarEndpoint(ctx, p)
+	if err != nil {
+		return
+	}
+	return ires.(*UpdateAvatarResult), nil
 }
 
 // GetUserByID calls the "getUserByID" endpoint of the "users" service.

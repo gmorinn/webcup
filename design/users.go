@@ -49,6 +49,38 @@ var _ = Service("users", func() {
 		})
 	})
 
+	Method("updateAvatar", func() {
+		Description("Update avatar")
+
+		Payload(func() {
+			Attribute("id", String, func() {
+				Format(FormatUUID)
+				Example("5dfb0bf7-597a-4250-b7ad-63a43ff59c25")
+			})
+			Attribute("avatar", String, func() {
+				Description("Url of the avatar and stock in db")
+			})
+			TokenField(1, "jwtToken", String, func() {
+				Description("JWT used for authentication after Signin/Signup")
+			})
+			AccessTokenField(2, "oauth", String, func() {
+				Description("Use to generate Oauth with /authorization")
+			})
+			Required("id", "avatar")
+		})
+
+		Result(func() {
+			Attribute("success", Boolean)
+			Attribute("user", resUser, "Result is an Object")
+			Required("success")
+		})
+
+		HTTP(func() {
+			PUT("/edit/avatar")
+			Response(StatusOK)
+		})
+	})
+
 	Method("getUserByID", func() {
 		Description("Get one User")
 		Payload(func() {

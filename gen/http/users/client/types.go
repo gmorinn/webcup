@@ -13,6 +13,14 @@ import (
 	goa "goa.design/goa/v3/pkg"
 )
 
+// UpdateAvatarRequestBody is the type of the "users" service "updateAvatar"
+// endpoint HTTP request body.
+type UpdateAvatarRequestBody struct {
+	ID string `form:"id" json:"id" xml:"id"`
+	// Url of the avatar and stock in db
+	Avatar string `form:"avatar" json:"avatar" xml:"avatar"`
+}
+
 // UpdateDescriptionRequestBody is the type of the "users" service
 // "updateDescription" endpoint HTTP request body.
 type UpdateDescriptionRequestBody struct {
@@ -27,6 +35,14 @@ type UpdateDescriptionRequestBody struct {
 // endpoint HTTP response body.
 type DeleteUserResponseBody struct {
 	Success *bool `form:"success,omitempty" json:"success,omitempty" xml:"success,omitempty"`
+}
+
+// UpdateAvatarResponseBody is the type of the "users" service "updateAvatar"
+// endpoint HTTP response body.
+type UpdateAvatarResponseBody struct {
+	Success *bool `form:"success,omitempty" json:"success,omitempty" xml:"success,omitempty"`
+	// Result is an Object
+	User *ResUserResponseBody `form:"user,omitempty" json:"user,omitempty" xml:"user,omitempty"`
 }
 
 // GetUserByIDResponseBody is the type of the "users" service "getUserByID"
@@ -48,6 +64,14 @@ type UpdateDescriptionResponseBody struct {
 // DeleteUserUnknownErrorResponseBody is the type of the "users" service
 // "deleteUser" endpoint HTTP response body for the "unknown_error" error.
 type DeleteUserUnknownErrorResponseBody struct {
+	Err       *string `form:"err,omitempty" json:"err,omitempty" xml:"err,omitempty"`
+	ErrorCode *string `form:"error_code,omitempty" json:"error_code,omitempty" xml:"error_code,omitempty"`
+	Success   *bool   `form:"success,omitempty" json:"success,omitempty" xml:"success,omitempty"`
+}
+
+// UpdateAvatarUnknownErrorResponseBody is the type of the "users" service
+// "updateAvatar" endpoint HTTP response body for the "unknown_error" error.
+type UpdateAvatarUnknownErrorResponseBody struct {
 	Err       *string `form:"err,omitempty" json:"err,omitempty" xml:"err,omitempty"`
 	ErrorCode *string `form:"error_code,omitempty" json:"error_code,omitempty" xml:"error_code,omitempty"`
 	Success   *bool   `form:"success,omitempty" json:"success,omitempty" xml:"success,omitempty"`
@@ -82,6 +106,16 @@ type ResUserResponseBody struct {
 	Avatar *string `form:"avatar,omitempty" json:"avatar,omitempty" xml:"avatar,omitempty"`
 }
 
+// NewUpdateAvatarRequestBody builds the HTTP request body from the payload of
+// the "updateAvatar" endpoint of the "users" service.
+func NewUpdateAvatarRequestBody(p *users.UpdateAvatarPayload) *UpdateAvatarRequestBody {
+	body := &UpdateAvatarRequestBody{
+		ID:     p.ID,
+		Avatar: p.Avatar,
+	}
+	return body
+}
+
 // NewUpdateDescriptionRequestBody builds the HTTP request body from the
 // payload of the "updateDescription" endpoint of the "users" service.
 func NewUpdateDescriptionRequestBody(p *users.UpdateDescriptionPayload) *UpdateDescriptionRequestBody {
@@ -108,6 +142,31 @@ func NewDeleteUserResultOK(body *DeleteUserResponseBody) *users.DeleteUserResult
 // NewDeleteUserUnknownError builds a users service deleteUser endpoint
 // unknown_error error.
 func NewDeleteUserUnknownError(body *DeleteUserUnknownErrorResponseBody) *users.UnknownError {
+	v := &users.UnknownError{
+		Err:       *body.Err,
+		ErrorCode: *body.ErrorCode,
+		Success:   *body.Success,
+	}
+
+	return v
+}
+
+// NewUpdateAvatarResultOK builds a "users" service "updateAvatar" endpoint
+// result from a HTTP "OK" response.
+func NewUpdateAvatarResultOK(body *UpdateAvatarResponseBody) *users.UpdateAvatarResult {
+	v := &users.UpdateAvatarResult{
+		Success: *body.Success,
+	}
+	if body.User != nil {
+		v.User = unmarshalResUserResponseBodyToUsersResUser(body.User)
+	}
+
+	return v
+}
+
+// NewUpdateAvatarUnknownError builds a users service updateAvatar endpoint
+// unknown_error error.
+func NewUpdateAvatarUnknownError(body *UpdateAvatarUnknownErrorResponseBody) *users.UnknownError {
 	v := &users.UnknownError{
 		Err:       *body.Err,
 		ErrorCode: *body.ErrorCode,
@@ -174,6 +233,20 @@ func ValidateDeleteUserResponseBody(body *DeleteUserResponseBody) (err error) {
 	return
 }
 
+// ValidateUpdateAvatarResponseBody runs the validations defined on
+// UpdateAvatarResponseBody
+func ValidateUpdateAvatarResponseBody(body *UpdateAvatarResponseBody) (err error) {
+	if body.Success == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("success", "body"))
+	}
+	if body.User != nil {
+		if err2 := ValidateResUserResponseBody(body.User); err2 != nil {
+			err = goa.MergeErrors(err, err2)
+		}
+	}
+	return
+}
+
 // ValidateGetUserByIDResponseBody runs the validations defined on
 // GetUserByIDResponseBody
 func ValidateGetUserByIDResponseBody(body *GetUserByIDResponseBody) (err error) {
@@ -208,6 +281,21 @@ func ValidateUpdateDescriptionResponseBody(body *UpdateDescriptionResponseBody) 
 // ValidateDeleteUserUnknownErrorResponseBody runs the validations defined on
 // deleteUser_unknown_error_response_body
 func ValidateDeleteUserUnknownErrorResponseBody(body *DeleteUserUnknownErrorResponseBody) (err error) {
+	if body.Err == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("err", "body"))
+	}
+	if body.Success == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("success", "body"))
+	}
+	if body.ErrorCode == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("error_code", "body"))
+	}
+	return
+}
+
+// ValidateUpdateAvatarUnknownErrorResponseBody runs the validations defined on
+// updateAvatar_unknown_error_response_body
+func ValidateUpdateAvatarUnknownErrorResponseBody(body *UpdateAvatarUnknownErrorResponseBody) (err error) {
 	if body.Err == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("err", "body"))
 	}

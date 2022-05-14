@@ -163,3 +163,48 @@ func (s *userssrvc) UpdateDescription(ctx context.Context, p *users.UpdateDescri
 	}
 	return res, nil
 }
+
+// Update avatar
+func (s *userssrvc) UpdateAvatar(ctx context.Context, p *users.UpdateAvatarPayload) (res *users.UpdateAvatarResult, err error) {
+	if p == nil {
+		return nil, ErrNullPayload
+	}
+	userID, err := uuid.Parse(p.ID)
+	if err != nil {
+		return nil, ErrWrongIdFormat
+	}
+	err = s.server.Store.ExecTx(ctx, func(q *db.Queries) error {
+		isExist, err := q.CheckIDExist(ctx, userID)
+		if err != nil || !isExist {
+			return ErrUserNotExist
+		}
+		arg := db.UpdateAvatarUserParams{
+			ID:     userID,
+			Avatar: utils.NullS(p.Avatar),
+		}
+		if err := q.UpdateAvatarUser(ctx, arg); err != nil {
+			return fmt.Errorf("error update avatar: %v", err)
+		}
+		newUser, err := q.GetUserByID(ctx, userID)
+		if err != nil {
+			return fmt.Errorf("error get user: %v", err)
+		}
+		res = &users.UpdateAvatarResult{
+			Success: true,
+			User: &users.ResUser{
+				ID:        newUser.ID.String(),
+				Firstname: newUser.Firstname.String,
+				Lastname:  newUser.Lastname.String,
+				Username:  newUser.Username,
+				Email:     newUser.Email,
+				Avatar:    newUser.Avatar.String,
+				Role:      string(newUser.Role),
+			},
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, s.errorResponse("TX_UPDATE_AVATAR", err)
+	}
+	return res, nil
+}
