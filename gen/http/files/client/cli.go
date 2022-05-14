@@ -23,7 +23,7 @@ func BuildImportFilePayload(filesImportFileBody string, filesImportFileOauth str
 	{
 		err = json.Unmarshal([]byte(filesImportFileBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"content\": \"RXQgZXQgZXQgbnVtcXVhbSBldCBlc3QgbGF1ZGFudGl1bS4=\",\n      \"filename\": \"foo.jpg\",\n      \"format\": \"image/jpeg\",\n      \"h\": 8299294903207092100,\n      \"mime\": \"Ut sit molestiae et.\",\n      \"size\": 3374177423091986767,\n      \"url\": \"Sed voluptas omnis similique in.\",\n      \"w\": 1080674065235429941\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"content\": \"SW5jaWR1bnQgaXBzYW0gYXNwZXJpb3JlcyBmYWNpbGlzLg==\",\n      \"filename\": \"foo.jpg\",\n      \"format\": \"image/jpeg\",\n      \"h\": 378833681784803462,\n      \"mime\": \"Et omnis deleniti exercitationem eum vitae.\",\n      \"size\": 5630459967245784067,\n      \"url\": \"Corporis excepturi reprehenderit voluptatum fugiat odit explicabo.\",\n      \"w\": 3855134557079646294\n   }'")
 		}
 		if body.Content == nil {
 			err = goa.MergeErrors(err, goa.MissingFieldError("content", "body"))

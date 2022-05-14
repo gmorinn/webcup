@@ -15,6 +15,7 @@ import (
 
 // Client is the "data" service client.
 type Client struct {
+	ListDataEndpoint           goa.Endpoint
 	ListDataMostRecentEndpoint goa.Endpoint
 	CreateDataEndpoint         goa.Endpoint
 	UpdateDataEndpoint         goa.Endpoint
@@ -23,14 +24,25 @@ type Client struct {
 }
 
 // NewClient initializes a "data" service client given the endpoints.
-func NewClient(listDataMostRecent, createData, updateData, getDataByUserID, getDataByID goa.Endpoint) *Client {
+func NewClient(listData, listDataMostRecent, createData, updateData, getDataByUserID, getDataByID goa.Endpoint) *Client {
 	return &Client{
+		ListDataEndpoint:           listData,
 		ListDataMostRecentEndpoint: listDataMostRecent,
 		CreateDataEndpoint:         createData,
 		UpdateDataEndpoint:         updateData,
 		GetDataByUserIDEndpoint:    getDataByUserID,
 		GetDataByIDEndpoint:        getDataByID,
 	}
+}
+
+// ListData calls the "listData" endpoint of the "data" service.
+func (c *Client) ListData(ctx context.Context, p *ListDataPayload) (res *ListDataResult, err error) {
+	var ires interface{}
+	ires, err = c.ListDataEndpoint(ctx, p)
+	if err != nil {
+		return
+	}
+	return ires.(*ListDataResult), nil
 }
 
 // ListDataMostRecent calls the "listDataMostRecent" endpoint of the "data"

@@ -11,6 +11,11 @@ import (
 	"fmt"
 )
 
+// ListDataDataPath returns the URL path to the data service listData HTTP endpoint.
+func ListDataDataPath() string {
+	return "/web/data/search"
+}
+
 // ListDataMostRecentDataPath returns the URL path to the data service listDataMostRecent HTTP endpoint.
 func ListDataMostRecentDataPath(offset int32, limit int32) string {
 	return fmt.Sprintf("/web/data/recents/%v/%v", offset, limit)

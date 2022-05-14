@@ -40,6 +40,7 @@ type Querier interface {
 	GetUserByUsername(ctx context.Context, username string) (User, error)
 	GetUserRandom(ctx context.Context) (User, error)
 	InsertMessage(ctx context.Context, arg InsertMessageParams) error
+	ListData(ctx context.Context, title string) ([]Datum, error)
 	ListDataMostRecent(ctx context.Context, arg ListDataMostRecentParams) ([]Datum, error)
 	ListRefreshTokenByUserID(ctx context.Context, arg ListRefreshTokenByUserIDParams) ([]RefreshToken, error)
 	ListUsers(ctx context.Context, firstname sql.NullString) ([]User, error)

@@ -1558,6 +1558,54 @@ paths:
       security:
       - OAuth2_header_Authorization: []
         jwt_header_jwtToken: []
+  /web/data/search:
+    patch:
+      tags:
+      - data
+      summary: listData data
+      description: List data for search bar
+      operationId: data#listData
+      parameters:
+      - name: Authorization
+        in: header
+        description: OAuth token
+        required: false
+        type: string
+        pattern: ^Bearer [^ ]+$
+      - name: jwtToken
+        in: header
+        description: Jwt token
+        required: false
+        type: string
+        pattern: ^Bearer [^ ]+$
+      - name: ListDataRequestBody
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/DataListDataRequestBody'
+          required:
+          - key
+      responses:
+        "200":
+          description: OK response.
+          schema:
+            $ref: '#/definitions/DataListDataResponseBody'
+            required:
+            - data
+            - success
+        "500":
+          description: Internal Server Error response.
+          schema:
+            $ref: '#/definitions/DataListDataUnknownErrorResponseBody'
+            required:
+            - err
+            - success
+            - error_code
+      schemes:
+      - http
+      security:
+      - OAuth2_header_Authorization: []
+        jwt_header_jwtToken: []
   /web/data/user/{user_id}:
     get:
       tags:
@@ -1624,13 +1672,13 @@ definitions:
     properties:
       exist:
         type: boolean
-        example: false
+        example: true
       success:
         type: boolean
         example: true
     example:
       exist: false
-      success: true
+      success: false
     required:
     - exist
     - success
@@ -1647,12 +1695,12 @@ definitions:
       success:
         type: boolean
         default: false
-        example: false
+        example: true
     description: Error not identified (500)
     example:
       err: sql no rows affected
       error_code: TX_UPDATE_ITEM
-      success: true
+      success: false
     required:
     - err
     - success
@@ -1700,7 +1748,7 @@ definitions:
         type: boolean
         example: false
     example:
-      success: true
+      success: false
     required:
     - success
   AuthResetPasswordUnknownErrorResponseBody:
@@ -1721,7 +1769,7 @@ definitions:
     example:
       err: sql no rows affected
       error_code: TX_UPDATE_ITEM
-      success: true
+      success: false
     required:
     - err
     - success
@@ -1749,8 +1797,8 @@ definitions:
         type: boolean
         example: false
     example:
-      exist: true
-      success: false
+      exist: false
+      success: true
     required:
     - exist
     - success
@@ -1767,12 +1815,12 @@ definitions:
       success:
         type: boolean
         default: false
-        example: true
+        example: false
     description: Error not identified (500)
     example:
       err: sql no rows affected
       error_code: TX_UPDATE_ITEM
-      success: false
+      success: true
     required:
     - err
     - success
@@ -1785,7 +1833,7 @@ definitions:
         type: boolean
         example: false
     example:
-      success: true
+      success: false
     required:
     - success
   BoContactDeleteBoContactUnknownErrorResponseBody:
@@ -1801,12 +1849,12 @@ definitions:
       success:
         type: boolean
         default: false
-        example: true
+        example: false
     description: Error not identified (500)
     example:
       err: sql no rows affected
       error_code: TX_UPDATE_ITEM
-      success: false
+      success: true
     required:
     - err
     - success
@@ -1819,15 +1867,16 @@ definitions:
         type: array
         items:
           type: string
-          example: Consequatur beatae.
+          example: Sequi rerum suscipit asperiores debitis.
         example:
-        - Nisi accusantium molestiae quibusdam laudantium tempore.
-        - Rerum officia.
-        - Eos quam quasi harum ipsa amet corrupti.
+        - Perspiciatis molestiae.
+        - Vero voluptas.
+        - Delectus cumque exercitationem numquam id ut.
+        - Nihil reiciendis voluptas.
     example:
       tab:
-      - Odio impedit.
-      - Amet tempore sunt.
+      - Sit eveniet sed et.
+      - Illum voluptatibus et iusto ab.
     required:
     - tab
   BoContactDeleteBoManyContactResponseBody:
@@ -1895,7 +1944,7 @@ definitions:
       success:
         type: boolean
         default: false
-        example: true
+        example: false
     description: Error not identified (500)
     example:
       err: sql no rows affected
@@ -1923,18 +1972,10 @@ definitions:
           id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
           message: Vous embauchez ?
           user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-        - email: guillaume@gmail.com
-          id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-          message: Vous embauchez ?
-          user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-        - email: guillaume@gmail.com
-          id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-          message: Vous embauchez ?
-          user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
       count:
         type: integer
         description: total of messages
-        example: 8825680535639427956
+        example: 3107723947614361780
         format: int64
       success:
         type: boolean
@@ -1957,14 +1998,67 @@ definitions:
         id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
         message: Vous embauchez ?
         user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-      count: 715822595859501078
-      success: false
+      count: 1956550490909028307
+      success: true
     required:
     - contacts
     - success
     - count
   BoContactGetBoContactUnknownErrorResponseBody:
     title: BoContactGetBoContactUnknownErrorResponseBody
+    type: object
+    properties:
+      err:
+        type: string
+        example: sql no rows affected
+      error_code:
+        type: string
+        example: TX_UPDATE_ITEM
+      success:
+        type: boolean
+        default: false
+        example: false
+    description: Error not identified (500)
+    example:
+      err: sql no rows affected
+      error_code: TX_UPDATE_ITEM
+      success: true
+    required:
+    - err
+    - success
+    - error_code
+  BoDeleteBoManyUsersRequestBody:
+    title: BoDeleteBoManyUsersRequestBody
+    type: object
+    properties:
+      tab:
+        type: array
+        items:
+          type: string
+          example: Sed error neque.
+        example:
+        - Quasi ea cumque esse vitae.
+        - Natus molestiae sed dignissimos ipsam.
+        - Consectetur rem optio asperiores veniam aliquam tempore.
+    example:
+      tab:
+      - Non corrupti praesentium perspiciatis suscipit aut adipisci.
+      - Aut odit rerum occaecati quo nesciunt.
+    required:
+    - tab
+  BoDeleteBoManyUsersResponseBody:
+    title: BoDeleteBoManyUsersResponseBody
+    type: object
+    properties:
+      success:
+        type: boolean
+        example: true
+    example:
+      success: true
+    required:
+    - success
+  BoDeleteBoManyUsersUnknownErrorResponseBody:
+    title: BoDeleteBoManyUsersUnknownErrorResponseBody
     type: object
     properties:
       err:
@@ -1986,68 +2080,15 @@ definitions:
     - err
     - success
     - error_code
-  BoDeleteBoManyUsersRequestBody:
-    title: BoDeleteBoManyUsersRequestBody
-    type: object
-    properties:
-      tab:
-        type: array
-        items:
-          type: string
-          example: Porro quia nihil est similique.
-        example:
-        - Excepturi suscipit non deleniti quia.
-        - Eos soluta nemo atque non quia rerum.
-    example:
-      tab:
-      - Fugit odio perspiciatis.
-      - Repellat sapiente aut.
-      - Laboriosam voluptas.
-    required:
-    - tab
-  BoDeleteBoManyUsersResponseBody:
-    title: BoDeleteBoManyUsersResponseBody
-    type: object
-    properties:
-      success:
-        type: boolean
-        example: false
-    example:
-      success: true
-    required:
-    - success
-  BoDeleteBoManyUsersUnknownErrorResponseBody:
-    title: BoDeleteBoManyUsersUnknownErrorResponseBody
-    type: object
-    properties:
-      err:
-        type: string
-        example: sql no rows affected
-      error_code:
-        type: string
-        example: TX_UPDATE_ITEM
-      success:
-        type: boolean
-        default: false
-        example: false
-    description: Error not identified (500)
-    example:
-      err: sql no rows affected
-      error_code: TX_UPDATE_ITEM
-      success: false
-    required:
-    - err
-    - success
-    - error_code
   BoDeleteBoUserResponseBody:
     title: BoDeleteBoUserResponseBody
     type: object
     properties:
       success:
         type: boolean
-        example: false
+        example: true
     example:
-      success: true
+      success: false
     required:
     - success
   BoDeleteBoUserUnknownErrorResponseBody:
@@ -2063,7 +2104,7 @@ definitions:
       success:
         type: boolean
         default: false
-        example: false
+        example: true
     description: Error not identified (500)
     example:
       err: sql no rows affected
@@ -2083,14 +2124,14 @@ definitions:
       user:
         $ref: '#/definitions/resUserResponseBody'
     example:
-      success: false
+      success: true
       user:
         avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
         email: guillaume@gmail.com
         firstname: Guillaume
         id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
         lastname: Morin
-        role: Assumenda sed.
+        role: Maiores et non dolor facilis et voluptatem.
         username: guillaumemorin
     required:
     - user
@@ -2108,12 +2149,12 @@ definitions:
       success:
         type: boolean
         default: false
-        example: false
+        example: true
     description: Error not identified (500)
     example:
       err: sql no rows affected
       error_code: TX_UPDATE_ITEM
-      success: true
+      success: false
     required:
     - err
     - success
@@ -2125,7 +2166,7 @@ definitions:
       count:
         type: integer
         description: total of users
-        example: 1313051233092171112
+        example: 6912915222911547911
         format: int64
       success:
         type: boolean
@@ -2141,39 +2182,60 @@ definitions:
           firstname: Guillaume
           id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
           lastname: Morin
-          role: Assumenda sed.
+          role: Maiores et non dolor facilis et voluptatem.
           username: guillaumemorin
         - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
           email: guillaume@gmail.com
           firstname: Guillaume
           id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
           lastname: Morin
-          role: Assumenda sed.
+          role: Maiores et non dolor facilis et voluptatem.
+          username: guillaumemorin
+        - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
+          email: guillaume@gmail.com
+          firstname: Guillaume
+          id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+          lastname: Morin
+          role: Maiores et non dolor facilis et voluptatem.
+          username: guillaumemorin
+        - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
+          email: guillaume@gmail.com
+          firstname: Guillaume
+          id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+          lastname: Morin
+          role: Maiores et non dolor facilis et voluptatem.
           username: guillaumemorin
     example:
-      count: 6798387346102627781
-      success: true
+      count: 6850563854754041191
+      success: false
       users:
       - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
         email: guillaume@gmail.com
         firstname: Guillaume
         id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
         lastname: Morin
-        role: Assumenda sed.
+        role: Maiores et non dolor facilis et voluptatem.
         username: guillaumemorin
       - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
         email: guillaume@gmail.com
         firstname: Guillaume
         id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
         lastname: Morin
-        role: Assumenda sed.
+        role: Maiores et non dolor facilis et voluptatem.
         username: guillaumemorin
       - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
         email: guillaume@gmail.com
         firstname: Guillaume
         id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
         lastname: Morin
-        role: Assumenda sed.
+        role: Maiores et non dolor facilis et voluptatem.
+        username: guillaumemorin
+      - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
+        email: guillaume@gmail.com
+        firstname: Guillaume
+        id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+        lastname: Morin
+        role: Maiores et non dolor facilis et voluptatem.
         username: guillaumemorin
     required:
     - users
@@ -2192,12 +2254,12 @@ definitions:
       success:
         type: boolean
         default: false
-        example: false
+        example: true
     description: Error not identified (500)
     example:
       err: sql no rows affected
       error_code: TX_UPDATE_ITEM
-      success: false
+      success: true
     required:
     - err
     - success
@@ -2210,11 +2272,11 @@ definitions:
         $ref: '#/definitions/payloadUserRequestBody'
     example:
       user:
-        avatar: Voluptatem nemo eos soluta.
+        avatar: Architecto dolorem autem.
         email: guillaume@gmail.com
         firstname: Guillaume
         lastname: Morin
-        role: pro
+        role: admin
         username: guillaumemoriin
     required:
     - user
@@ -2224,18 +2286,18 @@ definitions:
     properties:
       success:
         type: boolean
-        example: false
+        example: true
       user:
         $ref: '#/definitions/resUserResponseBody'
     example:
-      success: true
+      success: false
       user:
         avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
         email: guillaume@gmail.com
         firstname: Guillaume
         id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
         lastname: Morin
-        role: Assumenda sed.
+        role: Maiores et non dolor facilis et voluptatem.
         username: guillaumemorin
     required:
     - user
@@ -2253,7 +2315,7 @@ definitions:
       success:
         type: boolean
         default: false
-        example: true
+        example: false
     description: Error not identified (500)
     example:
       err: sql no rows affected
@@ -2291,7 +2353,7 @@ definitions:
         default: false
         example: false
     example:
-      success: false
+      success: true
     required:
     - success
   ContactsAddMessageUnknownErrorResponseBody:
@@ -2307,12 +2369,12 @@ definitions:
       success:
         type: boolean
         default: false
-        example: true
+        example: false
     description: Error not identified (500)
     example:
       err: sql no rows affected
       error_code: TX_UPDATE_ITEM
-      success: true
+      success: false
     required:
     - err
     - success
@@ -2325,9 +2387,9 @@ definitions:
         $ref: '#/definitions/payloadDataRequestBody'
     example:
       data:
-        category: space
+        category: animals
         description: Unique Air max restant au monde
-        image: Id rerum fuga.
+        image: Saepe omnis.
         title: Air max360 d'il y a 10 millions d'années
         user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
     required:
@@ -2343,10 +2405,10 @@ definitions:
         example: false
     example:
       data:
-        category: brain
+        category: robotics
         description: Unique Air max restant au monde
         id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-        image: Reprehenderit quia modi esse ducimus.
+        image: Id vel id rerum fuga nihil.
         title: Air max360 d'il y a 10 millions d'années
         user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
       success: false
@@ -2371,7 +2433,7 @@ definitions:
     example:
       err: sql no rows affected
       error_code: TX_UPDATE_ITEM
-      success: false
+      success: true
     required:
     - err
     - success
@@ -2387,10 +2449,10 @@ definitions:
         example: true
     example:
       data:
-        category: brain
+        category: robotics
         description: Unique Air max restant au monde
         id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-        image: Reprehenderit quia modi esse ducimus.
+        image: Id vel id rerum fuga nihil.
         title: Air max360 d'il y a 10 millions d'années
         user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
       success: true
@@ -2430,54 +2492,42 @@ definitions:
           $ref: '#/definitions/resDataResponseBody'
         description: Result is an object
         example:
-        - category: brain
+        - category: robotics
           description: Unique Air max restant au monde
           id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-          image: Reprehenderit quia modi esse ducimus.
+          image: Id vel id rerum fuga nihil.
           title: Air max360 d'il y a 10 millions d'années
           user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-        - category: brain
+        - category: robotics
           description: Unique Air max restant au monde
           id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-          image: Reprehenderit quia modi esse ducimus.
+          image: Id vel id rerum fuga nihil.
           title: Air max360 d'il y a 10 millions d'années
           user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-        - category: brain
+        - category: robotics
           description: Unique Air max restant au monde
           id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-          image: Reprehenderit quia modi esse ducimus.
+          image: Id vel id rerum fuga nihil.
           title: Air max360 d'il y a 10 millions d'années
           user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
       success:
         type: boolean
-        example: false
+        example: true
     example:
       data:
-      - category: brain
+      - category: robotics
         description: Unique Air max restant au monde
         id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-        image: Reprehenderit quia modi esse ducimus.
+        image: Id vel id rerum fuga nihil.
         title: Air max360 d'il y a 10 millions d'années
         user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-      - category: brain
+      - category: robotics
         description: Unique Air max restant au monde
         id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-        image: Reprehenderit quia modi esse ducimus.
+        image: Id vel id rerum fuga nihil.
         title: Air max360 d'il y a 10 millions d'années
         user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-      - category: brain
-        description: Unique Air max restant au monde
-        id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-        image: Reprehenderit quia modi esse ducimus.
-        title: Air max360 d'il y a 10 millions d'années
-        user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-      - category: brain
-        description: Unique Air max restant au monde
-        id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-        image: Reprehenderit quia modi esse ducimus.
-        title: Air max360 d'il y a 10 millions d'années
-        user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-      success: false
+      success: true
     required:
     - data
     - success
@@ -2494,12 +2544,12 @@ definitions:
       success:
         type: boolean
         default: false
-        example: false
+        example: true
     description: Error not identified (500)
     example:
       err: sql no rows affected
       error_code: TX_UPDATE_ITEM
-      success: false
+      success: true
     required:
     - err
     - success
@@ -2511,7 +2561,7 @@ definitions:
       count:
         type: integer
         description: total of datas
-        example: 8279187312252084615
+        example: 7077918749368794225
         format: int64
       data:
         type: array
@@ -2519,55 +2569,138 @@ definitions:
           $ref: '#/definitions/resDataResponseBody'
         description: Result is an an array of data
         example:
-        - category: brain
+        - category: robotics
           description: Unique Air max restant au monde
           id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-          image: Reprehenderit quia modi esse ducimus.
+          image: Id vel id rerum fuga nihil.
           title: Air max360 d'il y a 10 millions d'années
           user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-        - category: brain
+        - category: robotics
           description: Unique Air max restant au monde
           id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-          image: Reprehenderit quia modi esse ducimus.
+          image: Id vel id rerum fuga nihil.
+          title: Air max360 d'il y a 10 millions d'années
+          user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+        - category: robotics
+          description: Unique Air max restant au monde
+          id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+          image: Id vel id rerum fuga nihil.
+          title: Air max360 d'il y a 10 millions d'années
+          user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+        - category: robotics
+          description: Unique Air max restant au monde
+          id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+          image: Id vel id rerum fuga nihil.
           title: Air max360 d'il y a 10 millions d'années
           user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
       success:
         type: boolean
         example: true
     example:
-      count: 9173322964306226477
+      count: 8522889291447494859
       data:
-      - category: brain
+      - category: robotics
         description: Unique Air max restant au monde
         id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-        image: Reprehenderit quia modi esse ducimus.
+        image: Id vel id rerum fuga nihil.
         title: Air max360 d'il y a 10 millions d'années
         user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-      - category: brain
+      - category: robotics
         description: Unique Air max restant au monde
         id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-        image: Reprehenderit quia modi esse ducimus.
+        image: Id vel id rerum fuga nihil.
         title: Air max360 d'il y a 10 millions d'années
         user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-      - category: brain
-        description: Unique Air max restant au monde
-        id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-        image: Reprehenderit quia modi esse ducimus.
-        title: Air max360 d'il y a 10 millions d'années
-        user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-      - category: brain
-        description: Unique Air max restant au monde
-        id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-        image: Reprehenderit quia modi esse ducimus.
-        title: Air max360 d'il y a 10 millions d'années
-        user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-      success: false
+      success: true
     required:
     - data
     - success
     - count
   DataListDataMostRecentUnknownErrorResponseBody:
     title: DataListDataMostRecentUnknownErrorResponseBody
+    type: object
+    properties:
+      err:
+        type: string
+        example: sql no rows affected
+      error_code:
+        type: string
+        example: TX_UPDATE_ITEM
+      success:
+        type: boolean
+        default: false
+        example: true
+    description: Error not identified (500)
+    example:
+      err: sql no rows affected
+      error_code: TX_UPDATE_ITEM
+      success: true
+    required:
+    - err
+    - success
+    - error_code
+  DataListDataRequestBody:
+    title: DataListDataRequestBody
+    type: object
+    properties:
+      key:
+        type: string
+        example: Mars
+    example:
+      key: Mars
+    required:
+    - key
+  DataListDataResponseBody:
+    title: DataListDataResponseBody
+    type: object
+    properties:
+      data:
+        type: array
+        items:
+          $ref: '#/definitions/resDataResponseBody'
+        description: Result is an an array of user
+        example:
+        - category: robotics
+          description: Unique Air max restant au monde
+          id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+          image: Id vel id rerum fuga nihil.
+          title: Air max360 d'il y a 10 millions d'années
+          user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+        - category: robotics
+          description: Unique Air max restant au monde
+          id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+          image: Id vel id rerum fuga nihil.
+          title: Air max360 d'il y a 10 millions d'années
+          user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+        - category: robotics
+          description: Unique Air max restant au monde
+          id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+          image: Id vel id rerum fuga nihil.
+          title: Air max360 d'il y a 10 millions d'années
+          user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+      success:
+        type: boolean
+        example: false
+    example:
+      data:
+      - category: robotics
+        description: Unique Air max restant au monde
+        id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+        image: Id vel id rerum fuga nihil.
+        title: Air max360 d'il y a 10 millions d'années
+        user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+      - category: robotics
+        description: Unique Air max restant au monde
+        id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+        image: Id vel id rerum fuga nihil.
+        title: Air max360 d'il y a 10 millions d'années
+        user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+      success: true
+    required:
+    - data
+    - success
+  DataListDataUnknownErrorResponseBody:
+    title: DataListDataUnknownErrorResponseBody
     type: object
     properties:
       err:
@@ -2597,9 +2730,9 @@ definitions:
         $ref: '#/definitions/payloadDataRequestBody'
     example:
       data:
-        category: space
+        category: animals
         description: Unique Air max restant au monde
-        image: Id rerum fuga.
+        image: Saepe omnis.
         title: Air max360 d'il y a 10 millions d'années
         user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
     required:
@@ -2612,13 +2745,13 @@ definitions:
         $ref: '#/definitions/resDataResponseBody'
       success:
         type: boolean
-        example: true
+        example: false
     example:
       data:
-        category: brain
+        category: robotics
         description: Unique Air max restant au monde
         id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-        image: Reprehenderit quia modi esse ducimus.
+        image: Id vel id rerum fuga nihil.
         title: Air max360 d'il y a 10 millions d'années
         user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
       success: false
@@ -2655,7 +2788,7 @@ definitions:
       fault:
         type: boolean
         description: Is the error a server-side fault?
-        example: false
+        example: true
       id:
         type: string
         description: ID is a unique identifier for this particular occurrence of the
@@ -2684,8 +2817,8 @@ definitions:
       id: 123abc
       message: parameter 'p' must be an integer
       name: bad_request
-      temporary: false
-      timeout: true
+      temporary: true
+      timeout: false
     required:
     - name
     - id
@@ -2710,7 +2843,7 @@ definitions:
     properties:
       success:
         type: boolean
-        example: false
+        example: true
     example:
       success: true
     required:
@@ -2733,7 +2866,7 @@ definitions:
     example:
       err: sql no rows affected
       error_code: TX_UPDATE_ITEM
-      success: false
+      success: true
     required:
     - err
     - success
@@ -2746,24 +2879,52 @@ definitions:
         type: string
         description: content of image
         example:
-        - 85
+        - 68
+        - 101
+        - 108
+        - 101
+        - 110
+        - 105
         - 116
+        - 105
         - 32
-        - 113
-        - 117
-        - 97
+        - 100
+        - 111
+        - 108
+        - 111
+        - 114
+        - 101
         - 115
         - 32
-        - 113
+        - 118
+        - 111
+        - 108
         - 117
+        - 112
+        - 116
+        - 97
+        - 116
+        - 105
+        - 98
+        - 117
+        - 115
+        - 32
+        - 105
+        - 117
+        - 115
+        - 116
+        - 111
+        - 32
+        - 102
+        - 117
+        - 103
         - 105
         - 97
+        - 116
         - 32
-        - 117
-        - 108
-        - 108
-        - 97
-        - 109
+        - 115
+        - 101
+        - 100
         - 46
         format: byte
       filename:
@@ -2777,63 +2938,53 @@ definitions:
       h:
         type: integer
         description: height of image if you crop
-        example: 3528651168140212849
+        example: 5155240483756775586
         format: int64
       mime:
         type: string
         description: url file
-        example: Aspernatur qui dolores sed.
+        example: Totam et sint.
       size:
         type: integer
         description: size of image
-        example: 4313829320480866308
+        example: 986685068245262051
         format: int64
       url:
         type: string
         description: url file
-        example: Nisi eligendi aut fugiat.
+        example: Rerum non natus libero quia tempora earum.
       w:
         type: integer
         description: width of image if you crop
-        example: 1743607398783121329
+        example: 5815012610362759365
         format: int64
     example:
       content:
-      - 78
-      - 97
-      - 109
+      - 81
+      - 117
+      - 111
       - 32
       - 97
-      - 110
-      - 105
-      - 109
-      - 105
       - 32
       - 115
       - 105
       - 116
       - 32
-      - 108
       - 97
-      - 98
-      - 111
-      - 114
-      - 105
-      - 111
-      - 115
-      - 97
-      - 109
+      - 117
+      - 116
       - 32
-      - 101
-      - 97
+      - 104
+      - 105
+      - 99
       - 46
       filename: foo.jpg
       format: image/jpeg
-      h: 4894287445158582252
-      mime: Voluptatem ut.
-      size: 3310693819513598624
-      url: Sapiente est distinctio quia quia iusto molestiae.
-      w: 2198405938829378400
+      h: 1986164440742896345
+      mime: Consequatur enim autem rem fugit et provident.
+      size: 7206985126954302765
+      url: Quod veritatis.
+      w: 1731185997020115210
     required:
     - filename
     - content
@@ -2846,14 +2997,14 @@ definitions:
         $ref: '#/definitions/resFileResponseBody'
       success:
         type: boolean
-        example: true
+        example: false
     example:
       file:
         id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-        mime: Facilis consequatur itaque.
+        mime: Tenetur aut est voluptatibus fuga.
         name: foo.png
-        size: 838602125407019516
-        url: Vitae eum incidunt ipsam.
+        size: 6477760254985632700
+        url: Alias sit iure ut.
       success: false
     required:
     - success
@@ -2871,7 +3022,7 @@ definitions:
       success:
         type: boolean
         default: false
-        example: true
+        example: false
     description: Error not identified (500)
     example:
       err: sql no rows affected
@@ -2904,11 +3055,11 @@ definitions:
         example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ
       success:
         type: boolean
-        example: false
+        example: true
     example:
       access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ
       refresh_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ
-      success: true
+      success: false
     required:
     - access_token
     - refresh_token
@@ -2926,7 +3077,7 @@ definitions:
       success:
         type: boolean
         default: false
-        example: false
+        example: true
     description: Error not identified (500)
     example:
       err: sql no rows affected
@@ -2968,11 +3119,11 @@ definitions:
         example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ
       success:
         type: boolean
-        example: true
+        example: false
     example:
       access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ
       refresh_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ
-      success: false
+      success: true
     required:
     - access_token
     - refresh_token
@@ -2995,7 +3146,7 @@ definitions:
     example:
       err: sql no rows affected
       error_code: TX_UPDATE_ITEM
-      success: false
+      success: true
     required:
     - err
     - success
@@ -3036,7 +3187,7 @@ definitions:
     example:
       access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ
       refresh_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ
-      success: false
+      success: true
     required:
     - access_token
     - refresh_token
@@ -3054,7 +3205,7 @@ definitions:
       success:
         type: boolean
         default: false
-        example: true
+        example: false
     description: Error not identified (500)
     example:
       err: sql no rows affected
@@ -3138,7 +3289,7 @@ definitions:
     example:
       err: sql no rows affected
       error_code: TX_UPDATE_ITEM
-      success: false
+      success: true
     required:
     - err
     - success
@@ -3149,22 +3300,22 @@ definitions:
     properties:
       access_token:
         type: string
-        example: Aut hic debitis aut ipsum.
+        example: Sit non voluptates soluta sunt vel.
       expires_in:
         type: integer
-        example: 2853712597827717815
+        example: 4063684915091941449
         format: int64
       success:
         type: boolean
-        example: true
+        example: false
       token_type:
         type: string
-        example: Molestias id in voluptas architecto.
+        example: Non iure soluta quod.
     example:
-      access_token: Sed voluptatum enim.
-      expires_in: 8637745267229013526
-      success: true
-      token_type: Dignissimos ea.
+      access_token: Et autem qui sit.
+      expires_in: 1098783620700662790
+      success: false
+      token_type: Delectus et veniam sunt voluptatibus suscipit ea.
     required:
     - access_token
     - token_type
@@ -3176,22 +3327,22 @@ definitions:
     properties:
       access_token:
         type: string
-        example: Nisi totam.
+        example: Sunt nam dolores perspiciatis.
       expires_in:
         type: integer
-        example: 6838238732989430607
+        example: 7651732304992672245
         format: int64
       success:
         type: boolean
         example: true
       token_type:
         type: string
-        example: Sint aut deleniti dolores voluptatibus iusto.
+        example: Ratione consectetur quod quis quidem eum inventore.
     example:
-      access_token: Architecto quod veritatis libero sed animi consequatur.
-      expires_in: 7888743418604913022
-      success: true
-      token_type: Autem rem fugit et provident iusto.
+      access_token: Illo molestiae sit numquam.
+      expires_in: 3306166914492650717
+      success: false
+      token_type: Quos eaque cupiditate veniam totam repellendus.
     required:
     - access_token
     - token_type
@@ -3203,17 +3354,17 @@ definitions:
     properties:
       client_id:
         type: string
-        example: Nam dolores perspiciatis.
+        example: Odit aut similique porro quia nihil est.
       client_secret:
         type: string
-        example: Ratione consectetur quod quis quidem eum inventore.
+        example: Illo ipsam excepturi suscipit non.
       grant_type:
         type: string
-        example: Quo optio illo molestiae sit numquam ea.
+        example: Quia sed eos soluta nemo atque non.
     example:
-      client_id: Eaque cupiditate veniam totam repellendus omnis distinctio.
-      client_secret: Sit non voluptates soluta sunt vel.
-      grant_type: Non iure soluta quod.
+      client_id: Rerum quam doloremque fugit odio perspiciatis qui.
+      client_secret: Sapiente aut incidunt laboriosam voluptas quia quo.
+      grant_type: Iure quos.
     required:
     - client_id
     - client_secret
@@ -3231,7 +3382,7 @@ definitions:
       success:
         type: boolean
         default: false
-        example: true
+        example: false
     description: Error not identified (500)
     example:
       err: sql no rows affected
@@ -3247,7 +3398,7 @@ definitions:
     properties:
       success:
         type: boolean
-        example: false
+        example: true
       user:
         $ref: '#/definitions/resUserResponseBody'
     example:
@@ -3258,7 +3409,7 @@ definitions:
         firstname: Guillaume
         id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
         lastname: Morin
-        role: Assumenda sed.
+        role: Maiores et non dolor facilis et voluptatem.
         username: guillaumemorin
     required:
     - user
@@ -3293,11 +3444,11 @@ definitions:
       count:
         type: integer
         description: total of users
-        example: 6610316919098000541
+        example: 4545111465470067225
         format: int64
       success:
         type: boolean
-        example: true
+        example: false
       users:
         type: array
         items:
@@ -3309,31 +3460,17 @@ definitions:
           firstname: Guillaume
           id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
           lastname: Morin
-          role: Assumenda sed.
+          role: Maiores et non dolor facilis et voluptatem.
           username: guillaumemorin
         - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
           email: guillaume@gmail.com
           firstname: Guillaume
           id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
           lastname: Morin
-          role: Assumenda sed.
-          username: guillaumemorin
-        - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
-          email: guillaume@gmail.com
-          firstname: Guillaume
-          id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-          lastname: Morin
-          role: Assumenda sed.
-          username: guillaumemorin
-        - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
-          email: guillaume@gmail.com
-          firstname: Guillaume
-          id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-          lastname: Morin
-          role: Assumenda sed.
+          role: Maiores et non dolor facilis et voluptatem.
           username: guillaumemorin
     example:
-      count: 2151920179546742035
+      count: 7602437219320083114
       success: true
       users:
       - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
@@ -3341,21 +3478,28 @@ definitions:
         firstname: Guillaume
         id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
         lastname: Morin
-        role: Assumenda sed.
+        role: Maiores et non dolor facilis et voluptatem.
         username: guillaumemorin
       - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
         email: guillaume@gmail.com
         firstname: Guillaume
         id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
         lastname: Morin
-        role: Assumenda sed.
+        role: Maiores et non dolor facilis et voluptatem.
         username: guillaumemorin
       - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
         email: guillaume@gmail.com
         firstname: Guillaume
         id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
         lastname: Morin
-        role: Assumenda sed.
+        role: Maiores et non dolor facilis et voluptatem.
+        username: guillaumemorin
+      - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
+        email: guillaume@gmail.com
+        firstname: Guillaume
+        id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+        lastname: Morin
+        role: Maiores et non dolor facilis et voluptatem.
         username: guillaumemorin
     required:
     - users
@@ -3379,7 +3523,7 @@ definitions:
     example:
       err: sql no rows affected
       error_code: TX_UPDATE_ITEM
-      success: true
+      success: false
     required:
     - err
     - success
@@ -3401,7 +3545,7 @@ definitions:
     properties:
       success:
         type: boolean
-        example: true
+        example: false
       users:
         type: array
         items:
@@ -3413,38 +3557,38 @@ definitions:
           firstname: Guillaume
           id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
           lastname: Morin
-          role: Assumenda sed.
+          role: Maiores et non dolor facilis et voluptatem.
           username: guillaumemorin
         - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
           email: guillaume@gmail.com
           firstname: Guillaume
           id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
           lastname: Morin
-          role: Assumenda sed.
+          role: Maiores et non dolor facilis et voluptatem.
           username: guillaumemorin
     example:
-      success: true
+      success: false
       users:
       - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
         email: guillaume@gmail.com
         firstname: Guillaume
         id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
         lastname: Morin
-        role: Assumenda sed.
+        role: Maiores et non dolor facilis et voluptatem.
         username: guillaumemorin
       - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
         email: guillaume@gmail.com
         firstname: Guillaume
         id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
         lastname: Morin
-        role: Assumenda sed.
+        role: Maiores et non dolor facilis et voluptatem.
         username: guillaumemorin
       - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
         email: guillaume@gmail.com
         firstname: Guillaume
         id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
         lastname: Morin
-        role: Assumenda sed.
+        role: Maiores et non dolor facilis et voluptatem.
         username: guillaumemorin
     required:
     - users
@@ -3462,12 +3606,12 @@ definitions:
       success:
         type: boolean
         default: false
-        example: false
+        example: true
     description: Error not identified (500)
     example:
       err: sql no rows affected
       error_code: TX_UPDATE_ITEM
-      success: true
+      success: false
     required:
     - err
     - success
@@ -3512,7 +3656,7 @@ definitions:
     properties:
       success:
         type: boolean
-        example: false
+        example: true
       user:
         $ref: '#/definitions/resUserResponseBody'
     example:
@@ -3523,7 +3667,7 @@ definitions:
         firstname: Guillaume
         id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
         lastname: Morin
-        role: Assumenda sed.
+        role: Maiores et non dolor facilis et voluptatem.
         username: guillaumemorin
     required:
     - user
@@ -3558,13 +3702,13 @@ definitions:
       avatar:
         type: string
         description: Url of the avatar and stock in db
-        example: Sed dignissimos ipsam minus.
+        example: Corporis fuga.
       id:
         type: string
         example: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
         format: uuid
     example:
-      avatar: Rem optio asperiores veniam aliquam tempore possimus.
+      avatar: Repellat dicta in rerum occaecati excepturi non.
       id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
     required:
     - id
@@ -3586,7 +3730,7 @@ definitions:
         firstname: Guillaume
         id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
         lastname: Morin
-        role: Assumenda sed.
+        role: Maiores et non dolor facilis et voluptatem.
         username: guillaumemorin
     required:
     - success
@@ -3603,7 +3747,7 @@ definitions:
       success:
         type: boolean
         default: false
-        example: true
+        example: false
     description: Error not identified (500)
     example:
       err: sql no rows affected
@@ -3657,18 +3801,18 @@ definitions:
     properties:
       success:
         type: boolean
-        example: true
+        example: false
       user:
         $ref: '#/definitions/resUserResponseBody'
     example:
-      success: true
+      success: false
       user:
         avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
         email: guillaume@gmail.com
         firstname: Guillaume
         id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
         lastname: Morin
-        role: Assumenda sed.
+        role: Maiores et non dolor facilis et voluptatem.
         username: guillaumemorin
     required:
     - success
@@ -3685,12 +3829,12 @@ definitions:
       success:
         type: boolean
         default: false
-        example: false
+        example: true
     description: Error not identified (500)
     example:
       err: sql no rows affected
       error_code: TX_UPDATE_ITEM
-      success: false
+      success: true
     required:
     - err
     - success
@@ -3716,7 +3860,7 @@ definitions:
       image:
         type: string
         description: Url of the logo and stock in db
-        example: Nam debitis sit eveniet sed et nam.
+        example: Aliquid ipsa debitis autem praesentium distinctio veritatis.
       title:
         type: string
         example: Air max360 d'il y a 10 millions d'années
@@ -3727,15 +3871,14 @@ definitions:
         example: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
         format: uuid
     example:
-      category: animals
+      category: robotics
       description: Unique Air max restant au monde
-      image: Et iusto ab.
+      image: Non ex enim totam nisi eligendi aut.
       title: Air max360 d'il y a 10 millions d'années
       user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
     required:
     - title
     - description
-    - image
     - category
     - user_id
   payloadUserRequestBody:
@@ -3745,7 +3888,7 @@ definitions:
       avatar:
         type: string
         description: Url of the avatar and stock in db
-        example: Perferendis veniam cupiditate et ipsum vitae et.
+        example: Quasi harum aut provident cumque iusto laborum.
       email:
         type: string
         example: guillaume@gmail.com
@@ -3775,11 +3918,11 @@ definitions:
         minLength: 2
         maxLength: 20
     example:
-      avatar: Distinctio nihil modi.
+      avatar: Quos consectetur.
       email: guillaume@gmail.com
       firstname: Guillaume
       lastname: Morin
-      role: admin
+      role: user
       username: guillaumemoriin
     required:
     - email
@@ -3821,7 +3964,7 @@ definitions:
       category:
         type: string
         default: robotics
-        example: space
+        example: animals
         enum:
         - robotics
         - space
@@ -3839,7 +3982,7 @@ definitions:
       image:
         type: string
         description: Url of the logo and stock in db
-        example: Sequi rerum suscipit asperiores debitis.
+        example: Repellendus est labore.
       title:
         type: string
         example: Air max360 d'il y a 10 millions d'années
@@ -3850,10 +3993,10 @@ definitions:
         example: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
         format: uuid
     example:
-      category: brain
+      category: robotics
       description: Unique Air max restant au monde
       id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-      image: Perspiciatis molestiae.
+      image: Deserunt aut.
       title: Air max360 d'il y a 10 millions d'années
       user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
     required:
@@ -3873,23 +4016,23 @@ definitions:
         format: uuid
       mime:
         type: string
-        example: Rerum rerum rem enim doloremque.
+        example: Quia voluptatem ut quibusdam.
       name:
         type: string
         example: foo.png
       size:
         type: integer
-        example: 2635332059495989597
+        example: 9196837289073531221
         format: int64
       url:
         type: string
-        example: Et nostrum saepe et ex impedit.
+        example: Est distinctio quia quia iusto molestiae libero.
     example:
       id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-      mime: Distinctio veritatis.
+      mime: Laboriosam quae.
       name: foo.png
-      size: 1401039021449927644
-      url: Est maxime aliquid ipsa debitis autem.
+      size: 5896563731975487121
+      url: Sit laboriosam ea porro in at ducimus.
     required:
     - id
     - name
@@ -3916,7 +4059,7 @@ definitions:
       role:
         type: string
         description: User is admin or not
-        example: Necessitatibus quos.
+        example: Veniam cupiditate et ipsum vitae.
       username:
         type: string
         example: guillaumemorin
@@ -3926,7 +4069,7 @@ definitions:
       firstname: Guillaume
       id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
       lastname: Morin
-      role: Autem qui.
+      role: Esse et distinctio nihil modi voluptatibus voluptas.
       username: guillaumemorin
     required:
     - id

@@ -16,6 +16,8 @@ import (
 
 // futristics data of the api
 type Service interface {
+	// List data for search bar
+	ListData(context.Context, *ListDataPayload) (res *ListDataResult, err error)
 	// List data the most recent
 	ListDataMostRecent(context.Context, *ListDataMostRecentPayload) (res *ListDataMostRecentResult, err error)
 	// Create one data
@@ -44,7 +46,7 @@ const ServiceName = "data"
 // MethodNames lists the service method names as defined in the design. These
 // are the same values that are set in the endpoint request contexts under the
 // MethodKey key.
-var MethodNames = [5]string{"listDataMostRecent", "createData", "updateData", "getDataByUserID", "getDataByID"}
+var MethodNames = [6]string{"listData", "listDataMostRecent", "createData", "updateData", "getDataByUserID", "getDataByID"}
 
 // CreateDataPayload is the payload type of the data service createData method.
 type CreateDataPayload struct {
@@ -122,11 +124,27 @@ type ListDataMostRecentResult struct {
 	Count int64
 }
 
+// ListDataPayload is the payload type of the data service listData method.
+type ListDataPayload struct {
+	Key string
+	// JWT used for authentication after Signin/Signup
+	JWTToken *string
+	// Use to generate Oauth with /authorization
+	Oauth *string
+}
+
+// ListDataResult is the result type of the data service listData method.
+type ListDataResult struct {
+	// Result is an an array of user
+	Data    []*ResData
+	Success bool
+}
+
 type PayloadData struct {
 	Title       string
 	Description string
 	// Url of the logo and stock in db
-	Image    string
+	Image    *string
 	Category string
 	UserID   string
 }

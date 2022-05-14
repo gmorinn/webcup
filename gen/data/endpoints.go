@@ -16,6 +16,7 @@ import (
 
 // Endpoints wraps the "data" service endpoints.
 type Endpoints struct {
+	ListData           goa.Endpoint
 	ListDataMostRecent goa.Endpoint
 	CreateData         goa.Endpoint
 	UpdateData         goa.Endpoint
@@ -28,6 +29,7 @@ func NewEndpoints(s Service) *Endpoints {
 	// Casting service to Auther interface
 	a := s.(Auther)
 	return &Endpoints{
+		ListData:           NewListDataEndpoint(s, a.OAuth2Auth, a.JWTAuth),
 		ListDataMostRecent: NewListDataMostRecentEndpoint(s, a.OAuth2Auth, a.JWTAuth),
 		CreateData:         NewCreateDataEndpoint(s, a.OAuth2Auth, a.JWTAuth),
 		UpdateData:         NewUpdateDataEndpoint(s, a.OAuth2Auth, a.JWTAuth),
@@ -38,11 +40,54 @@ func NewEndpoints(s Service) *Endpoints {
 
 // Use applies the given middleware to all the "data" service endpoints.
 func (e *Endpoints) Use(m func(goa.Endpoint) goa.Endpoint) {
+	e.ListData = m(e.ListData)
 	e.ListDataMostRecent = m(e.ListDataMostRecent)
 	e.CreateData = m(e.CreateData)
 	e.UpdateData = m(e.UpdateData)
 	e.GetDataByUserID = m(e.GetDataByUserID)
 	e.GetDataByID = m(e.GetDataByID)
+}
+
+// NewListDataEndpoint returns an endpoint function that calls the method
+// "listData" of service "data".
+func NewListDataEndpoint(s Service, authOAuth2Fn security.AuthOAuth2Func, authJWTFn security.AuthJWTFunc) goa.Endpoint {
+	return func(ctx context.Context, req interface{}) (interface{}, error) {
+		p := req.(*ListDataPayload)
+		var err error
+		sc := security.OAuth2Scheme{
+			Name:           "OAuth2",
+			Scopes:         []string{"api:read"},
+			RequiredScopes: []string{},
+			Flows: []*security.OAuthFlow{
+				&security.OAuthFlow{
+					Type:       "client_credentials",
+					TokenURL:   "/authorization",
+					RefreshURL: "/refresh",
+				},
+			},
+		}
+		var token string
+		if p.Oauth != nil {
+			token = *p.Oauth
+		}
+		ctx, err = authOAuth2Fn(ctx, token, &sc)
+		if err == nil {
+			sc := security.JWTScheme{
+				Name:           "jwt",
+				Scopes:         []string{"api:read", "api:write"},
+				RequiredScopes: []string{},
+			}
+			var token string
+			if p.JWTToken != nil {
+				token = *p.JWTToken
+			}
+			ctx, err = authJWTFn(ctx, token, &sc)
+		}
+		if err != nil {
+			return nil, err
+		}
+		return s.ListData(ctx, p)
+	}
 }
 
 // NewListDataMostRecentEndpoint returns an endpoint function that calls the

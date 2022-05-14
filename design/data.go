@@ -25,6 +25,32 @@ var _ = Service("data", func() {
 		Response("unknown_error", StatusInternalServerError)
 	})
 
+	Method("listData", func() {
+		Description("List data for search bar")
+		Payload(func() {
+			Attribute("key", String, func() {
+				Example("Mars")
+			})
+			TokenField(1, "jwtToken", String, func() {
+				Description("JWT used for authentication after Signin/Signup")
+			})
+			AccessTokenField(2, "oauth", String, func() {
+				Description("Use to generate Oauth with /authorization")
+			})
+			Required("key")
+		})
+
+		HTTP(func() {
+			PATCH("/search")
+			Response(StatusOK)
+		})
+		Result(func() {
+			Attribute("data", ArrayOf(resData), "Result is an an array of user")
+			Attribute("success", Boolean)
+			Required("data", "success")
+		})
+	})
+
 	Method("listDataMostRecent", func() {
 		Description("List data the most recent")
 		Payload(func() {
@@ -217,5 +243,5 @@ var payloadData = Type("payloadData", func() {
 		Format(FormatUUID)
 		Example("5dfb0bf7-597a-4250-b7ad-63a43ff59c25")
 	})
-	Required("title", "description", "image", "category", "user_id")
+	Required("title", "description", "category", "user_id")
 })

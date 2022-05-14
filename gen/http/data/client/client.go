@@ -17,6 +17,10 @@ import (
 
 // Client lists the data service endpoint HTTP clients.
 type Client struct {
+	// ListData Doer is the HTTP client used to make requests to the listData
+	// endpoint.
+	ListDataDoer goahttp.Doer
+
 	// ListDataMostRecent Doer is the HTTP client used to make requests to the
 	// listDataMostRecent endpoint.
 	ListDataMostRecentDoer goahttp.Doer
@@ -60,6 +64,7 @@ func NewClient(
 	restoreBody bool,
 ) *Client {
 	return &Client{
+		ListDataDoer:           doer,
 		ListDataMostRecentDoer: doer,
 		CreateDataDoer:         doer,
 		UpdateDataDoer:         doer,
@@ -71,6 +76,30 @@ func NewClient(
 		host:                   host,
 		decoder:                dec,
 		encoder:                enc,
+	}
+}
+
+// ListData returns an endpoint that makes HTTP requests to the data service
+// listData server.
+func (c *Client) ListData() goa.Endpoint {
+	var (
+		encodeRequest  = EncodeListDataRequest(c.encoder)
+		decodeResponse = DecodeListDataResponse(c.decoder, c.RestoreResponseBody)
+	)
+	return func(ctx context.Context, v interface{}) (interface{}, error) {
+		req, err := c.BuildListDataRequest(ctx, v)
+		if err != nil {
+			return nil, err
+		}
+		err = encodeRequest(req, v)
+		if err != nil {
+			return nil, err
+		}
+		resp, err := c.ListDataDoer.Do(req)
+		if err != nil {
+			return nil, goahttp.ErrRequestError("data", "listData", err)
+		}
+		return decodeResponse(resp)
 	}
 }
 

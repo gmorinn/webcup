@@ -32,3 +32,9 @@ LIMIT $1 OFFSET $2;
 -- name: CountData :one
 SELECT COUNT(*) FROM data
 WHERE deleted_at IS NULL;
+
+-- name: ListData :many
+SELECT * FROM data
+WHERE deleted_at IS NULL
+AND (title ILIKE $1 OR description ILIKE $1)
+LIMIT 5;

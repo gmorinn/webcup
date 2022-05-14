@@ -21,6 +21,7 @@ import (
 // Server lists the data service endpoint HTTP handlers.
 type Server struct {
 	Mounts             []*MountPoint
+	ListData           http.Handler
 	ListDataMostRecent http.Handler
 	CreateData         http.Handler
 	UpdateData         http.Handler
@@ -62,16 +63,19 @@ func New(
 ) *Server {
 	return &Server{
 		Mounts: []*MountPoint{
+			{"ListData", "PATCH", "/web/data/search"},
 			{"ListDataMostRecent", "GET", "/web/data/recents/{offset}/{limit}"},
 			{"CreateData", "POST", "/web/data/add"},
 			{"UpdateData", "PUT", "/web/data/{id}"},
 			{"GetDataByUserID", "GET", "/web/data/user/{user_id}"},
 			{"GetDataByID", "GET", "/web/data/{id}"},
+			{"CORS", "OPTIONS", "/web/data/search"},
 			{"CORS", "OPTIONS", "/web/data/recents/{offset}/{limit}"},
 			{"CORS", "OPTIONS", "/web/data/add"},
 			{"CORS", "OPTIONS", "/web/data/{id}"},
 			{"CORS", "OPTIONS", "/web/data/user/{user_id}"},
 		},
+		ListData:           NewListDataHandler(e.ListData, mux, decoder, encoder, errhandler, formatter),
 		ListDataMostRecent: NewListDataMostRecentHandler(e.ListDataMostRecent, mux, decoder, encoder, errhandler, formatter),
 		CreateData:         NewCreateDataHandler(e.CreateData, mux, decoder, encoder, errhandler, formatter),
 		UpdateData:         NewUpdateDataHandler(e.UpdateData, mux, decoder, encoder, errhandler, formatter),
@@ -86,6 +90,7 @@ func (s *Server) Service() string { return "data" }
 
 // Use wraps the server handlers with the given middleware.
 func (s *Server) Use(m func(http.Handler) http.Handler) {
+	s.ListData = m(s.ListData)
 	s.ListDataMostRecent = m(s.ListDataMostRecent)
 	s.CreateData = m(s.CreateData)
 	s.UpdateData = m(s.UpdateData)
@@ -96,6 +101,7 @@ func (s *Server) Use(m func(http.Handler) http.Handler) {
 
 // Mount configures the mux to serve the data endpoints.
 func Mount(mux goahttp.Muxer, h *Server) {
+	MountListDataHandler(mux, h.ListData)
 	MountListDataMostRecentHandler(mux, h.ListDataMostRecent)
 	MountCreateDataHandler(mux, h.CreateData)
 	MountUpdateDataHandler(mux, h.UpdateData)
@@ -107,6 +113,57 @@ func Mount(mux goahttp.Muxer, h *Server) {
 // Mount configures the mux to serve the data endpoints.
 func (s *Server) Mount(mux goahttp.Muxer) {
 	Mount(mux, s)
+}
+
+// MountListDataHandler configures the mux to serve the "data" service
+// "listData" endpoint.
+func MountListDataHandler(mux goahttp.Muxer, h http.Handler) {
+	f, ok := HandleDataOrigin(h).(http.HandlerFunc)
+	if !ok {
+		f = func(w http.ResponseWriter, r *http.Request) {
+			h.ServeHTTP(w, r)
+		}
+	}
+	mux.Handle("PATCH", "/web/data/search", f)
+}
+
+// NewListDataHandler creates a HTTP handler which loads the HTTP request and
+// calls the "data" service "listData" endpoint.
+func NewListDataHandler(
+	endpoint goa.Endpoint,
+	mux goahttp.Muxer,
+	decoder func(*http.Request) goahttp.Decoder,
+	encoder func(context.Context, http.ResponseWriter) goahttp.Encoder,
+	errhandler func(context.Context, http.ResponseWriter, error),
+	formatter func(err error) goahttp.Statuser,
+) http.Handler {
+	var (
+		decodeRequest  = DecodeListDataRequest(mux, decoder)
+		encodeResponse = EncodeListDataResponse(encoder)
+		encodeError    = EncodeListDataError(encoder, formatter)
+	)
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
+		ctx = context.WithValue(ctx, goa.MethodKey, "listData")
+		ctx = context.WithValue(ctx, goa.ServiceKey, "data")
+		payload, err := decodeRequest(r)
+		if err != nil {
+			if err := encodeError(ctx, w, err); err != nil {
+				errhandler(ctx, w, err)
+			}
+			return
+		}
+		res, err := endpoint(ctx, payload)
+		if err != nil {
+			if err := encodeError(ctx, w, err); err != nil {
+				errhandler(ctx, w, err)
+			}
+			return
+		}
+		if err := encodeResponse(ctx, w, res); err != nil {
+			errhandler(ctx, w, err)
+		}
+	})
 }
 
 // MountListDataMostRecentHandler configures the mux to serve the "data"
@@ -368,6 +425,7 @@ func NewGetDataByIDHandler(
 // service data.
 func MountCORSHandler(mux goahttp.Muxer, h http.Handler) {
 	h = HandleDataOrigin(h)
+	mux.Handle("OPTIONS", "/web/data/search", h.ServeHTTP)
 	mux.Handle("OPTIONS", "/web/data/recents/{offset}/{limit}", h.ServeHTTP)
 	mux.Handle("OPTIONS", "/web/data/add", h.ServeHTTP)
 	mux.Handle("OPTIONS", "/web/data/{id}", h.ServeHTTP)

@@ -20,6 +20,99 @@ import (
 	goa "goa.design/goa/v3/pkg"
 )
 
+// EncodeListDataResponse returns an encoder for responses returned by the data
+// listData endpoint.
+func EncodeListDataResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
+	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
+		res, _ := v.(*data.ListDataResult)
+		enc := encoder(ctx, w)
+		body := NewListDataResponseBody(res)
+		w.WriteHeader(http.StatusOK)
+		return enc.Encode(body)
+	}
+}
+
+// DecodeListDataRequest returns a decoder for requests sent to the data
+// listData endpoint.
+func DecodeListDataRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
+	return func(r *http.Request) (interface{}, error) {
+		var (
+			body ListDataRequestBody
+			err  error
+		)
+		err = decoder(r).Decode(&body)
+		if err != nil {
+			if err == io.EOF {
+				return nil, goa.MissingPayloadError()
+			}
+			return nil, goa.DecodePayloadError(err.Error())
+		}
+		err = ValidateListDataRequestBody(&body)
+		if err != nil {
+			return nil, err
+		}
+
+		var (
+			oauth    *string
+			jwtToken *string
+		)
+		oauthRaw := r.Header.Get("Authorization")
+		if oauthRaw != "" {
+			oauth = &oauthRaw
+		}
+		jwtTokenRaw := r.Header.Get("jwtToken")
+		if jwtTokenRaw != "" {
+			jwtToken = &jwtTokenRaw
+		}
+		payload := NewListDataPayload(&body, oauth, jwtToken)
+		if payload.Oauth != nil {
+			if strings.Contains(*payload.Oauth, " ") {
+				// Remove authorization scheme prefix (e.g. "Bearer")
+				cred := strings.SplitN(*payload.Oauth, " ", 2)[1]
+				payload.Oauth = &cred
+			}
+		}
+		if payload.JWTToken != nil {
+			if strings.Contains(*payload.JWTToken, " ") {
+				// Remove authorization scheme prefix (e.g. "Bearer")
+				cred := strings.SplitN(*payload.JWTToken, " ", 2)[1]
+				payload.JWTToken = &cred
+			}
+		}
+
+		return payload, nil
+	}
+}
+
+// EncodeListDataError returns an encoder for errors returned by the listData
+// data endpoint.
+func EncodeListDataError(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder, formatter func(err error) goahttp.Statuser) func(context.Context, http.ResponseWriter, error) error {
+	encodeError := goahttp.ErrorEncoder(encoder, formatter)
+	return func(ctx context.Context, w http.ResponseWriter, v error) error {
+		var en ErrorNamer
+		if !errors.As(v, &en) {
+			return encodeError(ctx, w, v)
+		}
+		switch en.ErrorName() {
+		case "unknown_error":
+			var res *data.UnknownError
+			errors.As(v, &res)
+			enc := encoder(ctx, w)
+			var body interface{}
+			if formatter != nil {
+				body = formatter(res)
+			} else {
+				body = NewListDataUnknownErrorResponseBody(res)
+			}
+			w.Header().Set("goa-error", res.ErrorName())
+			w.WriteHeader(http.StatusInternalServerError)
+			return enc.Encode(body)
+		default:
+			return encodeError(ctx, w, v)
+		}
+	}
+}
+
 // EncodeListDataMostRecentResponse returns an encoder for responses returned
 // by the data listDataMostRecent endpoint.
 func EncodeListDataMostRecentResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
@@ -517,7 +610,7 @@ func unmarshalPayloadDataRequestBodyToDataPayloadData(v *PayloadDataRequestBody)
 	res := &data.PayloadData{
 		Title:       *v.Title,
 		Description: *v.Description,
-		Image:       *v.Image,
+		Image:       v.Image,
 		Category:    *v.Category,
 		UserID:      *v.UserID,
 	}

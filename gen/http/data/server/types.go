@@ -14,6 +14,12 @@ import (
 	goa "goa.design/goa/v3/pkg"
 )
 
+// ListDataRequestBody is the type of the "data" service "listData" endpoint
+// HTTP request body.
+type ListDataRequestBody struct {
+	Key *string `form:"key,omitempty" json:"key,omitempty" xml:"key,omitempty"`
+}
+
 // CreateDataRequestBody is the type of the "data" service "createData"
 // endpoint HTTP request body.
 type CreateDataRequestBody struct {
@@ -24,6 +30,14 @@ type CreateDataRequestBody struct {
 // endpoint HTTP request body.
 type UpdateDataRequestBody struct {
 	Data *PayloadDataRequestBody `form:"data,omitempty" json:"data,omitempty" xml:"data,omitempty"`
+}
+
+// ListDataResponseBody is the type of the "data" service "listData" endpoint
+// HTTP response body.
+type ListDataResponseBody struct {
+	// Result is an an array of user
+	Data    []*ResDataResponseBody `form:"data" json:"data" xml:"data"`
+	Success bool                   `form:"success" json:"success" xml:"success"`
 }
 
 // ListDataMostRecentResponseBody is the type of the "data" service
@@ -66,6 +80,14 @@ type GetDataByIDResponseBody struct {
 	// Result is an object
 	Data    *ResDataResponseBody `form:"data" json:"data" xml:"data"`
 	Success bool                 `form:"success" json:"success" xml:"success"`
+}
+
+// ListDataUnknownErrorResponseBody is the type of the "data" service
+// "listData" endpoint HTTP response body for the "unknown_error" error.
+type ListDataUnknownErrorResponseBody struct {
+	Err       string `form:"err" json:"err" xml:"err"`
+	ErrorCode string `form:"error_code" json:"error_code" xml:"error_code"`
+	Success   bool   `form:"success" json:"success" xml:"success"`
 }
 
 // ListDataMostRecentUnknownErrorResponseBody is the type of the "data" service
@@ -128,6 +150,21 @@ type PayloadDataRequestBody struct {
 	Image    *string `form:"image,omitempty" json:"image,omitempty" xml:"image,omitempty"`
 	Category *string `form:"category,omitempty" json:"category,omitempty" xml:"category,omitempty"`
 	UserID   *string `form:"user_id,omitempty" json:"user_id,omitempty" xml:"user_id,omitempty"`
+}
+
+// NewListDataResponseBody builds the HTTP response body from the result of the
+// "listData" endpoint of the "data" service.
+func NewListDataResponseBody(res *data.ListDataResult) *ListDataResponseBody {
+	body := &ListDataResponseBody{
+		Success: res.Success,
+	}
+	if res.Data != nil {
+		body.Data = make([]*ResDataResponseBody, len(res.Data))
+		for i, val := range res.Data {
+			body.Data[i] = marshalDataResDataToResDataResponseBody(val)
+		}
+	}
+	return body
 }
 
 // NewListDataMostRecentResponseBody builds the HTTP response body from the
@@ -197,6 +234,17 @@ func NewGetDataByIDResponseBody(res *data.GetDataByIDResult) *GetDataByIDRespons
 	return body
 }
 
+// NewListDataUnknownErrorResponseBody builds the HTTP response body from the
+// result of the "listData" endpoint of the "data" service.
+func NewListDataUnknownErrorResponseBody(res *data.UnknownError) *ListDataUnknownErrorResponseBody {
+	body := &ListDataUnknownErrorResponseBody{
+		Err:       res.Err,
+		ErrorCode: res.ErrorCode,
+		Success:   res.Success,
+	}
+	return body
+}
+
 // NewListDataMostRecentUnknownErrorResponseBody builds the HTTP response body
 // from the result of the "listDataMostRecent" endpoint of the "data" service.
 func NewListDataMostRecentUnknownErrorResponseBody(res *data.UnknownError) *ListDataMostRecentUnknownErrorResponseBody {
@@ -250,6 +298,17 @@ func NewGetDataByIDUnknownErrorResponseBody(res *data.UnknownError) *GetDataByID
 		Success:   res.Success,
 	}
 	return body
+}
+
+// NewListDataPayload builds a data service listData endpoint payload.
+func NewListDataPayload(body *ListDataRequestBody, oauth *string, jwtToken *string) *data.ListDataPayload {
+	v := &data.ListDataPayload{
+		Key: *body.Key,
+	}
+	v.Oauth = oauth
+	v.JWTToken = jwtToken
+
+	return v
 }
 
 // NewListDataMostRecentPayload builds a data service listDataMostRecent
@@ -306,6 +365,15 @@ func NewGetDataByIDPayload(id string, oauth *string, jwtToken *string) *data.Get
 	return v
 }
 
+// ValidateListDataRequestBody runs the validations defined on
+// ListDataRequestBody
+func ValidateListDataRequestBody(body *ListDataRequestBody) (err error) {
+	if body.Key == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("key", "body"))
+	}
+	return
+}
+
 // ValidateCreateDataRequestBody runs the validations defined on
 // CreateDataRequestBody
 func ValidateCreateDataRequestBody(body *CreateDataRequestBody) (err error) {
@@ -342,9 +410,6 @@ func ValidatePayloadDataRequestBody(body *PayloadDataRequestBody) (err error) {
 	}
 	if body.Description == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("description", "body"))
-	}
-	if body.Image == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("image", "body"))
 	}
 	if body.Category == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("category", "body"))

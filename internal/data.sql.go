@@ -122,6 +122,46 @@ func (q *Queries) GetDataByUserID(ctx context.Context, userID uuid.UUID) ([]Datu
 	return items, nil
 }
 
+const listData = `-- name: ListData :many
+SELECT id, created_at, updated_at, deleted_at, title, description, user_id, img, category FROM data
+WHERE deleted_at IS NULL
+AND (title ILIKE $1 OR description ILIKE $1)
+LIMIT 5
+`
+
+func (q *Queries) ListData(ctx context.Context, title string) ([]Datum, error) {
+	rows, err := q.db.QueryContext(ctx, listData, title)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []Datum{}
+	for rows.Next() {
+		var i Datum
+		if err := rows.Scan(
+			&i.ID,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.DeletedAt,
+			&i.Title,
+			&i.Description,
+			&i.UserID,
+			&i.Img,
+			&i.Category,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const listDataMostRecent = `-- name: ListDataMostRecent :many
 SELECT id, created_at, updated_at, deleted_at, title, description, user_id, img, category FROM data
 WHERE deleted_at IS NULL

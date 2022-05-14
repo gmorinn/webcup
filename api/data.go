@@ -43,6 +43,38 @@ func (s *datasrvc) JWTAuth(ctx context.Context, token string, scheme *security.J
 	return s.server.CheckJWT(ctx, token, scheme)
 }
 
+func (s *datasrvc) ListData(ctx context.Context, p *data.ListDataPayload) (res *data.ListDataResult, err error) {
+	if p == nil {
+		return nil, ErrNullPayload
+	}
+	err = s.server.Store.ExecTx(ctx, func(q *db.Queries) error {
+		var result []*data.ResData
+		datas, err := q.ListData(ctx, "%"+p.Key+"%")
+		if err != nil {
+			return fmt.Errorf("error list datas by key: %v", err)
+		}
+		for _, v := range datas {
+			result = append(result, &data.ResData{
+				ID:          v.ID.String(),
+				Title:       v.Title,
+				Description: v.Description,
+				Image:       v.Img.String,
+				Category:    string(v.Category),
+				UserID:      v.UserID.String(),
+			})
+		}
+		res = &data.ListDataResult{
+			Success: true,
+			Data:    result,
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, s.errorResponse("TX_LIST_DATA", err)
+	}
+	return res, nil
+}
+
 // List data the most recent
 func (s *datasrvc) ListDataMostRecent(ctx context.Context, p *data.ListDataMostRecentPayload) (res *data.ListDataMostRecentResult, err error) {
 	err = s.server.Store.ExecTx(ctx, func(q *db.Queries) error {
@@ -88,7 +120,7 @@ func (s *datasrvc) CreateData(ctx context.Context, p *data.CreateDataPayload) (r
 		arg := db.CreateDataParams{
 			Title:       p.Data.Title,
 			Description: p.Data.Description,
-			Img:         utils.NullS(p.Data.Image),
+			Img:         utils.NullS(*p.Data.Image),
 			Category:    db.Futur(p.Data.Category),
 			UserID:      uuid.MustParse(p.Data.UserID),
 		}
@@ -125,7 +157,7 @@ func (s *datasrvc) UpdateData(ctx context.Context, p *data.UpdateDataPayload) (r
 			ID:          uuid.MustParse(p.ID),
 			Title:       p.Data.Title,
 			Description: p.Data.Description,
-			Img:         utils.NullS(p.Data.Image),
+			Img:         utils.NullS(*p.Data.Image),
 			Category:    db.Futur(p.Data.Category),
 		}
 		if err := q.UpdateData(ctx, arg); err != nil {

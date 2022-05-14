@@ -19,6 +19,106 @@ import (
 	goahttp "goa.design/goa/v3/http"
 )
 
+// BuildListDataRequest instantiates a HTTP request object with method and path
+// set to call the "data" service "listData" endpoint
+func (c *Client) BuildListDataRequest(ctx context.Context, v interface{}) (*http.Request, error) {
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: ListDataDataPath()}
+	req, err := http.NewRequest("PATCH", u.String(), nil)
+	if err != nil {
+		return nil, goahttp.ErrInvalidURL("data", "listData", u.String(), err)
+	}
+	if ctx != nil {
+		req = req.WithContext(ctx)
+	}
+
+	return req, nil
+}
+
+// EncodeListDataRequest returns an encoder for requests sent to the data
+// listData server.
+func EncodeListDataRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.Request, interface{}) error {
+	return func(req *http.Request, v interface{}) error {
+		p, ok := v.(*data.ListDataPayload)
+		if !ok {
+			return goahttp.ErrInvalidType("data", "listData", "*data.ListDataPayload", v)
+		}
+		if p.Oauth != nil {
+			head := *p.Oauth
+			if !strings.Contains(head, " ") {
+				req.Header.Set("Authorization", "Bearer "+head)
+			} else {
+				req.Header.Set("Authorization", head)
+			}
+		}
+		if p.JWTToken != nil {
+			head := *p.JWTToken
+			req.Header.Set("jwtToken", head)
+		}
+		body := NewListDataRequestBody(p)
+		if err := encoder(req).Encode(&body); err != nil {
+			return goahttp.ErrEncodingError("data", "listData", err)
+		}
+		return nil
+	}
+}
+
+// DecodeListDataResponse returns a decoder for responses returned by the data
+// listData endpoint. restoreBody controls whether the response body should be
+// restored after having been read.
+// DecodeListDataResponse may return the following errors:
+//	- "unknown_error" (type *data.UnknownError): http.StatusInternalServerError
+//	- error: internal error
+func DecodeListDataResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
+	return func(resp *http.Response) (interface{}, error) {
+		if restoreBody {
+			b, err := ioutil.ReadAll(resp.Body)
+			if err != nil {
+				return nil, err
+			}
+			resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			defer func() {
+				resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			}()
+		} else {
+			defer resp.Body.Close()
+		}
+		switch resp.StatusCode {
+		case http.StatusOK:
+			var (
+				body ListDataResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("data", "listData", err)
+			}
+			err = ValidateListDataResponseBody(&body)
+			if err != nil {
+				return nil, goahttp.ErrValidationError("data", "listData", err)
+			}
+			res := NewListDataResultOK(&body)
+			return res, nil
+		case http.StatusInternalServerError:
+			var (
+				body ListDataUnknownErrorResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("data", "listData", err)
+			}
+			err = ValidateListDataUnknownErrorResponseBody(&body)
+			if err != nil {
+				return nil, goahttp.ErrValidationError("data", "listData", err)
+			}
+			return nil, NewListDataUnknownError(&body)
+		default:
+			body, _ := ioutil.ReadAll(resp.Body)
+			return nil, goahttp.ErrInvalidResponse("data", "listData", resp.StatusCode, string(body))
+		}
+	}
+}
+
 // BuildListDataMostRecentRequest instantiates a HTTP request object with
 // method and path set to call the "data" service "listDataMostRecent" endpoint
 func (c *Client) BuildListDataMostRecentRequest(ctx context.Context, v interface{}) (*http.Request, error) {

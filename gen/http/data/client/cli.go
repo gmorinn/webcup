@@ -16,6 +16,38 @@ import (
 	goa "goa.design/goa/v3/pkg"
 )
 
+// BuildListDataPayload builds the payload for the data listData endpoint from
+// CLI flags.
+func BuildListDataPayload(dataListDataBody string, dataListDataOauth string, dataListDataJWTToken string) (*data.ListDataPayload, error) {
+	var err error
+	var body ListDataRequestBody
+	{
+		err = json.Unmarshal([]byte(dataListDataBody), &body)
+		if err != nil {
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"key\": \"Mars\"\n   }'")
+		}
+	}
+	var oauth *string
+	{
+		if dataListDataOauth != "" {
+			oauth = &dataListDataOauth
+		}
+	}
+	var jwtToken *string
+	{
+		if dataListDataJWTToken != "" {
+			jwtToken = &dataListDataJWTToken
+		}
+	}
+	v := &data.ListDataPayload{
+		Key: body.Key,
+	}
+	v.Oauth = oauth
+	v.JWTToken = jwtToken
+
+	return v, nil
+}
+
 // BuildListDataMostRecentPayload builds the payload for the data
 // listDataMostRecent endpoint from CLI flags.
 func BuildListDataMostRecentPayload(dataListDataMostRecentOffset string, dataListDataMostRecentLimit string, dataListDataMostRecentOauth string, dataListDataMostRecentJWTToken string) (*data.ListDataMostRecentPayload, error) {
@@ -79,7 +111,7 @@ func BuildCreateDataPayload(dataCreateDataBody string, dataCreateDataOauth strin
 	{
 		err = json.Unmarshal([]byte(dataCreateDataBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"data\": {\n         \"category\": \"space\",\n         \"description\": \"Unique Air max restant au monde\",\n         \"image\": \"Id rerum fuga.\",\n         \"title\": \"Air max360 d\\'il y a 10 millions d\\'années\",\n         \"user_id\": \"5dfb0bf7-597a-4250-b7ad-63a43ff59c25\"\n      }\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"data\": {\n         \"category\": \"animals\",\n         \"description\": \"Unique Air max restant au monde\",\n         \"image\": \"Saepe omnis.\",\n         \"title\": \"Air max360 d\\'il y a 10 millions d\\'années\",\n         \"user_id\": \"5dfb0bf7-597a-4250-b7ad-63a43ff59c25\"\n      }\n   }'")
 		}
 		if body.Data == nil {
 			err = goa.MergeErrors(err, goa.MissingFieldError("data", "body"))
@@ -123,7 +155,7 @@ func BuildUpdateDataPayload(dataUpdateDataBody string, dataUpdateDataID string, 
 	{
 		err = json.Unmarshal([]byte(dataUpdateDataBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"data\": {\n         \"category\": \"space\",\n         \"description\": \"Unique Air max restant au monde\",\n         \"image\": \"Id rerum fuga.\",\n         \"title\": \"Air max360 d\\'il y a 10 millions d\\'années\",\n         \"user_id\": \"5dfb0bf7-597a-4250-b7ad-63a43ff59c25\"\n      }\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"data\": {\n         \"category\": \"animals\",\n         \"description\": \"Unique Air max restant au monde\",\n         \"image\": \"Saepe omnis.\",\n         \"title\": \"Air max360 d\\'il y a 10 millions d\\'années\",\n         \"user_id\": \"5dfb0bf7-597a-4250-b7ad-63a43ff59c25\"\n      }\n   }'")
 		}
 		if body.Data == nil {
 			err = goa.MergeErrors(err, goa.MissingFieldError("data", "body"))

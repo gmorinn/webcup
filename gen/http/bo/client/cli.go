@@ -120,7 +120,7 @@ func BuildDeleteBoManyUsersPayload(boDeleteBoManyUsersBody string, boDeleteBoMan
 	{
 		err = json.Unmarshal([]byte(boDeleteBoManyUsersBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"tab\": [\n         \"Molestiae quos quo est nihil sapiente.\",\n         \"Suscipit ut aliquid.\"\n      ]\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"tab\": [\n         \"Nemo eos soluta sed.\",\n         \"Necessitatibus sint.\",\n         \"Est sed molestiae et et quidem quae.\",\n         \"Est quis sapiente consequuntur aut est alias.\"\n      ]\n   }'")
 		}
 		if body.Tab == nil {
 			err = goa.MergeErrors(err, goa.MissingFieldError("tab", "body"))
@@ -162,7 +162,7 @@ func BuildUpdateBoUserPayload(boUpdateBoUserBody string, boUpdateBoUserID string
 	{
 		err = json.Unmarshal([]byte(boUpdateBoUserBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"user\": {\n         \"avatar\": \"Voluptatem nemo eos soluta.\",\n         \"email\": \"guillaume@gmail.com\",\n         \"firstname\": \"Guillaume\",\n         \"lastname\": \"Morin\",\n         \"role\": \"pro\",\n         \"username\": \"guillaumemoriin\"\n      }\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"user\": {\n         \"avatar\": \"Architecto dolorem autem.\",\n         \"email\": \"guillaume@gmail.com\",\n         \"firstname\": \"Guillaume\",\n         \"lastname\": \"Morin\",\n         \"role\": \"admin\",\n         \"username\": \"guillaumemoriin\"\n      }\n   }'")
 		}
 		if body.User == nil {
 			err = goa.MergeErrors(err, goa.MissingFieldError("user", "body"))
