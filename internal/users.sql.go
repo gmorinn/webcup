@@ -50,8 +50,22 @@ func (q *Queries) GetEmailByUserID(ctx context.Context, id uuid.UUID) (string, e
 	return email, err
 }
 
+const getStockByUserID = `-- name: GetStockByUserID :one
+SELECT stock FROM users
+WHERE id = $1
+AND deleted_at IS NULL
+LIMIT 1
+`
+
+func (q *Queries) GetStockByUserID(ctx context.Context, id uuid.UUID) (int64, error) {
+	row := q.db.QueryRowContext(ctx, getStockByUserID, id)
+	var stock int64
+	err := row.Scan(&stock)
+	return stock, err
+}
+
 const getUserByID = `-- name: GetUserByID :one
-SELECT id, created_at, updated_at, deleted_at, email, password, firstname, lastname, username, password_confirm_code, role, avatar FROM users
+SELECT id, created_at, updated_at, deleted_at, email, password, firstname, lastname, username, password_confirm_code, role, stock, avatar FROM users
 WHERE id = $1
 AND deleted_at IS NULL
 LIMIT 1
@@ -72,13 +86,14 @@ func (q *Queries) GetUserByID(ctx context.Context, id uuid.UUID) (User, error) {
 		&i.Username,
 		&i.PasswordConfirmCode,
 		&i.Role,
+		&i.Stock,
 		&i.Avatar,
 	)
 	return i, err
 }
 
 const getUserByUsername = `-- name: GetUserByUsername :one
-SELECT id, created_at, updated_at, deleted_at, email, password, firstname, lastname, username, password_confirm_code, role, avatar FROM users
+SELECT id, created_at, updated_at, deleted_at, email, password, firstname, lastname, username, password_confirm_code, role, stock, avatar FROM users
 WHERE username = $1
 AND deleted_at IS NULL
 LIMIT 1
@@ -99,13 +114,14 @@ func (q *Queries) GetUserByUsername(ctx context.Context, username string) (User,
 		&i.Username,
 		&i.PasswordConfirmCode,
 		&i.Role,
+		&i.Stock,
 		&i.Avatar,
 	)
 	return i, err
 }
 
 const getUserRandom = `-- name: GetUserRandom :one
-SELECT id, created_at, updated_at, deleted_at, email, password, firstname, lastname, username, password_confirm_code, role, avatar FROM users
+SELECT id, created_at, updated_at, deleted_at, email, password, firstname, lastname, username, password_confirm_code, role, stock, avatar FROM users
 WHERE deleted_at IS NULL
 LIMIT 1
 `
@@ -125,13 +141,14 @@ func (q *Queries) GetUserRandom(ctx context.Context) (User, error) {
 		&i.Username,
 		&i.PasswordConfirmCode,
 		&i.Role,
+		&i.Stock,
 		&i.Avatar,
 	)
 	return i, err
 }
 
 const listUsers = `-- name: ListUsers :many
-SELECT id, created_at, updated_at, deleted_at, email, password, firstname, lastname, username, password_confirm_code, role, avatar FROM users
+SELECT id, created_at, updated_at, deleted_at, email, password, firstname, lastname, username, password_confirm_code, role, stock, avatar FROM users
 WHERE deleted_at IS NULL
 AND (firstname ILIKE $1 OR lastname ILIKE $1 OR email ILIKE $1 OR username ILIKE $1)
 LIMIT 5
@@ -158,6 +175,7 @@ func (q *Queries) ListUsers(ctx context.Context, firstname sql.NullString) ([]Us
 			&i.Username,
 			&i.PasswordConfirmCode,
 			&i.Role,
+			&i.Stock,
 			&i.Avatar,
 		); err != nil {
 			return nil, err
@@ -174,7 +192,7 @@ func (q *Queries) ListUsers(ctx context.Context, firstname sql.NullString) ([]Us
 }
 
 const listUsersMostRecent = `-- name: ListUsersMostRecent :many
-SELECT id, created_at, updated_at, deleted_at, email, password, firstname, lastname, username, password_confirm_code, role, avatar FROM users
+SELECT id, created_at, updated_at, deleted_at, email, password, firstname, lastname, username, password_confirm_code, role, stock, avatar FROM users
 WHERE deleted_at IS NULL
 ORDER BY created_at DESC
 LIMIT $1 OFFSET $2
@@ -206,6 +224,7 @@ func (q *Queries) ListUsersMostRecent(ctx context.Context, arg ListUsersMostRece
 			&i.Username,
 			&i.PasswordConfirmCode,
 			&i.Role,
+			&i.Stock,
 			&i.Avatar,
 		); err != nil {
 			return nil, err
@@ -264,5 +283,22 @@ func (q *Queries) UpdateDescriptionUser(ctx context.Context, arg UpdateDescripti
 		arg.Email,
 		arg.ID,
 	)
+	return err
+}
+
+const updateStock = `-- name: UpdateStock :exec
+UPDATE users
+SET stock = $1,
+    updated_at = NOW()
+WHERE id = $2
+`
+
+type UpdateStockParams struct {
+	Stock int64     `json:"stock"`
+	ID    uuid.UUID `json:"id"`
+}
+
+func (q *Queries) UpdateStock(ctx context.Context, arg UpdateStockParams) error {
+	_, err := q.db.ExecContext(ctx, updateStock, arg.Stock, arg.ID)
 	return err
 }

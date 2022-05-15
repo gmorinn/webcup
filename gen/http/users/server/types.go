@@ -22,6 +22,13 @@ type UpdateAvatarRequestBody struct {
 	Avatar *string `form:"avatar,omitempty" json:"avatar,omitempty" xml:"avatar,omitempty"`
 }
 
+// UpdateNumberStockageRequestBody is the type of the "users" service
+// "updateNumberStockage" endpoint HTTP request body.
+type UpdateNumberStockageRequestBody struct {
+	ID     *string `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
+	Number *int64  `form:"number,omitempty" json:"number,omitempty" xml:"number,omitempty"`
+}
+
 // UpdateDescriptionRequestBody is the type of the "users" service
 // "updateDescription" endpoint HTTP request body.
 type UpdateDescriptionRequestBody struct {
@@ -44,6 +51,12 @@ type UpdateAvatarResponseBody struct {
 	Success bool `form:"success" json:"success" xml:"success"`
 	// Result is an Object
 	User *ResUserResponseBody `form:"user,omitempty" json:"user,omitempty" xml:"user,omitempty"`
+}
+
+// UpdateNumberStockageResponseBody is the type of the "users" service
+// "updateNumberStockage" endpoint HTTP response body.
+type UpdateNumberStockageResponseBody struct {
+	Success bool `form:"success" json:"success" xml:"success"`
 }
 
 // GetUserByIDResponseBody is the type of the "users" service "getUserByID"
@@ -73,6 +86,15 @@ type DeleteUserUnknownErrorResponseBody struct {
 // UpdateAvatarUnknownErrorResponseBody is the type of the "users" service
 // "updateAvatar" endpoint HTTP response body for the "unknown_error" error.
 type UpdateAvatarUnknownErrorResponseBody struct {
+	Err       string `form:"err" json:"err" xml:"err"`
+	ErrorCode string `form:"error_code" json:"error_code" xml:"error_code"`
+	Success   bool   `form:"success" json:"success" xml:"success"`
+}
+
+// UpdateNumberStockageUnknownErrorResponseBody is the type of the "users"
+// service "updateNumberStockage" endpoint HTTP response body for the
+// "unknown_error" error.
+type UpdateNumberStockageUnknownErrorResponseBody struct {
 	Err       string `form:"err" json:"err" xml:"err"`
 	ErrorCode string `form:"error_code" json:"error_code" xml:"error_code"`
 	Success   bool   `form:"success" json:"success" xml:"success"`
@@ -128,6 +150,15 @@ func NewUpdateAvatarResponseBody(res *users.UpdateAvatarResult) *UpdateAvatarRes
 	return body
 }
 
+// NewUpdateNumberStockageResponseBody builds the HTTP response body from the
+// result of the "updateNumberStockage" endpoint of the "users" service.
+func NewUpdateNumberStockageResponseBody(res *users.UpdateNumberStockageResult) *UpdateNumberStockageResponseBody {
+	body := &UpdateNumberStockageResponseBody{
+		Success: res.Success,
+	}
+	return body
+}
+
 // NewGetUserByIDResponseBody builds the HTTP response body from the result of
 // the "getUserByID" endpoint of the "users" service.
 func NewGetUserByIDResponseBody(res *users.GetUserByIDResult) *GetUserByIDResponseBody {
@@ -167,6 +198,18 @@ func NewDeleteUserUnknownErrorResponseBody(res *users.UnknownError) *DeleteUserU
 // the result of the "updateAvatar" endpoint of the "users" service.
 func NewUpdateAvatarUnknownErrorResponseBody(res *users.UnknownError) *UpdateAvatarUnknownErrorResponseBody {
 	body := &UpdateAvatarUnknownErrorResponseBody{
+		Err:       res.Err,
+		ErrorCode: res.ErrorCode,
+		Success:   res.Success,
+	}
+	return body
+}
+
+// NewUpdateNumberStockageUnknownErrorResponseBody builds the HTTP response
+// body from the result of the "updateNumberStockage" endpoint of the "users"
+// service.
+func NewUpdateNumberStockageUnknownErrorResponseBody(res *users.UnknownError) *UpdateNumberStockageUnknownErrorResponseBody {
+	body := &UpdateNumberStockageUnknownErrorResponseBody{
 		Err:       res.Err,
 		ErrorCode: res.ErrorCode,
 		Success:   res.Success,
@@ -218,6 +261,19 @@ func NewUpdateAvatarPayload(body *UpdateAvatarRequestBody, oauth *string, jwtTok
 	return v
 }
 
+// NewUpdateNumberStockagePayload builds a users service updateNumberStockage
+// endpoint payload.
+func NewUpdateNumberStockagePayload(body *UpdateNumberStockageRequestBody, oauth *string, jwtToken *string) *users.UpdateNumberStockagePayload {
+	v := &users.UpdateNumberStockagePayload{
+		ID:     *body.ID,
+		Number: *body.Number,
+	}
+	v.Oauth = oauth
+	v.JWTToken = jwtToken
+
+	return v
+}
+
 // NewGetUserByIDPayload builds a users service getUserByID endpoint payload.
 func NewGetUserByIDPayload(id string, oauth *string, jwtToken *string) *users.GetUserByIDPayload {
 	v := &users.GetUserByIDPayload{}
@@ -252,6 +308,21 @@ func ValidateUpdateAvatarRequestBody(body *UpdateAvatarRequestBody) (err error) 
 	}
 	if body.Avatar == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("avatar", "body"))
+	}
+	if body.ID != nil {
+		err = goa.MergeErrors(err, goa.ValidateFormat("body.id", *body.ID, goa.FormatUUID))
+	}
+	return
+}
+
+// ValidateUpdateNumberStockageRequestBody runs the validations defined on
+// UpdateNumberStockageRequestBody
+func ValidateUpdateNumberStockageRequestBody(body *UpdateNumberStockageRequestBody) (err error) {
+	if body.ID == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("id", "body"))
+	}
+	if body.Number == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("number", "body"))
 	}
 	if body.ID != nil {
 		err = goa.MergeErrors(err, goa.ValidateFormat("body.id", *body.ID, goa.FormatUUID))

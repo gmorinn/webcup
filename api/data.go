@@ -78,6 +78,17 @@ func (s *datasrvc) ListData(ctx context.Context, p *data.ListDataPayload) (res *
 // Create one data
 func (s *datasrvc) CreateData(ctx context.Context, p *data.CreateDataPayload) (res *data.CreateDataResult, err error) {
 	err = s.server.Store.ExecTx(ctx, func(q *db.Queries) error {
+		stock, err := q.GetStockByUserID(ctx, uuid.MustParse(p.Data.UserID))
+		if err != nil {
+			return fmt.Errorf("ERROR_GET_STOCK_BY_ID %v", err)
+		}
+		count, err := q.CountDataByUserID(ctx, uuid.MustParse(p.Data.UserID))
+		if err != nil {
+			return fmt.Errorf("ERROR_GET_STOCK_BY_ID %v", err)
+		}
+		if count >= stock || stock == 0 {
+			return fmt.Errorf("ERROR_CREATE_DATA_MAX_DATA")
+		}
 		arg := db.CreateDataParams{
 			Title:       p.Data.Title,
 			Description: p.Data.Description,
@@ -92,6 +103,13 @@ func (s *datasrvc) CreateData(ctx context.Context, p *data.CreateDataPayload) (r
 		NewData, err := q.GetDataByID(ctx, createData.ID)
 		if err != nil {
 			return fmt.Errorf("ERROR_GET_DATA_BY_ID %v", err)
+		}
+		arg2 := db.UpdateStockParams{
+			ID:    NewData.UserID,
+			Stock: stock - 1,
+		}
+		if err := q.UpdateStock(ctx, arg2); err != nil {
+			return fmt.Errorf("ERROR_UPDATE_USER_DESCRIPTION %v", err)
 		}
 		res = &data.CreateDataResult{
 			Data: &data.ResData{

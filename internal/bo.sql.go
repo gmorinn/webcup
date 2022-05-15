@@ -71,7 +71,7 @@ func (q *Queries) GetBoAllDatas(ctx context.Context, arg GetBoAllDatasParams) ([
 }
 
 const getBoAllUsers = `-- name: GetBoAllUsers :many
-SELECT id, created_at, updated_at, deleted_at, email, password, firstname, lastname, username, password_confirm_code, role, avatar FROM users
+SELECT id, created_at, updated_at, deleted_at, email, password, firstname, lastname, username, password_confirm_code, role, stock, avatar FROM users
 WHERE deleted_at IS NULL
 ORDER BY
   CASE WHEN $1::bool THEN firstname END asc,
@@ -136,6 +136,7 @@ func (q *Queries) GetBoAllUsers(ctx context.Context, arg GetBoAllUsersParams) ([
 			&i.Username,
 			&i.PasswordConfirmCode,
 			&i.Role,
+			&i.Stock,
 			&i.Avatar,
 		); err != nil {
 			return nil, err

@@ -59,14 +59,14 @@ paths:
             application/json:
               schema:
                 type: string
-                example: Ipsam velit voluptatum autem dicta.
+                example: Ratione odit hic dolorem.
         "403":
           description: 'oauth_error: Forbidden response.'
           content:
             application/json:
               schema:
                 type: string
-                example: Eum sit consequuntur quisquam placeat.
+                example: Animi quisquam quas minus consectetur voluptatibus.
         "500":
           description: 'unknown_error: Error not identified (500)'
           content:
@@ -287,7 +287,7 @@ paths:
                   id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
                   message: Vous embauchez ?
                   user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-                success: false
+                success: true
         "500":
           description: 'unknown_error: Error not identified (500)'
           content:
@@ -382,12 +382,8 @@ paths:
                   id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
                   message: Vous embauchez ?
                   user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-                - email: guillaume@gmail.com
-                  id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-                  message: Vous embauchez ?
-                  user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-                count: 1095145591013443619
-                success: false
+                count: 7122203880607118907
+                success: true
         "500":
           description: 'unknown_error: Error not identified (500)'
           content:
@@ -426,9 +422,8 @@ paths:
               $ref: '#/components/schemas/DeleteBoManyContactRequestBody'
             example:
               tab:
-              - Quo mollitia consequatur.
-              - Autem necessitatibus dolorem animi vero ipsa.
-              - Fuga eos repellat.
+              - Adipisci harum ipsum.
+              - In beatae fugiat unde eos possimus mollitia.
       responses:
         "200":
           description: OK response.
@@ -484,7 +479,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ResetPasswordResponseBody'
               example:
-                success: true
+                success: false
         "500":
           description: 'unknown_error: Error not identified (500)'
           content:
@@ -568,28 +563,28 @@ paths:
               example:
                 count: 3937526645573723134
                 data:
-                - category: animals
+                - category: space
                   description: Unique Air max restant au monde
                   id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-                  image: Id vel id rerum fuga nihil.
+                  image: Facere natus.
                   title: Air max360 d'il y a 10 millions d'années
                   user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-                - category: animals
+                - category: space
                   description: Unique Air max restant au monde
                   id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-                  image: Id vel id rerum fuga nihil.
+                  image: Facere natus.
                   title: Air max360 d'il y a 10 millions d'années
                   user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-                - category: animals
+                - category: space
                   description: Unique Air max restant au monde
                   id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-                  image: Id vel id rerum fuga nihil.
+                  image: Facere natus.
                   title: Air max360 d'il y a 10 millions d'années
                   user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-                - category: animals
+                - category: space
                   description: Unique Air max restant au monde
                   id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-                  image: Id vel id rerum fuga nihil.
+                  image: Facere natus.
                   title: Air max360 d'il y a 10 millions d'années
                   user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
                 success: false
@@ -632,46 +627,27 @@ paths:
             example:
               content:
               - 73
-              - 110
-              - 99
-              - 105
-              - 100
-              - 117
-              - 110
               - 116
-              - 32
-              - 105
-              - 112
-              - 115
               - 97
-              - 109
-              - 32
-              - 97
-              - 115
-              - 112
+              - 113
+              - 117
               - 101
-              - 114
-              - 105
+              - 32
+              - 116
+              - 101
+              - 109
+              - 112
               - 111
               - 114
               - 101
-              - 115
-              - 32
-              - 102
-              - 97
-              - 99
-              - 105
-              - 108
-              - 105
-              - 115
               - 46
               filename: foo.jpg
               format: image/jpeg
-              h: 378833681784803462
-              mime: Et omnis deleniti exercitationem eum vitae.
-              size: 5630459967245784067
-              url: Corporis excepturi reprehenderit voluptatum fugiat odit explicabo.
-              w: 3855134557079646294
+              h: 8213129504107496369
+              mime: Incidunt ipsam asperiores facilis.
+              size: 7940255785138466612
+              url: Enim et omnis deleniti exercitationem.
+              w: 466048715731699887
       responses:
         "201":
           description: Created response.
@@ -1161,7 +1137,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ResetPasswordResponseBody'
               example:
-                success: false
+                success: true
         "500":
           description: 'unknown_error: Error not identified (500)'
           content:
@@ -1260,7 +1236,7 @@ paths:
             application/json:
               schema:
                 type: string
-                example: Inventore nam totam reiciendis omnis.
+                example: Accusamus fugiat exercitationem iusto ex commodi.
         "500":
           description: 'unknown_error: Error not identified (500)'
           content:
@@ -1329,7 +1305,7 @@ paths:
             application/json:
               schema:
                 type: string
-                example: Nihil porro accusamus.
+                example: Iusto beatae.
         "500":
           description: 'unknown_error: Error not identified (500)'
           content:
@@ -1384,7 +1360,7 @@ paths:
             application/json:
               schema:
                 type: string
-                example: Ut quo.
+                example: Fuga tempora quidem.
         "500":
           description: 'unknown_error: Error not identified (500)'
           content:
@@ -1419,9 +1395,9 @@ paths:
         schema:
           type: string
           description: Jwt token
-          example: "Bearer \U0005D0FD\U0006A3FF㾂\U000843AA"
+          example: "Bearer \U0003A808\U0010250E\U000B0E58\U00051A29\U0009D7F6\U000565DC"
           pattern: ^Bearer [^ ]+$
-        example: Bearer 浢
+        example: "Bearer \U00105C3F\U00021D3F\U000FECFB\U000DE5FA"
       responses:
         "200":
           description: OK response.
@@ -1466,9 +1442,9 @@ paths:
         schema:
           type: string
           description: Jwt token
-          example: "Bearer \U0003A808\U0010250E\U000B0E58\U00051A29\U0009D7F6\U000565DC"
+          example: "Bearer \U0006982F"
           pattern: ^Bearer [^ ]+$
-        example: "Bearer \U00105C3F\U00021D3F\U000FECFB\U000DE5FA"
+        example: "Bearer \U000AF9E5"
       requestBody:
         required: true
         content:
@@ -1489,7 +1465,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/UpdateAvatarResponseBody'
               example:
-                success: true
+                success: false
                 user:
                   avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
                   email: guillaume@gmail.com
@@ -1554,6 +1530,54 @@ paths:
                   lastname: Morin
                   role: Maiores et non dolor facilis et voluptatem.
                   username: guillaumemorin
+        "500":
+          description: 'unknown_error: Error not identified (500)'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnknownError'
+      security:
+      - OAuth2_header_Authorization:
+        - api:read
+        jwt_header_jwtToken:
+        - api:read
+        - api:write
+  /v1/web/user/edit/stock:
+    put:
+      tags:
+      - users
+      summary: updateNumberStockage users
+      description: Update number stockage
+      operationId: users#updateNumberStockage
+      parameters:
+      - name: jwtToken
+        in: header
+        description: Jwt token
+        allowEmptyValue: true
+        schema:
+          type: string
+          description: Jwt token
+          example: "Bearer \U0005D0FD\U0006A3FF㾂\U000843AA"
+          pattern: ^Bearer [^ ]+$
+        example: Bearer 浢
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateNumberStockageRequestBody'
+            example:
+              id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+              number: 2285170554064599612
+      responses:
+        "200":
+          description: OK response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResetPasswordResponseBody'
+              example:
+                success: true
         "500":
           description: 'unknown_error: Error not identified (500)'
           content:
@@ -1650,10 +1674,10 @@ paths:
                 $ref: '#/components/schemas/CreateDataResponseBody'
               example:
                 data:
-                  category: animals
+                  category: space
                   description: Unique Air max restant au monde
                   id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-                  image: Id vel id rerum fuga nihil.
+                  image: Facere natus.
                   title: Air max360 d'il y a 10 millions d'années
                   user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
                 success: false
@@ -1702,9 +1726,9 @@ paths:
               $ref: '#/components/schemas/CreateDataRequestBody'
             example:
               data:
-                category: animals
+                category: autre
                 description: Unique Air max restant au monde
-                image: Saepe omnis.
+                image: Minus rerum ea sed non nobis.
                 title: Air max360 d'il y a 10 millions d'années
                 user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
       responses:
@@ -1716,10 +1740,10 @@ paths:
                 $ref: '#/components/schemas/CreateDataResponseBody'
               example:
                 data:
-                  category: animals
+                  category: space
                   description: Unique Air max restant au monde
                   id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-                  image: Id vel id rerum fuga nihil.
+                  image: Facere natus.
                   title: Air max360 d'il y a 10 millions d'années
                   user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
                 success: true
@@ -1761,9 +1785,9 @@ paths:
               $ref: '#/components/schemas/CreateDataRequestBody'
             example:
               data:
-                category: animals
+                category: autre
                 description: Unique Air max restant au monde
-                image: Saepe omnis.
+                image: Minus rerum ea sed non nobis.
                 title: Air max360 d'il y a 10 millions d'années
                 user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
       responses:
@@ -1775,13 +1799,13 @@ paths:
                 $ref: '#/components/schemas/CreateDataResponseBody'
               example:
                 data:
-                  category: animals
+                  category: space
                   description: Unique Air max restant au monde
                   id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-                  image: Id vel id rerum fuga nihil.
+                  image: Facere natus.
                   title: Air max360 d'il y a 10 millions d'années
                   user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-                success: true
+                success: false
         "500":
           description: 'unknown_error: Error not identified (500)'
           content:
@@ -1840,30 +1864,18 @@ paths:
               schema:
                 $ref: '#/components/schemas/ListDataMostRecentResponseBody'
               example:
-                count: 7231342164995042586
+                count: 1970069621566387455
                 data:
-                - category: animals
+                - category: space
                   description: Unique Air max restant au monde
                   id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-                  image: Id vel id rerum fuga nihil.
+                  image: Facere natus.
                   title: Air max360 d'il y a 10 millions d'années
                   user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-                - category: animals
+                - category: space
                   description: Unique Air max restant au monde
                   id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-                  image: Id vel id rerum fuga nihil.
-                  title: Air max360 d'il y a 10 millions d'années
-                  user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-                - category: animals
-                  description: Unique Air max restant au monde
-                  id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-                  image: Id vel id rerum fuga nihil.
-                  title: Air max360 d'il y a 10 millions d'années
-                  user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-                - category: animals
-                  description: Unique Air max restant au monde
-                  id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-                  image: Id vel id rerum fuga nihil.
+                  image: Facere natus.
                   title: Air max360 d'il y a 10 millions d'années
                   user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
                 success: true
@@ -1914,25 +1926,19 @@ paths:
                 $ref: '#/components/schemas/ListDataResponseBody'
               example:
                 data:
-                - category: animals
+                - category: space
                   description: Unique Air max restant au monde
                   id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-                  image: Id vel id rerum fuga nihil.
+                  image: Facere natus.
                   title: Air max360 d'il y a 10 millions d'années
                   user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-                - category: animals
+                - category: space
                   description: Unique Air max restant au monde
                   id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-                  image: Id vel id rerum fuga nihil.
+                  image: Facere natus.
                   title: Air max360 d'il y a 10 millions d'années
                   user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-                - category: animals
-                  description: Unique Air max restant au monde
-                  id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-                  image: Id vel id rerum fuga nihil.
-                  title: Air max360 d'il y a 10 millions d'années
-                  user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-                success: true
+                success: false
         "500":
           description: 'unknown_error: Error not identified (500)'
           content:
@@ -2001,27 +2007,33 @@ paths:
               schema:
                 $ref: '#/components/schemas/ListDataMostRecentResponseBody'
               example:
-                count: 3536243267759173871
+                count: 312839799197293562
                 data:
-                - category: animals
+                - category: space
                   description: Unique Air max restant au monde
                   id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-                  image: Id vel id rerum fuga nihil.
+                  image: Facere natus.
                   title: Air max360 d'il y a 10 millions d'années
                   user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-                - category: animals
+                - category: space
                   description: Unique Air max restant au monde
                   id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-                  image: Id vel id rerum fuga nihil.
+                  image: Facere natus.
                   title: Air max360 d'il y a 10 millions d'années
                   user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-                - category: animals
+                - category: space
                   description: Unique Air max restant au monde
                   id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-                  image: Id vel id rerum fuga nihil.
+                  image: Facere natus.
                   title: Air max360 d'il y a 10 millions d'années
                   user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-                success: true
+                - category: space
+                  description: Unique Air max restant au monde
+                  id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+                  image: Facere natus.
+                  title: Air max360 d'il y a 10 millions d'années
+                  user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+                success: false
         "500":
           description: 'unknown_error: Error not identified (500)'
           content:
@@ -2061,9 +2073,9 @@ components:
           $ref: '#/components/schemas/PayloadData'
       example:
         data:
-          category: animals
+          category: autre
           description: Unique Air max restant au monde
-          image: Saepe omnis.
+          image: Minus rerum ea sed non nobis.
           title: Air max360 d'il y a 10 millions d'années
           user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
       required:
@@ -2075,16 +2087,16 @@ components:
           $ref: '#/components/schemas/ResData'
         success:
           type: boolean
-          example: true
+          example: false
       example:
         data:
-          category: animals
+          category: space
           description: Unique Air max restant au monde
           id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-          image: Id vel id rerum fuga nihil.
+          image: Facere natus.
           title: Air max360 d'il y a 10 millions d'années
           user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-        success: true
+        success: false
       required:
       - data
       - success
@@ -2095,15 +2107,15 @@ components:
           type: array
           items:
             type: string
-            example: Veritatis nostrum mollitia omnis ea aut.
+            example: Aut nihil velit et repellat optio hic.
           example:
-          - Velit et.
-          - Optio hic voluptatem minus mollitia praesentium accusamus.
-          - Aut maxime consectetur tempore pariatur harum.
+          - Mollitia praesentium accusamus qui aut maxime consectetur.
+          - Pariatur harum quia aliquam qui blanditiis esse.
       example:
         tab:
-        - Qui blanditiis.
-        - Ut quis eius.
+        - Eius sed voluptatum nisi sit eos accusantium.
+        - Voluptatum nisi ad vitae alias ea architecto.
+        - Soluta veniam nulla molestias ipsa.
       required:
       - tab
     DeleteFileRequestBody:
@@ -2132,13 +2144,13 @@ components:
       properties:
         exist:
           type: boolean
-          example: false
+          example: true
         success:
           type: boolean
-          example: false
+          example: true
       example:
-        exist: true
-        success: false
+        exist: false
+        success: true
       required:
       - exist
       - success
@@ -2156,7 +2168,7 @@ components:
           id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
           message: Vous embauchez ?
           user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-        success: false
+        success: true
       required:
       - success
     GetBoContactResponseBody:
@@ -2176,10 +2188,14 @@ components:
             id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
             message: Vous embauchez ?
             user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+          - email: guillaume@gmail.com
+            id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+            message: Vous embauchez ?
+            user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
         count:
           type: integer
           description: total of messages
-          example: 9024331826156984613
+          example: 5884970500282370533
           format: int64
         success:
           type: boolean
@@ -2194,11 +2210,7 @@ components:
           id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
           message: Vous embauchez ?
           user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-        - email: guillaume@gmail.com
-          id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-          message: Vous embauchez ?
-          user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-        count: 2731692357888754355
+        count: 723723875477646817
         success: false
       required:
       - contacts
@@ -2210,7 +2222,7 @@ components:
         count:
           type: integer
           description: total of users
-          example: 2713765700157862593
+          example: 6845117260586266030
           format: int64
         success:
           type: boolean
@@ -2236,9 +2248,23 @@ components:
             role: Maiores et non dolor facilis et voluptatem.
             username: guillaumemorin
       example:
-        count: 7733796454865084191
+        count: 3810859879622229518
         success: true
         users:
+        - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
+          email: guillaume@gmail.com
+          firstname: Guillaume
+          id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+          lastname: Morin
+          role: Maiores et non dolor facilis et voluptatem.
+          username: guillaumemorin
+        - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
+          email: guillaume@gmail.com
+          firstname: Guillaume
+          id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+          lastname: Morin
+          role: Maiores et non dolor facilis et voluptatem.
+          username: guillaumemorin
         - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
           email: guillaume@gmail.com
           firstname: Guillaume
@@ -2264,51 +2290,26 @@ components:
           type: string
           description: content of image
           example:
-          - 65
-          - 116
-          - 113
-          - 117
-          - 101
-          - 32
-          - 97
-          - 116
-          - 32
-          - 97
-          - 117
-          - 116
-          - 32
-          - 108
-          - 97
-          - 98
+          - 78
           - 111
+          - 110
+          - 32
+          - 97
+          - 112
+          - 101
           - 114
           - 105
-          - 111
-          - 115
           - 97
           - 109
           - 32
+          - 97
           - 100
           - 105
+          - 112
+          - 105
           - 115
-          - 116
-          - 105
-          - 110
           - 99
-          - 116
           - 105
-          - 111
-          - 32
-          - 101
-          - 116
-          - 32
-          - 108
-          - 97
-          - 98
-          - 111
-          - 114
-          - 117
-          - 109
           - 46
           format: binary
         filename:
@@ -2322,85 +2323,52 @@ components:
         h:
           type: integer
           description: height of image if you crop
-          example: 4327526275544677620
+          example: 779309785250283982
           format: int64
         mime:
           type: string
           description: url file
-          example: Eligendi dolores nihil sapiente autem autem numquam.
+          example: Id qui vitae quis nihil maxime dolorem.
         size:
           type: integer
           description: size of image
-          example: 3280055458782308509
+          example: 2650996123944027409
           format: int64
         url:
           type: string
           description: url file
-          example: Fugit est voluptatibus aliquid non.
+          example: Consequatur ratione praesentium repellat sit sit quia.
         w:
           type: integer
           description: width of image if you crop
-          example: 4666571051202056419
+          example: 9133522365644655952
           format: int64
       example:
         content:
-        - 68
-        - 111
-        - 108
-        - 111
-        - 114
-        - 101
-        - 109
+        - 69
+        - 116
         - 32
         - 113
         - 117
         - 105
-        - 32
-        - 110
-        - 111
-        - 110
-        - 32
-        - 97
-        - 112
-        - 101
-        - 114
-        - 105
-        - 97
-        - 109
-        - 32
-        - 97
-        - 100
-        - 105
-        - 112
-        - 105
         - 115
-        - 99
-        - 105
         - 32
-        - 109
-        - 111
-        - 108
-        - 101
         - 115
+        - 117
+        - 110
         - 116
-        - 105
-        - 97
-        - 101
         - 32
-        - 108
-        - 105
-        - 98
         - 101
-        - 114
-        - 111
+        - 117
+        - 109
         - 46
         filename: foo.jpg
         format: image/jpeg
-        h: 9133522365644655952
-        mime: Assumenda id qui vitae quis nihil.
-        size: 3951517561839058066
-        url: Sequi consequatur ratione praesentium repellat sit sit.
-        w: 6728655176459955819
+        h: 4581769862265689623
+        mime: Odit ratione hic.
+        size: 1595949279084269978
+        url: Dolor dignissimos corrupti.
+        w: 4839082704448106939
       required:
       - filename
       - content
@@ -2430,7 +2398,7 @@ components:
         count:
           type: integer
           description: total of datas
-          example: 1870581988750152049
+          example: 1925422419388765693
           format: int64
         data:
           type: array
@@ -2438,43 +2406,49 @@ components:
             $ref: '#/components/schemas/ResData'
           description: Result is an an array of data
           example:
-          - category: animals
+          - category: space
             description: Unique Air max restant au monde
             id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-            image: Id vel id rerum fuga nihil.
+            image: Facere natus.
             title: Air max360 d'il y a 10 millions d'années
             user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-          - category: animals
+          - category: space
             description: Unique Air max restant au monde
             id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-            image: Id vel id rerum fuga nihil.
+            image: Facere natus.
             title: Air max360 d'il y a 10 millions d'années
             user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-          - category: animals
+          - category: space
             description: Unique Air max restant au monde
             id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-            image: Id vel id rerum fuga nihil.
+            image: Facere natus.
             title: Air max360 d'il y a 10 millions d'années
             user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
         success:
           type: boolean
-          example: false
+          example: true
       example:
-        count: 4887889221454404582
+        count: 4781939491337536228
         data:
-        - category: animals
+        - category: space
           description: Unique Air max restant au monde
           id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-          image: Id vel id rerum fuga nihil.
+          image: Facere natus.
           title: Air max360 d'il y a 10 millions d'années
           user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-        - category: animals
+        - category: space
           description: Unique Air max restant au monde
           id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-          image: Id vel id rerum fuga nihil.
+          image: Facere natus.
           title: Air max360 d'il y a 10 millions d'années
           user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-        success: false
+        - category: space
+          description: Unique Air max restant au monde
+          id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+          image: Facere natus.
+          title: Air max360 d'il y a 10 millions d'années
+          user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+        success: true
       required:
       - data
       - success
@@ -2498,28 +2472,22 @@ components:
             $ref: '#/components/schemas/ResData'
           description: Result is an an array of user
           example:
-          - category: animals
+          - category: space
             description: Unique Air max restant au monde
             id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-            image: Id vel id rerum fuga nihil.
+            image: Facere natus.
             title: Air max360 d'il y a 10 millions d'années
             user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-          - category: animals
+          - category: space
             description: Unique Air max restant au monde
             id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-            image: Id vel id rerum fuga nihil.
+            image: Facere natus.
             title: Air max360 d'il y a 10 millions d'années
             user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-          - category: animals
+          - category: space
             description: Unique Air max restant au monde
             id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-            image: Id vel id rerum fuga nihil.
-            title: Air max360 d'il y a 10 millions d'années
-            user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-          - category: animals
-            description: Unique Air max restant au monde
-            id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-            image: Id vel id rerum fuga nihil.
+            image: Facere natus.
             title: Air max360 d'il y a 10 millions d'années
             user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
         success:
@@ -2527,25 +2495,25 @@ components:
           example: false
       example:
         data:
-        - category: animals
+        - category: space
           description: Unique Air max restant au monde
           id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-          image: Id vel id rerum fuga nihil.
+          image: Facere natus.
           title: Air max360 d'il y a 10 millions d'années
           user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-        - category: animals
+        - category: space
           description: Unique Air max restant au monde
           id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-          image: Id vel id rerum fuga nihil.
+          image: Facere natus.
           title: Air max360 d'il y a 10 millions d'années
           user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-        - category: animals
+        - category: space
           description: Unique Air max restant au monde
           id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-          image: Id vel id rerum fuga nihil.
+          image: Facere natus.
           title: Air max360 d'il y a 10 millions d'années
           user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-        success: false
+        success: true
       required:
       - data
       - success
@@ -2575,23 +2543,9 @@ components:
             lastname: Morin
             role: Maiores et non dolor facilis et voluptatem.
             username: guillaumemorin
-          - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
-            email: guillaume@gmail.com
-            firstname: Guillaume
-            id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-            lastname: Morin
-            role: Maiores et non dolor facilis et voluptatem.
-            username: guillaumemorin
       example:
         success: true
         users:
-        - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
-          email: guillaume@gmail.com
-          firstname: Guillaume
-          id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-          lastname: Morin
-          role: Maiores et non dolor facilis et voluptatem.
-          username: guillaumemorin
         - avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
           email: guillaume@gmail.com
           firstname: Guillaume
@@ -2614,17 +2568,17 @@ components:
       properties:
         client_id:
           type: string
-          example: Sapiente possimus voluptas.
+          example: Praesentium cum dolorem.
         client_secret:
           type: string
-          example: Maiores laborum maiores harum et quam.
+          example: Possimus exercitationem quasi.
         grant_type:
           type: string
-          example: Fugit fugit quisquam minima.
+          example: Ducimus sint pariatur laborum quis id pariatur.
       example:
-        client_id: Praesentium cum dolorem.
-        client_secret: Possimus exercitationem quasi.
-        grant_type: Ducimus sint pariatur laborum quis id pariatur.
+        client_id: Alias et molestias nobis.
+        client_secret: Quis quod itaque ducimus sed at.
+        grant_type: Sit numquam.
       required:
       - client_id
       - client_secret
@@ -2634,22 +2588,22 @@ components:
       properties:
         access_token:
           type: string
-          example: Alias et molestias nobis.
+          example: Amet nostrum eveniet nisi et.
         expires_in:
           type: integer
-          example: 5756715230904972689
+          example: 8141662905809446472
           format: int64
         success:
           type: boolean
-          example: true
+          example: false
         token_type:
           type: string
-          example: Quis quod itaque ducimus sed at.
+          example: Iste eum aspernatur voluptatum.
       example:
-        access_token: Consequatur amet nostrum eveniet nisi et ut.
-        expires_in: 5150442669964840560
-        success: true
-        token_type: Eum aspernatur.
+        access_token: Sit consequuntur quisquam placeat.
+        expires_in: 4135014651227265522
+        success: false
+        token_type: Ipsam velit voluptatum autem dicta.
       required:
       - access_token
       - token_type
@@ -2661,7 +2615,7 @@ components:
         category:
           type: string
           default: robotics
-          example: robotics
+          example: space
           enum:
           - robotics
           - space
@@ -2676,7 +2630,7 @@ components:
         image:
           type: string
           description: Url of the logo and stock in db
-          example: A eos enim earum aut commodi.
+          example: Dolores nihil sapiente autem autem numquam.
         title:
           type: string
           example: Air max360 d'il y a 10 millions d'années
@@ -2687,9 +2641,9 @@ components:
           example: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
           format: uuid
       example:
-        category: robotics
+        category: space
         description: Unique Air max restant au monde
-        image: Non dolore.
+        image: At aut laboriosam distinctio et.
         title: Air max360 d'il y a 10 millions d'années
         user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
       required:
@@ -2703,7 +2657,7 @@ components:
         avatar:
           type: string
           description: Url of the avatar and stock in db
-          example: Fugit velit sed voluptas quaerat cumque qui.
+          example: Earum inventore nam totam reiciendis.
         email:
           type: string
           example: guillaume@gmail.com
@@ -2721,7 +2675,7 @@ components:
         role:
           type: string
           description: role of the user
-          example: admin
+          example: user
           enum:
           - admin
           - user
@@ -2733,11 +2687,11 @@ components:
           minLength: 2
           maxLength: 20
       example:
-        avatar: Est molestiae minus.
+        avatar: Vitae nobis vero et ut.
         email: guillaume@gmail.com
         firstname: Guillaume
         lastname: Morin
-        role: pro
+        role: admin
         username: guillaumemoriin
       required:
       - email
@@ -2787,7 +2741,7 @@ components:
         category:
           type: string
           default: robotics
-          example: animals
+          example: brain
           enum:
           - robotics
           - space
@@ -2806,7 +2760,7 @@ components:
         image:
           type: string
           description: Url of the logo and stock in db
-          example: Voluptatum nisi sit.
+          example: Eos enim earum.
         title:
           type: string
           example: Air max360 d'il y a 10 millions d'années
@@ -2817,10 +2771,10 @@ components:
           example: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
           format: uuid
       example:
-        category: brain
+        category: autre
         description: Unique Air max restant au monde
         id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-        image: Explicabo voluptatum.
+        image: Quidem dolores non dolore eaque.
         title: Air max360 d'il y a 10 millions d'années
         user_id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
       required:
@@ -2839,23 +2793,23 @@ components:
           format: uuid
         mime:
           type: string
-          example: Et quis sunt eum.
+          example: Repellendus dolor rem alias unde ad in.
         name:
           type: string
           example: foo.png
         size:
           type: integer
-          example: 1595949279084269978
+          example: 3432256459834041744
           format: int64
         url:
           type: string
-          example: Corrupti ut cum voluptatem odit ratione hic.
+          example: Aut ut.
       example:
         id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
-        mime: Repellendus dolor rem alias unde ad in.
+        mime: Maiores laborum maiores harum et quam.
         name: foo.png
-        size: 3432256459834041744
-        url: Aut ut.
+        size: 9020329461380384661
+        url: Quibusdam rem explicabo consequatur sapiente possimus voluptas.
       required:
       - id
       - name
@@ -2881,7 +2835,7 @@ components:
         role:
           type: string
           description: User is admin or not
-          example: Quisquam quas minus consectetur.
+          example: Neque similique saepe repudiandae fugit velit sed.
         username:
           type: string
           example: guillaumemorin
@@ -2891,7 +2845,7 @@ components:
         firstname: Guillaume
         id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
         lastname: Morin
-        role: Quisquam ratione odit hic dolorem aliquid.
+        role: Quaerat cumque qui quo.
         username: guillaumemorin
       required:
       - id
@@ -2940,9 +2894,9 @@ components:
       properties:
         success:
           type: boolean
-          example: true
+          example: false
       example:
-        success: true
+        success: false
       required:
       - success
     Sign:
@@ -2956,7 +2910,7 @@ components:
           example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ
         success:
           type: boolean
-          example: false
+          example: true
       example:
         access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ
         refresh_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ
@@ -3046,13 +3000,13 @@ components:
         avatar:
           type: string
           description: Url of the avatar and stock in db
-          example: Exercitationem iusto ex commodi et.
+          example: Veritatis temporibus ut dolorem natus ipsum.
         id:
           type: string
           example: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
           format: uuid
       example:
-        avatar: Doloremque distinctio beatae fuga tempora quidem.
+        avatar: Soluta nulla.
         id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
       required:
       - id
@@ -3062,7 +3016,7 @@ components:
       properties:
         success:
           type: boolean
-          example: true
+          example: false
         user:
           $ref: '#/components/schemas/ResUser'
       example:
@@ -3097,11 +3051,11 @@ components:
       properties:
         success:
           type: boolean
-          example: true
+          example: false
         user:
           $ref: '#/components/schemas/ResUser'
       example:
-        success: false
+        success: true
         user:
           avatar: /public/uploads/2022/02/eedf427a-559a-4faf-9e75-357fbb5d65fb.png
           email: guillaume@gmail.com
@@ -3150,6 +3104,23 @@ components:
       - email
       - id
       - username
+    UpdateNumberStockageRequestBody:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+          format: uuid
+        number:
+          type: integer
+          example: 2269417093727514736
+          format: int64
+      example:
+        id: 5dfb0bf7-597a-4250-b7ad-63a43ff59c25
+        number: 1972916839102469043
+      required:
+      - id
+      - number
   securitySchemes:
     OAuth2_header_Authorization:
       type: oauth2

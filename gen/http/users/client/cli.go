@@ -87,6 +87,44 @@ func BuildUpdateAvatarPayload(usersUpdateAvatarBody string, usersUpdateAvatarOau
 	return v, nil
 }
 
+// BuildUpdateNumberStockagePayload builds the payload for the users
+// updateNumberStockage endpoint from CLI flags.
+func BuildUpdateNumberStockagePayload(usersUpdateNumberStockageBody string, usersUpdateNumberStockageOauth string, usersUpdateNumberStockageJWTToken string) (*users.UpdateNumberStockagePayload, error) {
+	var err error
+	var body UpdateNumberStockageRequestBody
+	{
+		err = json.Unmarshal([]byte(usersUpdateNumberStockageBody), &body)
+		if err != nil {
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"id\": \"5dfb0bf7-597a-4250-b7ad-63a43ff59c25\",\n      \"number\": 2285170554064599612\n   }'")
+		}
+		err = goa.MergeErrors(err, goa.ValidateFormat("body.id", body.ID, goa.FormatUUID))
+
+		if err != nil {
+			return nil, err
+		}
+	}
+	var oauth *string
+	{
+		if usersUpdateNumberStockageOauth != "" {
+			oauth = &usersUpdateNumberStockageOauth
+		}
+	}
+	var jwtToken *string
+	{
+		if usersUpdateNumberStockageJWTToken != "" {
+			jwtToken = &usersUpdateNumberStockageJWTToken
+		}
+	}
+	v := &users.UpdateNumberStockagePayload{
+		ID:     body.ID,
+		Number: body.Number,
+	}
+	v.Oauth = oauth
+	v.JWTToken = jwtToken
+
+	return v, nil
+}
+
 // BuildGetUserByIDPayload builds the payload for the users getUserByID
 // endpoint from CLI flags.
 func BuildGetUserByIDPayload(usersGetUserByIDID string, usersGetUserByIDOauth string, usersGetUserByIDJWTToken string) (*users.GetUserByIDPayload, error) {

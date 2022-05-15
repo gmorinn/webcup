@@ -14,6 +14,7 @@ type Querier interface {
 	CheckIDExist(ctx context.Context, id uuid.UUID) (bool, error)
 	CheckUsernameExist(ctx context.Context, username string) (bool, error)
 	CountData(ctx context.Context) (int64, error)
+	CountDataByUserID(ctx context.Context, userID uuid.UUID) (int64, error)
 	CountMessage(ctx context.Context) (int64, error)
 	CountUser(ctx context.Context) (int64, error)
 	CreateData(ctx context.Context, arg CreateDataParams) (Datum, error)
@@ -37,6 +38,7 @@ type Querier interface {
 	GetMessagesFiltered(ctx context.Context, arg GetMessagesFilteredParams) ([]Contact, error)
 	GetOldRefreshToken(ctx context.Context) (RefreshToken, error)
 	GetRefreshToken(ctx context.Context, token string) (GetRefreshTokenRow, error)
+	GetStockByUserID(ctx context.Context, id uuid.UUID) (int64, error)
 	GetUserByID(ctx context.Context, id uuid.UUID) (User, error)
 	GetUserByUsername(ctx context.Context, username string) (User, error)
 	GetUserRandom(ctx context.Context) (User, error)
@@ -52,6 +54,7 @@ type Querier interface {
 	UpdateData(ctx context.Context, arg UpdateDataParams) error
 	UpdateDescriptionUser(ctx context.Context, arg UpdateDescriptionUserParams) error
 	UpdatePasswordUserWithconfirmCode(ctx context.Context, arg UpdatePasswordUserWithconfirmCodeParams) error
+	UpdateStock(ctx context.Context, arg UpdateStockParams) error
 	UpdateUserBo(ctx context.Context, arg UpdateUserBoParams) error
 	UpdateUserConfirmCode(ctx context.Context, arg UpdateUserConfirmCodeParams) error
 	UpdateUserPassword(ctx context.Context, arg UpdateUserPasswordParams) error

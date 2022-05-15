@@ -164,6 +164,37 @@ func (s *userssrvc) UpdateDescription(ctx context.Context, p *users.UpdateDescri
 	return res, nil
 }
 
+func (s *userssrvc) UpdateNumberStockage(ctx context.Context, p *users.UpdateNumberStockagePayload) (res *users.UpdateNumberStockageResult, err error) {
+	if p == nil {
+		return nil, ErrNullPayload
+	}
+	userID, err := uuid.Parse(p.ID)
+	if err != nil {
+		return nil, ErrWrongIdFormat
+	}
+	err = s.server.Store.ExecTx(ctx, func(q *db.Queries) error {
+		stock, err := q.GetStockByUserID(ctx, userID)
+		if err != nil {
+			return fmt.Errorf("error get stock by user id: %v", err)
+		}
+		arg := db.UpdateStockParams{
+			ID:    userID,
+			Stock: stock + p.Number,
+		}
+		if err := q.UpdateStock(ctx, arg); err != nil {
+			return fmt.Errorf("ERROR_UPDATE_USER_DESCRIPTION %v", err)
+		}
+		res = &users.UpdateNumberStockageResult{
+			Success: true,
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, s.errorResponse("TX_UPDATE_USER_DESCRIPTION", err)
+	}
+	return res, nil
+}
+
 // Update avatar
 func (s *userssrvc) UpdateAvatar(ctx context.Context, p *users.UpdateAvatarPayload) (res *users.UpdateAvatarResult, err error) {
 	if p == nil {

@@ -25,6 +25,10 @@ type Client struct {
 	// updateAvatar endpoint.
 	UpdateAvatarDoer goahttp.Doer
 
+	// UpdateNumberStockage Doer is the HTTP client used to make requests to the
+	// updateNumberStockage endpoint.
+	UpdateNumberStockageDoer goahttp.Doer
+
 	// GetUserByID Doer is the HTTP client used to make requests to the getUserByID
 	// endpoint.
 	GetUserByIDDoer goahttp.Doer
@@ -56,16 +60,17 @@ func NewClient(
 	restoreBody bool,
 ) *Client {
 	return &Client{
-		DeleteUserDoer:        doer,
-		UpdateAvatarDoer:      doer,
-		GetUserByIDDoer:       doer,
-		UpdateDescriptionDoer: doer,
-		CORSDoer:              doer,
-		RestoreResponseBody:   restoreBody,
-		scheme:                scheme,
-		host:                  host,
-		decoder:               dec,
-		encoder:               enc,
+		DeleteUserDoer:           doer,
+		UpdateAvatarDoer:         doer,
+		UpdateNumberStockageDoer: doer,
+		GetUserByIDDoer:          doer,
+		UpdateDescriptionDoer:    doer,
+		CORSDoer:                 doer,
+		RestoreResponseBody:      restoreBody,
+		scheme:                   scheme,
+		host:                     host,
+		decoder:                  dec,
+		encoder:                  enc,
 	}
 }
 
@@ -112,6 +117,30 @@ func (c *Client) UpdateAvatar() goa.Endpoint {
 		resp, err := c.UpdateAvatarDoer.Do(req)
 		if err != nil {
 			return nil, goahttp.ErrRequestError("users", "updateAvatar", err)
+		}
+		return decodeResponse(resp)
+	}
+}
+
+// UpdateNumberStockage returns an endpoint that makes HTTP requests to the
+// users service updateNumberStockage server.
+func (c *Client) UpdateNumberStockage() goa.Endpoint {
+	var (
+		encodeRequest  = EncodeUpdateNumberStockageRequest(c.encoder)
+		decodeResponse = DecodeUpdateNumberStockageResponse(c.decoder, c.RestoreResponseBody)
+	)
+	return func(ctx context.Context, v interface{}) (interface{}, error) {
+		req, err := c.BuildUpdateNumberStockageRequest(ctx, v)
+		if err != nil {
+			return nil, err
+		}
+		err = encodeRequest(req, v)
+		if err != nil {
+			return nil, err
+		}
+		resp, err := c.UpdateNumberStockageDoer.Do(req)
+		if err != nil {
+			return nil, goahttp.ErrRequestError("users", "updateNumberStockage", err)
 		}
 		return decodeResponse(resp)
 	}

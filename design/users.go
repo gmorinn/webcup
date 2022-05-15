@@ -81,6 +81,36 @@ var _ = Service("users", func() {
 		})
 	})
 
+	Method("updateNumberStockage", func() {
+		Description("Update number stockage")
+
+		Payload(func() {
+			Attribute("id", String, func() {
+				Format(FormatUUID)
+				Example("5dfb0bf7-597a-4250-b7ad-63a43ff59c25")
+			})
+			Attribute("number", Int64, func() {
+			})
+			TokenField(1, "jwtToken", String, func() {
+				Description("JWT used for authentication after Signin/Signup")
+			})
+			AccessTokenField(2, "oauth", String, func() {
+				Description("Use to generate Oauth with /authorization")
+			})
+			Required("id", "number")
+		})
+
+		Result(func() {
+			Attribute("success", Boolean)
+			Required("success")
+		})
+
+		HTTP(func() {
+			PUT("/edit/stock")
+			Response(StatusOK)
+		})
+	})
+
 	Method("getUserByID", func() {
 		Description("Get one User")
 		Payload(func() {

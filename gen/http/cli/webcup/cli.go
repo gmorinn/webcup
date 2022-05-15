@@ -41,7 +41,7 @@ jwt-token (signup|signin|refresh|signin-bo)
 o-auth o-auth
 bo (get-bo-users|get-bo-data|delete-bo-user|delete-bo-many-users|update-bo-user|get-bo-user)
 public-users (get-user-by-username|list-users|list-users-most-recent)
-users (delete-user|update-avatar|get-user-by-id|update-description)
+users (delete-user|update-avatar|update-number-stockage|get-user-by-id|update-description)
 `
 }
 
@@ -49,25 +49,25 @@ users (delete-user|update-avatar|get-user-by-id|update-description)
 func UsageExamples() string {
 	return os.Args[0] + ` auth email-exist --body '{
       "email": "guillaume@gmail.com"
-   }' --oauth "Nisi distinctio cum."` + "\n" +
-		os.Args[0] + ` bo-contact get-bo-contact --offset 0 --limit 9 --field "name" --direction "asc" --oauth "Similique aut." --jwt-token "Rerum quia quidem dolor."` + "\n" +
+   }' --oauth "At aut."` + "\n" +
+		os.Args[0] + ` bo-contact get-bo-contact --offset 0 --limit 9 --field "name" --direction "asc" --oauth "Enim distinctio veritatis architecto ut neque quod." --jwt-token "Aut quis aut ea."` + "\n" +
 		os.Args[0] + ` contacts add-message --body '{
       "msg": "Je reprends l\'app pour un million",
       "user_id": "5dfb0bf7-597a-4250-b7ad-63a43ff59c25"
-   }' --oauth "Possimus mollitia qui dolorum rem rerum." --jwt-token "Facere quaerat."` + "\n" +
+   }' --oauth "Saepe quia beatae autem reprehenderit." --jwt-token "Modi esse ducimus magnam beatae sapiente."` + "\n" +
 		os.Args[0] + ` data list-data --body '{
       "key": "Mars"
-   }' --oauth "Saepe quia beatae autem reprehenderit." --jwt-token "Modi esse ducimus magnam beatae sapiente."` + "\n" +
+   }' --oauth "Id rerum fuga." --jwt-token "Pariatur nisi."` + "\n" +
 		os.Args[0] + ` files import-file --body '{
-      "content": "SW5jaWR1bnQgaXBzYW0gYXNwZXJpb3JlcyBmYWNpbGlzLg==",
+      "content": "SXRhcXVlIHRlbXBvcmUu",
       "filename": "foo.jpg",
       "format": "image/jpeg",
-      "h": 378833681784803462,
-      "mime": "Et omnis deleniti exercitationem eum vitae.",
-      "size": 5630459967245784067,
-      "url": "Corporis excepturi reprehenderit voluptatum fugiat odit explicabo.",
-      "w": 3855134557079646294
-   }' --oauth "Tempore perferendis veritatis corporis." --jwt-token "Libero animi qui corporis aut deserunt asperiores."` + "\n" +
+      "h": 8213129504107496369,
+      "mime": "Incidunt ipsam asperiores facilis.",
+      "size": 7940255785138466612,
+      "url": "Enim et omnis deleniti exercitationem.",
+      "w": 466048715731699887
+   }' --oauth "Corporis sed." --jwt-token "Animi qui corporis aut deserunt asperiores."` + "\n" +
 		""
 }
 
@@ -265,6 +265,11 @@ func ParseEndpoint(
 		usersUpdateAvatarOauthFlag    = usersUpdateAvatarFlags.String("oauth", "", "")
 		usersUpdateAvatarJWTTokenFlag = usersUpdateAvatarFlags.String("jwt-token", "", "")
 
+		usersUpdateNumberStockageFlags        = flag.NewFlagSet("update-number-stockage", flag.ExitOnError)
+		usersUpdateNumberStockageBodyFlag     = usersUpdateNumberStockageFlags.String("body", "REQUIRED", "")
+		usersUpdateNumberStockageOauthFlag    = usersUpdateNumberStockageFlags.String("oauth", "", "")
+		usersUpdateNumberStockageJWTTokenFlag = usersUpdateNumberStockageFlags.String("jwt-token", "", "")
+
 		usersGetUserByIDFlags        = flag.NewFlagSet("get-user-by-id", flag.ExitOnError)
 		usersGetUserByIDIDFlag       = usersGetUserByIDFlags.String("id", "REQUIRED", "Unique ID of the User")
 		usersGetUserByIDOauthFlag    = usersGetUserByIDFlags.String("oauth", "", "")
@@ -326,6 +331,7 @@ func ParseEndpoint(
 	usersFlags.Usage = usersUsage
 	usersDeleteUserFlags.Usage = usersDeleteUserUsage
 	usersUpdateAvatarFlags.Usage = usersUpdateAvatarUsage
+	usersUpdateNumberStockageFlags.Usage = usersUpdateNumberStockageUsage
 	usersGetUserByIDFlags.Usage = usersGetUserByIDUsage
 	usersUpdateDescriptionFlags.Usage = usersUpdateDescriptionUsage
 
@@ -513,6 +519,9 @@ func ParseEndpoint(
 			case "update-avatar":
 				epf = usersUpdateAvatarFlags
 
+			case "update-number-stockage":
+				epf = usersUpdateNumberStockageFlags
+
 			case "get-user-by-id":
 				epf = usersGetUserByIDFlags
 
@@ -676,6 +685,9 @@ func ParseEndpoint(
 			case "update-avatar":
 				endpoint = c.UpdateAvatar()
 				data, err = usersc.BuildUpdateAvatarPayload(*usersUpdateAvatarBodyFlag, *usersUpdateAvatarOauthFlag, *usersUpdateAvatarJWTTokenFlag)
+			case "update-number-stockage":
+				endpoint = c.UpdateNumberStockage()
+				data, err = usersc.BuildUpdateNumberStockagePayload(*usersUpdateNumberStockageBodyFlag, *usersUpdateNumberStockageOauthFlag, *usersUpdateNumberStockageJWTTokenFlag)
 			case "get-user-by-id":
 				endpoint = c.GetUserByID()
 				data, err = usersc.BuildGetUserByIDPayload(*usersGetUserByIDIDFlag, *usersGetUserByIDOauthFlag, *usersGetUserByIDJWTTokenFlag)
@@ -717,7 +729,7 @@ Check if email exist in database
 Example:
     %[1]s auth email-exist --body '{
       "email": "guillaume@gmail.com"
-   }' --oauth "Nisi distinctio cum."
+   }' --oauth "At aut."
 `, os.Args[0])
 }
 
@@ -731,7 +743,7 @@ Check if email exist in database and send code by email to reset password
 Example:
     %[1]s auth send-confirmation --body '{
       "email": "guillaume@gmail.com"
-   }' --oauth "Et quis ab velit."
+   }' --oauth "Incidunt similique aut voluptatem."
 `, os.Args[0])
 }
 
@@ -748,7 +760,7 @@ Example:
       "confirm_password": "JeSuisUnTest974",
       "email": "guillaume@gmail.com",
       "password": "JeSuisUnTest974"
-   }' --oauth "Dicta cumque at aut eveniet quibusdam laborum."
+   }' --oauth "Porro non natus fugiat."
 `, os.Args[0])
 }
 
@@ -781,7 +793,7 @@ Get All messages
     -jwt-token STRING: 
 
 Example:
-    %[1]s bo-contact get-bo-contact --offset 0 --limit 9 --field "name" --direction "asc" --oauth "Similique aut." --jwt-token "Rerum quia quidem dolor."
+    %[1]s bo-contact get-bo-contact --offset 0 --limit 9 --field "name" --direction "asc" --oauth "Enim distinctio veritatis architecto ut neque quod." --jwt-token "Aut quis aut ea."
 `, os.Args[0])
 }
 
@@ -794,7 +806,7 @@ Delete one contact by ID
     -jwt-token STRING: 
 
 Example:
-    %[1]s bo-contact delete-bo-contact --id "5dfb0bf7-597a-4250-b7ad-63a43ff59c25" --oauth "Commodi numquam enim distinctio veritatis." --jwt-token "Ut neque."
+    %[1]s bo-contact delete-bo-contact --id "5dfb0bf7-597a-4250-b7ad-63a43ff59c25" --oauth "Quas sapiente odit ducimus tenetur quos aut." --jwt-token "Sunt quo mollitia."
 `, os.Args[0])
 }
 
@@ -807,7 +819,7 @@ get one contact by ID
     -jwt-token STRING: 
 
 Example:
-    %[1]s bo-contact get-bo-contact-by-id --id "5dfb0bf7-597a-4250-b7ad-63a43ff59c25" --oauth "Quis aut ea et dicta." --jwt-token "Nisi assumenda quas sapiente odit ducimus tenetur."
+    %[1]s bo-contact get-bo-contact-by-id --id "5dfb0bf7-597a-4250-b7ad-63a43ff59c25" --oauth "Necessitatibus dolorem animi vero." --jwt-token "Veniam fuga eos repellat tenetur dolorem."
 `, os.Args[0])
 }
 
@@ -822,11 +834,10 @@ Delete many contact with IDs send in body
 Example:
     %[1]s bo-contact delete-bo-many-contact --body '{
       "tab": [
-         "Quo mollitia consequatur.",
-         "Autem necessitatibus dolorem animi vero ipsa.",
-         "Fuga eos repellat."
+         "Adipisci harum ipsum.",
+         "In beatae fugiat unde eos possimus mollitia."
       ]
-   }' --oauth "Dolorem quia molestias est exercitationem." --jwt-token "Harum ipsum quidem in beatae."
+   }' --oauth "Dolorum rem rerum." --jwt-token "Facere quaerat."
 `, os.Args[0])
 }
 
@@ -855,7 +866,7 @@ Example:
     %[1]s contacts add-message --body '{
       "msg": "Je reprends l\'app pour un million",
       "user_id": "5dfb0bf7-597a-4250-b7ad-63a43ff59c25"
-   }' --oauth "Possimus mollitia qui dolorum rem rerum." --jwt-token "Facere quaerat."
+   }' --oauth "Saepe quia beatae autem reprehenderit." --jwt-token "Modi esse ducimus magnam beatae sapiente."
 `, os.Args[0])
 }
 
@@ -888,7 +899,7 @@ List data for search bar
 Example:
     %[1]s data list-data --body '{
       "key": "Mars"
-   }' --oauth "Saepe quia beatae autem reprehenderit." --jwt-token "Modi esse ducimus magnam beatae sapiente."
+   }' --oauth "Id rerum fuga." --jwt-token "Pariatur nisi."
 `, os.Args[0])
 }
 
@@ -902,7 +913,7 @@ List data the most recent
     -jwt-token STRING: 
 
 Example:
-    %[1]s data list-data-most-recent --offset 0 --limit 5 --oauth "Quia ut accusantium aliquid provident molestiae." --jwt-token "Sed eos sed esse totam."
+    %[1]s data list-data-most-recent --offset 0 --limit 5 --oauth "Molestiae iste sed eos sed." --jwt-token "Totam ut ea."
 `, os.Args[0])
 }
 
@@ -917,13 +928,13 @@ Create one data
 Example:
     %[1]s data create-data --body '{
       "data": {
-         "category": "animals",
+         "category": "autre",
          "description": "Unique Air max restant au monde",
-         "image": "Saepe omnis.",
+         "image": "Minus rerum ea sed non nobis.",
          "title": "Air max360 d\'il y a 10 millions d\'années",
          "user_id": "5dfb0bf7-597a-4250-b7ad-63a43ff59c25"
       }
-   }' --oauth "Ea sed non nobis recusandae." --jwt-token "Voluptatibus est officiis earum sint et."
+   }' --oauth "Voluptatibus est officiis earum sint et." --jwt-token "Dolorem assumenda qui commodi qui voluptatibus molestias."
 `, os.Args[0])
 }
 
@@ -939,13 +950,13 @@ Update one data
 Example:
     %[1]s data update-data --body '{
       "data": {
-         "category": "animals",
+         "category": "autre",
          "description": "Unique Air max restant au monde",
-         "image": "Saepe omnis.",
+         "image": "Minus rerum ea sed non nobis.",
          "title": "Air max360 d\'il y a 10 millions d\'années",
          "user_id": "5dfb0bf7-597a-4250-b7ad-63a43ff59c25"
       }
-   }' --id "5dfb0bf7-597a-4250-b7ad-63a43ff59c25" --oauth "Qui commodi qui voluptatibus." --jwt-token "Laborum aut vitae nemo dicta."
+   }' --id "5dfb0bf7-597a-4250-b7ad-63a43ff59c25" --oauth "Nemo dicta voluptas excepturi voluptatem odio quae." --jwt-token "A dolores."
 `, os.Args[0])
 }
 
@@ -960,7 +971,7 @@ Get one data user id
     -jwt-token STRING: 
 
 Example:
-    %[1]s data get-data-by-user-id --user-id "5dfb0bf7-597a-4250-b7ad-63a43ff59c25" --offset 0 --limit 5 --oauth "Odio quae ipsam a dolores sed." --jwt-token "Omnis similique in."
+    %[1]s data get-data-by-user-id --user-id "5dfb0bf7-597a-4250-b7ad-63a43ff59c25" --offset 0 --limit 5 --oauth "Similique in ratione ratione fuga ut." --jwt-token "Molestiae et."
 `, os.Args[0])
 }
 
@@ -973,7 +984,7 @@ Get one data by id
     -jwt-token STRING: 
 
 Example:
-    %[1]s data get-data-by-id --id "5dfb0bf7-597a-4250-b7ad-63a43ff59c25" --oauth "Molestiae et." --jwt-token "Et et et numquam et est laudantium."
+    %[1]s data get-data-by-id --id "5dfb0bf7-597a-4250-b7ad-63a43ff59c25" --oauth "Et est laudantium debitis." --jwt-token "Necessitatibus corporis excepturi reprehenderit voluptatum fugiat odit."
 `, os.Args[0])
 }
 
@@ -1001,15 +1012,15 @@ Import file
 
 Example:
     %[1]s files import-file --body '{
-      "content": "SW5jaWR1bnQgaXBzYW0gYXNwZXJpb3JlcyBmYWNpbGlzLg==",
+      "content": "SXRhcXVlIHRlbXBvcmUu",
       "filename": "foo.jpg",
       "format": "image/jpeg",
-      "h": 378833681784803462,
-      "mime": "Et omnis deleniti exercitationem eum vitae.",
-      "size": 5630459967245784067,
-      "url": "Corporis excepturi reprehenderit voluptatum fugiat odit explicabo.",
-      "w": 3855134557079646294
-   }' --oauth "Tempore perferendis veritatis corporis." --jwt-token "Libero animi qui corporis aut deserunt asperiores."
+      "h": 8213129504107496369,
+      "mime": "Incidunt ipsam asperiores facilis.",
+      "size": 7940255785138466612,
+      "url": "Enim et omnis deleniti exercitationem.",
+      "w": 466048715731699887
+   }' --oauth "Corporis sed." --jwt-token "Animi qui corporis aut deserunt asperiores."
 `, os.Args[0])
 }
 
@@ -1316,6 +1327,7 @@ Usage:
 COMMAND:
     delete-user: Delete one User by ID
     update-avatar: Update avatar
+    update-number-stockage: Update number stockage
     get-user-by-id: Get one User
     update-description: Update main info like email, username, firstname, lastname
 
@@ -1352,6 +1364,22 @@ Example:
 `, os.Args[0])
 }
 
+func usersUpdateNumberStockageUsage() {
+	fmt.Fprintf(os.Stderr, `%[1]s [flags] users update-number-stockage -body JSON -oauth STRING -jwt-token STRING
+
+Update number stockage
+    -body JSON: 
+    -oauth STRING: 
+    -jwt-token STRING: 
+
+Example:
+    %[1]s users update-number-stockage --body '{
+      "id": "5dfb0bf7-597a-4250-b7ad-63a43ff59c25",
+      "number": 2285170554064599612
+   }' --oauth "Eveniet velit aperiam." --jwt-token "Natus dolor eaque modi."
+`, os.Args[0])
+}
+
 func usersGetUserByIDUsage() {
 	fmt.Fprintf(os.Stderr, `%[1]s [flags] users get-user-by-id -id STRING -oauth STRING -jwt-token STRING
 
@@ -1361,7 +1389,7 @@ Get one User
     -jwt-token STRING: 
 
 Example:
-    %[1]s users get-user-by-id --id "5dfb0bf7-597a-4250-b7ad-63a43ff59c25" --oauth "Excepturi eveniet velit aperiam." --jwt-token "Natus dolor eaque modi."
+    %[1]s users get-user-by-id --id "5dfb0bf7-597a-4250-b7ad-63a43ff59c25" --oauth "Est illo maiores." --jwt-token "Deserunt mollitia maxime eius."
 `, os.Args[0])
 }
 
@@ -1380,6 +1408,6 @@ Example:
       "id": "5dfb0bf7-597a-4250-b7ad-63a43ff59c25",
       "lastname": "Morin",
       "username": "guillaumemoriin"
-   }' --oauth "Est illo maiores." --jwt-token "Deserunt mollitia maxime eius."
+   }' --oauth "Id omnis sit consequatur beatae." --jwt-token "Dolorem nisi accusantium molestiae quibusdam laudantium."
 `, os.Args[0])
 }

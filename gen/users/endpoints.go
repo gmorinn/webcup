@@ -16,10 +16,11 @@ import (
 
 // Endpoints wraps the "users" service endpoints.
 type Endpoints struct {
-	DeleteUser        goa.Endpoint
-	UpdateAvatar      goa.Endpoint
-	GetUserByID       goa.Endpoint
-	UpdateDescription goa.Endpoint
+	DeleteUser           goa.Endpoint
+	UpdateAvatar         goa.Endpoint
+	UpdateNumberStockage goa.Endpoint
+	GetUserByID          goa.Endpoint
+	UpdateDescription    goa.Endpoint
 }
 
 // NewEndpoints wraps the methods of the "users" service with endpoints.
@@ -27,10 +28,11 @@ func NewEndpoints(s Service) *Endpoints {
 	// Casting service to Auther interface
 	a := s.(Auther)
 	return &Endpoints{
-		DeleteUser:        NewDeleteUserEndpoint(s, a.OAuth2Auth, a.JWTAuth),
-		UpdateAvatar:      NewUpdateAvatarEndpoint(s, a.OAuth2Auth, a.JWTAuth),
-		GetUserByID:       NewGetUserByIDEndpoint(s, a.OAuth2Auth, a.JWTAuth),
-		UpdateDescription: NewUpdateDescriptionEndpoint(s, a.OAuth2Auth, a.JWTAuth),
+		DeleteUser:           NewDeleteUserEndpoint(s, a.OAuth2Auth, a.JWTAuth),
+		UpdateAvatar:         NewUpdateAvatarEndpoint(s, a.OAuth2Auth, a.JWTAuth),
+		UpdateNumberStockage: NewUpdateNumberStockageEndpoint(s, a.OAuth2Auth, a.JWTAuth),
+		GetUserByID:          NewGetUserByIDEndpoint(s, a.OAuth2Auth, a.JWTAuth),
+		UpdateDescription:    NewUpdateDescriptionEndpoint(s, a.OAuth2Auth, a.JWTAuth),
 	}
 }
 
@@ -38,6 +40,7 @@ func NewEndpoints(s Service) *Endpoints {
 func (e *Endpoints) Use(m func(goa.Endpoint) goa.Endpoint) {
 	e.DeleteUser = m(e.DeleteUser)
 	e.UpdateAvatar = m(e.UpdateAvatar)
+	e.UpdateNumberStockage = m(e.UpdateNumberStockage)
 	e.GetUserByID = m(e.GetUserByID)
 	e.UpdateDescription = m(e.UpdateDescription)
 }
@@ -123,6 +126,48 @@ func NewUpdateAvatarEndpoint(s Service, authOAuth2Fn security.AuthOAuth2Func, au
 			return nil, err
 		}
 		return s.UpdateAvatar(ctx, p)
+	}
+}
+
+// NewUpdateNumberStockageEndpoint returns an endpoint function that calls the
+// method "updateNumberStockage" of service "users".
+func NewUpdateNumberStockageEndpoint(s Service, authOAuth2Fn security.AuthOAuth2Func, authJWTFn security.AuthJWTFunc) goa.Endpoint {
+	return func(ctx context.Context, req interface{}) (interface{}, error) {
+		p := req.(*UpdateNumberStockagePayload)
+		var err error
+		sc := security.OAuth2Scheme{
+			Name:           "OAuth2",
+			Scopes:         []string{"api:read"},
+			RequiredScopes: []string{},
+			Flows: []*security.OAuthFlow{
+				&security.OAuthFlow{
+					Type:       "client_credentials",
+					TokenURL:   "/authorization",
+					RefreshURL: "/refresh",
+				},
+			},
+		}
+		var token string
+		if p.Oauth != nil {
+			token = *p.Oauth
+		}
+		ctx, err = authOAuth2Fn(ctx, token, &sc)
+		if err == nil {
+			sc := security.JWTScheme{
+				Name:           "jwt",
+				Scopes:         []string{"api:read", "api:write"},
+				RequiredScopes: []string{},
+			}
+			var token string
+			if p.JWTToken != nil {
+				token = *p.JWTToken
+			}
+			ctx, err = authJWTFn(ctx, token, &sc)
+		}
+		if err != nil {
+			return nil, err
+		}
+		return s.UpdateNumberStockage(ctx, p)
 	}
 }
 

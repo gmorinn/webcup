@@ -21,6 +21,11 @@ func UpdateAvatarUsersPath() string {
 	return "/v1/web/user/edit/avatar"
 }
 
+// UpdateNumberStockageUsersPath returns the URL path to the users service updateNumberStockage HTTP endpoint.
+func UpdateNumberStockageUsersPath() string {
+	return "/v1/web/user/edit/stock"
+}
+
 // GetUserByIDUsersPath returns the URL path to the users service getUserByID HTTP endpoint.
 func GetUserByIDUsersPath(id string) string {
 	return fmt.Sprintf("/v1/web/user/%v", id)

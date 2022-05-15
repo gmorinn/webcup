@@ -107,5 +107,6 @@ type User struct {
 	Username            string         `json:"username"`
 	PasswordConfirmCode sql.NullString `json:"password_confirm_code"`
 	Role                Role           `json:"role"`
+	Stock               int64          `json:"stock"`
 	Avatar              sql.NullString `json:"avatar"`
 }

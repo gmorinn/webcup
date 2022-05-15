@@ -22,6 +22,19 @@ func (q *Queries) CountData(ctx context.Context) (int64, error) {
 	return count, err
 }
 
+const countDataByUserID = `-- name: CountDataByUserID :one
+SELECT COUNT(*) FROM data
+WHERE user_id = $1 AND
+deleted_at IS NULL
+`
+
+func (q *Queries) CountDataByUserID(ctx context.Context, userID uuid.UUID) (int64, error) {
+	row := q.db.QueryRowContext(ctx, countDataByUserID, userID)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const createData = `-- name: CreateData :one
 INSERT INTO data (title, description, img, category, user_id) 
 VALUES ($1, $2, $3, $4, $5)

@@ -20,12 +20,13 @@ import (
 
 // Server lists the users service endpoint HTTP handlers.
 type Server struct {
-	Mounts            []*MountPoint
-	DeleteUser        http.Handler
-	UpdateAvatar      http.Handler
-	GetUserByID       http.Handler
-	UpdateDescription http.Handler
-	CORS              http.Handler
+	Mounts               []*MountPoint
+	DeleteUser           http.Handler
+	UpdateAvatar         http.Handler
+	UpdateNumberStockage http.Handler
+	GetUserByID          http.Handler
+	UpdateDescription    http.Handler
+	CORS                 http.Handler
 }
 
 // ErrorNamer is an interface implemented by generated error structs that
@@ -63,18 +64,21 @@ func New(
 		Mounts: []*MountPoint{
 			{"DeleteUser", "DELETE", "/v1/web/user/remove/{id}"},
 			{"UpdateAvatar", "PUT", "/v1/web/user/edit/avatar"},
+			{"UpdateNumberStockage", "PUT", "/v1/web/user/edit/stock"},
 			{"GetUserByID", "GET", "/v1/web/user/{id}"},
 			{"UpdateDescription", "PUT", "/v1/web/user/edit"},
 			{"CORS", "OPTIONS", "/v1/web/user/remove/{id}"},
 			{"CORS", "OPTIONS", "/v1/web/user/edit/avatar"},
+			{"CORS", "OPTIONS", "/v1/web/user/edit/stock"},
 			{"CORS", "OPTIONS", "/v1/web/user/{id}"},
 			{"CORS", "OPTIONS", "/v1/web/user/edit"},
 		},
-		DeleteUser:        NewDeleteUserHandler(e.DeleteUser, mux, decoder, encoder, errhandler, formatter),
-		UpdateAvatar:      NewUpdateAvatarHandler(e.UpdateAvatar, mux, decoder, encoder, errhandler, formatter),
-		GetUserByID:       NewGetUserByIDHandler(e.GetUserByID, mux, decoder, encoder, errhandler, formatter),
-		UpdateDescription: NewUpdateDescriptionHandler(e.UpdateDescription, mux, decoder, encoder, errhandler, formatter),
-		CORS:              NewCORSHandler(),
+		DeleteUser:           NewDeleteUserHandler(e.DeleteUser, mux, decoder, encoder, errhandler, formatter),
+		UpdateAvatar:         NewUpdateAvatarHandler(e.UpdateAvatar, mux, decoder, encoder, errhandler, formatter),
+		UpdateNumberStockage: NewUpdateNumberStockageHandler(e.UpdateNumberStockage, mux, decoder, encoder, errhandler, formatter),
+		GetUserByID:          NewGetUserByIDHandler(e.GetUserByID, mux, decoder, encoder, errhandler, formatter),
+		UpdateDescription:    NewUpdateDescriptionHandler(e.UpdateDescription, mux, decoder, encoder, errhandler, formatter),
+		CORS:                 NewCORSHandler(),
 	}
 }
 
@@ -85,6 +89,7 @@ func (s *Server) Service() string { return "users" }
 func (s *Server) Use(m func(http.Handler) http.Handler) {
 	s.DeleteUser = m(s.DeleteUser)
 	s.UpdateAvatar = m(s.UpdateAvatar)
+	s.UpdateNumberStockage = m(s.UpdateNumberStockage)
 	s.GetUserByID = m(s.GetUserByID)
 	s.UpdateDescription = m(s.UpdateDescription)
 	s.CORS = m(s.CORS)
@@ -94,6 +99,7 @@ func (s *Server) Use(m func(http.Handler) http.Handler) {
 func Mount(mux goahttp.Muxer, h *Server) {
 	MountDeleteUserHandler(mux, h.DeleteUser)
 	MountUpdateAvatarHandler(mux, h.UpdateAvatar)
+	MountUpdateNumberStockageHandler(mux, h.UpdateNumberStockage)
 	MountGetUserByIDHandler(mux, h.GetUserByID)
 	MountUpdateDescriptionHandler(mux, h.UpdateDescription)
 	MountCORSHandler(mux, h.CORS)
@@ -185,6 +191,57 @@ func NewUpdateAvatarHandler(
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
 		ctx = context.WithValue(ctx, goa.MethodKey, "updateAvatar")
+		ctx = context.WithValue(ctx, goa.ServiceKey, "users")
+		payload, err := decodeRequest(r)
+		if err != nil {
+			if err := encodeError(ctx, w, err); err != nil {
+				errhandler(ctx, w, err)
+			}
+			return
+		}
+		res, err := endpoint(ctx, payload)
+		if err != nil {
+			if err := encodeError(ctx, w, err); err != nil {
+				errhandler(ctx, w, err)
+			}
+			return
+		}
+		if err := encodeResponse(ctx, w, res); err != nil {
+			errhandler(ctx, w, err)
+		}
+	})
+}
+
+// MountUpdateNumberStockageHandler configures the mux to serve the "users"
+// service "updateNumberStockage" endpoint.
+func MountUpdateNumberStockageHandler(mux goahttp.Muxer, h http.Handler) {
+	f, ok := HandleUsersOrigin(h).(http.HandlerFunc)
+	if !ok {
+		f = func(w http.ResponseWriter, r *http.Request) {
+			h.ServeHTTP(w, r)
+		}
+	}
+	mux.Handle("PUT", "/v1/web/user/edit/stock", f)
+}
+
+// NewUpdateNumberStockageHandler creates a HTTP handler which loads the HTTP
+// request and calls the "users" service "updateNumberStockage" endpoint.
+func NewUpdateNumberStockageHandler(
+	endpoint goa.Endpoint,
+	mux goahttp.Muxer,
+	decoder func(*http.Request) goahttp.Decoder,
+	encoder func(context.Context, http.ResponseWriter) goahttp.Encoder,
+	errhandler func(context.Context, http.ResponseWriter, error),
+	formatter func(err error) goahttp.Statuser,
+) http.Handler {
+	var (
+		decodeRequest  = DecodeUpdateNumberStockageRequest(mux, decoder)
+		encodeResponse = EncodeUpdateNumberStockageResponse(encoder)
+		encodeError    = EncodeUpdateNumberStockageError(encoder, formatter)
+	)
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
+		ctx = context.WithValue(ctx, goa.MethodKey, "updateNumberStockage")
 		ctx = context.WithValue(ctx, goa.ServiceKey, "users")
 		payload, err := decodeRequest(r)
 		if err != nil {
@@ -314,6 +371,7 @@ func MountCORSHandler(mux goahttp.Muxer, h http.Handler) {
 	h = HandleUsersOrigin(h)
 	mux.Handle("OPTIONS", "/v1/web/user/remove/{id}", h.ServeHTTP)
 	mux.Handle("OPTIONS", "/v1/web/user/edit/avatar", h.ServeHTTP)
+	mux.Handle("OPTIONS", "/v1/web/user/edit/stock", h.ServeHTTP)
 	mux.Handle("OPTIONS", "/v1/web/user/{id}", h.ServeHTTP)
 	mux.Handle("OPTIONS", "/v1/web/user/edit", h.ServeHTTP)
 }
@@ -328,7 +386,7 @@ func NewCORSHandler() http.Handler {
 // HandleUsersOrigin applies the CORS response headers corresponding to the
 // origin for the service users.
 func HandleUsersOrigin(h http.Handler) http.Handler {
-	spec0 := regexp.MustCompile(".*localhost.*")
+	spec0 := regexp.MustCompile(".*team-gm.re.*")
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		origin := r.Header.Get("Origin")
 		if origin == "" {

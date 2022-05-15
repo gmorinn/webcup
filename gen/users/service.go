@@ -20,6 +20,8 @@ type Service interface {
 	DeleteUser(context.Context, *DeleteUserPayload) (res *DeleteUserResult, err error)
 	// Update avatar
 	UpdateAvatar(context.Context, *UpdateAvatarPayload) (res *UpdateAvatarResult, err error)
+	// Update number stockage
+	UpdateNumberStockage(context.Context, *UpdateNumberStockagePayload) (res *UpdateNumberStockageResult, err error)
 	// Get one User
 	GetUserByID(context.Context, *GetUserByIDPayload) (res *GetUserByIDResult, err error)
 	// Update main info like email, username, firstname, lastname
@@ -42,7 +44,7 @@ const ServiceName = "users"
 // MethodNames lists the service method names as defined in the design. These
 // are the same values that are set in the endpoint request contexts under the
 // MethodKey key.
-var MethodNames = [4]string{"deleteUser", "updateAvatar", "getUserByID", "updateDescription"}
+var MethodNames = [5]string{"deleteUser", "updateAvatar", "updateNumberStockage", "getUserByID", "updateDescription"}
 
 // DeleteUserPayload is the payload type of the users service deleteUser method.
 type DeleteUserPayload struct {
@@ -127,6 +129,23 @@ type UpdateDescriptionResult struct {
 	Success bool
 	// Result is an Object
 	User *ResUser
+}
+
+// UpdateNumberStockagePayload is the payload type of the users service
+// updateNumberStockage method.
+type UpdateNumberStockagePayload struct {
+	ID     string
+	Number int64
+	// JWT used for authentication after Signin/Signup
+	JWTToken *string
+	// Use to generate Oauth with /authorization
+	Oauth *string
+}
+
+// UpdateNumberStockageResult is the result type of the users service
+// updateNumberStockage method.
+type UpdateNumberStockageResult struct {
+	Success bool
 }
 
 type UnknownError struct {

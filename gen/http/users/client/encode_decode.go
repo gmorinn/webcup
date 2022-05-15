@@ -225,6 +225,107 @@ func DecodeUpdateAvatarResponse(decoder func(*http.Response) goahttp.Decoder, re
 	}
 }
 
+// BuildUpdateNumberStockageRequest instantiates a HTTP request object with
+// method and path set to call the "users" service "updateNumberStockage"
+// endpoint
+func (c *Client) BuildUpdateNumberStockageRequest(ctx context.Context, v interface{}) (*http.Request, error) {
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: UpdateNumberStockageUsersPath()}
+	req, err := http.NewRequest("PUT", u.String(), nil)
+	if err != nil {
+		return nil, goahttp.ErrInvalidURL("users", "updateNumberStockage", u.String(), err)
+	}
+	if ctx != nil {
+		req = req.WithContext(ctx)
+	}
+
+	return req, nil
+}
+
+// EncodeUpdateNumberStockageRequest returns an encoder for requests sent to
+// the users updateNumberStockage server.
+func EncodeUpdateNumberStockageRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.Request, interface{}) error {
+	return func(req *http.Request, v interface{}) error {
+		p, ok := v.(*users.UpdateNumberStockagePayload)
+		if !ok {
+			return goahttp.ErrInvalidType("users", "updateNumberStockage", "*users.UpdateNumberStockagePayload", v)
+		}
+		if p.Oauth != nil {
+			head := *p.Oauth
+			if !strings.Contains(head, " ") {
+				req.Header.Set("Authorization", "Bearer "+head)
+			} else {
+				req.Header.Set("Authorization", head)
+			}
+		}
+		if p.JWTToken != nil {
+			head := *p.JWTToken
+			req.Header.Set("jwtToken", head)
+		}
+		body := NewUpdateNumberStockageRequestBody(p)
+		if err := encoder(req).Encode(&body); err != nil {
+			return goahttp.ErrEncodingError("users", "updateNumberStockage", err)
+		}
+		return nil
+	}
+}
+
+// DecodeUpdateNumberStockageResponse returns a decoder for responses returned
+// by the users updateNumberStockage endpoint. restoreBody controls whether the
+// response body should be restored after having been read.
+// DecodeUpdateNumberStockageResponse may return the following errors:
+//	- "unknown_error" (type *users.UnknownError): http.StatusInternalServerError
+//	- error: internal error
+func DecodeUpdateNumberStockageResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
+	return func(resp *http.Response) (interface{}, error) {
+		if restoreBody {
+			b, err := ioutil.ReadAll(resp.Body)
+			if err != nil {
+				return nil, err
+			}
+			resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			defer func() {
+				resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			}()
+		} else {
+			defer resp.Body.Close()
+		}
+		switch resp.StatusCode {
+		case http.StatusOK:
+			var (
+				body UpdateNumberStockageResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("users", "updateNumberStockage", err)
+			}
+			err = ValidateUpdateNumberStockageResponseBody(&body)
+			if err != nil {
+				return nil, goahttp.ErrValidationError("users", "updateNumberStockage", err)
+			}
+			res := NewUpdateNumberStockageResultOK(&body)
+			return res, nil
+		case http.StatusInternalServerError:
+			var (
+				body UpdateNumberStockageUnknownErrorResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("users", "updateNumberStockage", err)
+			}
+			err = ValidateUpdateNumberStockageUnknownErrorResponseBody(&body)
+			if err != nil {
+				return nil, goahttp.ErrValidationError("users", "updateNumberStockage", err)
+			}
+			return nil, NewUpdateNumberStockageUnknownError(&body)
+		default:
+			body, _ := ioutil.ReadAll(resp.Body)
+			return nil, goahttp.ErrInvalidResponse("users", "updateNumberStockage", resp.StatusCode, string(body))
+		}
+	}
+}
+
 // BuildGetUserByIDRequest instantiates a HTTP request object with method and
 // path set to call the "users" service "getUserByID" endpoint
 func (c *Client) BuildGetUserByIDRequest(ctx context.Context, v interface{}) (*http.Request, error) {

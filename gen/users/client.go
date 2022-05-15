@@ -15,19 +15,21 @@ import (
 
 // Client is the "users" service client.
 type Client struct {
-	DeleteUserEndpoint        goa.Endpoint
-	UpdateAvatarEndpoint      goa.Endpoint
-	GetUserByIDEndpoint       goa.Endpoint
-	UpdateDescriptionEndpoint goa.Endpoint
+	DeleteUserEndpoint           goa.Endpoint
+	UpdateAvatarEndpoint         goa.Endpoint
+	UpdateNumberStockageEndpoint goa.Endpoint
+	GetUserByIDEndpoint          goa.Endpoint
+	UpdateDescriptionEndpoint    goa.Endpoint
 }
 
 // NewClient initializes a "users" service client given the endpoints.
-func NewClient(deleteUser, updateAvatar, getUserByID, updateDescription goa.Endpoint) *Client {
+func NewClient(deleteUser, updateAvatar, updateNumberStockage, getUserByID, updateDescription goa.Endpoint) *Client {
 	return &Client{
-		DeleteUserEndpoint:        deleteUser,
-		UpdateAvatarEndpoint:      updateAvatar,
-		GetUserByIDEndpoint:       getUserByID,
-		UpdateDescriptionEndpoint: updateDescription,
+		DeleteUserEndpoint:           deleteUser,
+		UpdateAvatarEndpoint:         updateAvatar,
+		UpdateNumberStockageEndpoint: updateNumberStockage,
+		GetUserByIDEndpoint:          getUserByID,
+		UpdateDescriptionEndpoint:    updateDescription,
 	}
 }
 
@@ -49,6 +51,17 @@ func (c *Client) UpdateAvatar(ctx context.Context, p *UpdateAvatarPayload) (res 
 		return
 	}
 	return ires.(*UpdateAvatarResult), nil
+}
+
+// UpdateNumberStockage calls the "updateNumberStockage" endpoint of the
+// "users" service.
+func (c *Client) UpdateNumberStockage(ctx context.Context, p *UpdateNumberStockagePayload) (res *UpdateNumberStockageResult, err error) {
+	var ires interface{}
+	ires, err = c.UpdateNumberStockageEndpoint(ctx, p)
+	if err != nil {
+		return
+	}
+	return ires.(*UpdateNumberStockageResult), nil
 }
 
 // GetUserByID calls the "getUserByID" endpoint of the "users" service.

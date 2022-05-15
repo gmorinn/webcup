@@ -7,6 +7,12 @@ SET firstname = $1,
     updated_at = NOW()
 WHERE id = $5;
 
+-- name: UpdateStock :exec
+UPDATE users
+SET stock = $1,
+    updated_at = NOW()
+WHERE id = $2;
+
 -- name: UpdateAvatarUser :exec
 UPDATE users
 SET avatar = $1,
@@ -21,6 +27,12 @@ LIMIT 1;
 
 -- name: GetEmailByUserID :one
 SELECT email FROM users
+WHERE id = $1
+AND deleted_at IS NULL
+LIMIT 1;
+
+-- name: GetStockByUserID :one
+SELECT stock FROM users
 WHERE id = $1
 AND deleted_at IS NULL
 LIMIT 1;

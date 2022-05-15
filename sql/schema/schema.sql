@@ -37,6 +37,7 @@
     "username" text NOT NULL UNIQUE CONSTRAINT usernamechk CHECK (char_length(username) >= 3 AND char_length(username) <= 20 AND username ~ '^[a-z0-9_\-]+$'),
     "password_confirm_code" text DEFAULT NULL CONSTRAINT code_passwordchk CHECK (char_length(password_confirm_code) = 5),
     "role" role NOT NULL DEFAULT 'user',
+    "stock" bigint NOT NULL DEFAULT 0,
     "avatar" text DEFAULT NULL
   );
 

@@ -12,7 +12,7 @@ import (
 
 const checkEmailExist = `-- name: CheckEmailExist :one
 SELECT EXISTS(
-    SELECT id, created_at, updated_at, deleted_at, email, password, firstname, lastname, username, password_confirm_code, role, avatar FROM users
+    SELECT id, created_at, updated_at, deleted_at, email, password, firstname, lastname, username, password_confirm_code, role, stock, avatar FROM users
     WHERE email = $1
     AND deleted_at IS NULL
 )
@@ -27,7 +27,7 @@ func (q *Queries) CheckEmailExist(ctx context.Context, email string) (bool, erro
 
 const checkIDExist = `-- name: CheckIDExist :one
 SELECT EXISTS(
-    SELECT id, created_at, updated_at, deleted_at, email, password, firstname, lastname, username, password_confirm_code, role, avatar FROM users
+    SELECT id, created_at, updated_at, deleted_at, email, password, firstname, lastname, username, password_confirm_code, role, stock, avatar FROM users
     WHERE id = $1
     AND deleted_at IS NULL
 )
@@ -42,7 +42,7 @@ func (q *Queries) CheckIDExist(ctx context.Context, id uuid.UUID) (bool, error) 
 
 const checkUsernameExist = `-- name: CheckUsernameExist :one
 SELECT EXISTS(
-    SELECT id, created_at, updated_at, deleted_at, email, password, firstname, lastname, username, password_confirm_code, role, avatar FROM users
+    SELECT id, created_at, updated_at, deleted_at, email, password, firstname, lastname, username, password_confirm_code, role, stock, avatar FROM users
     WHERE username = $1
 )
 `
@@ -56,7 +56,7 @@ func (q *Queries) CheckUsernameExist(ctx context.Context, username string) (bool
 
 const existUserByEmailAndConfirmCode = `-- name: ExistUserByEmailAndConfirmCode :one
 SELECT EXISTS(
-    SELECT id, created_at, updated_at, deleted_at, email, password, firstname, lastname, username, password_confirm_code, role, avatar FROM users
+    SELECT id, created_at, updated_at, deleted_at, email, password, firstname, lastname, username, password_confirm_code, role, stock, avatar FROM users
     WHERE deleted_at IS NULL
     AND email = $1
     AND password_confirm_code = $2
@@ -76,7 +76,7 @@ func (q *Queries) ExistUserByEmailAndConfirmCode(ctx context.Context, arg ExistU
 }
 
 const findUserByEmail = `-- name: FindUserByEmail :one
-SELECT id, created_at, updated_at, deleted_at, email, password, firstname, lastname, username, password_confirm_code, role, avatar FROM users
+SELECT id, created_at, updated_at, deleted_at, email, password, firstname, lastname, username, password_confirm_code, role, stock, avatar FROM users
 WHERE email = $1
 AND deleted_at IS NULL
 `
@@ -96,6 +96,7 @@ func (q *Queries) FindUserByEmail(ctx context.Context, email string) (User, erro
 		&i.Username,
 		&i.PasswordConfirmCode,
 		&i.Role,
+		&i.Stock,
 		&i.Avatar,
 	)
 	return i, err
@@ -152,7 +153,7 @@ func (q *Queries) LoginUser(ctx context.Context, arg LoginUserParams) (LoginUser
 const signup = `-- name: Signup :one
 INSERT INTO users (email, password, username) 
 VALUES ($1, crypt($2, gen_salt('bf')), $3)
-RETURNING id, created_at, updated_at, deleted_at, email, password, firstname, lastname, username, password_confirm_code, role, avatar
+RETURNING id, created_at, updated_at, deleted_at, email, password, firstname, lastname, username, password_confirm_code, role, stock, avatar
 `
 
 type SignupParams struct {
@@ -176,6 +177,7 @@ func (q *Queries) Signup(ctx context.Context, arg SignupParams) (User, error) {
 		&i.Username,
 		&i.PasswordConfirmCode,
 		&i.Role,
+		&i.Stock,
 		&i.Avatar,
 	)
 	return i, err

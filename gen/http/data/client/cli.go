@@ -111,7 +111,7 @@ func BuildCreateDataPayload(dataCreateDataBody string, dataCreateDataOauth strin
 	{
 		err = json.Unmarshal([]byte(dataCreateDataBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"data\": {\n         \"category\": \"animals\",\n         \"description\": \"Unique Air max restant au monde\",\n         \"image\": \"Saepe omnis.\",\n         \"title\": \"Air max360 d\\'il y a 10 millions d\\'années\",\n         \"user_id\": \"5dfb0bf7-597a-4250-b7ad-63a43ff59c25\"\n      }\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"data\": {\n         \"category\": \"autre\",\n         \"description\": \"Unique Air max restant au monde\",\n         \"image\": \"Minus rerum ea sed non nobis.\",\n         \"title\": \"Air max360 d\\'il y a 10 millions d\\'années\",\n         \"user_id\": \"5dfb0bf7-597a-4250-b7ad-63a43ff59c25\"\n      }\n   }'")
 		}
 		if body.Data == nil {
 			err = goa.MergeErrors(err, goa.MissingFieldError("data", "body"))
@@ -155,7 +155,7 @@ func BuildUpdateDataPayload(dataUpdateDataBody string, dataUpdateDataID string, 
 	{
 		err = json.Unmarshal([]byte(dataUpdateDataBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"data\": {\n         \"category\": \"animals\",\n         \"description\": \"Unique Air max restant au monde\",\n         \"image\": \"Saepe omnis.\",\n         \"title\": \"Air max360 d\\'il y a 10 millions d\\'années\",\n         \"user_id\": \"5dfb0bf7-597a-4250-b7ad-63a43ff59c25\"\n      }\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"data\": {\n         \"category\": \"autre\",\n         \"description\": \"Unique Air max restant au monde\",\n         \"image\": \"Minus rerum ea sed non nobis.\",\n         \"title\": \"Air max360 d\\'il y a 10 millions d\\'années\",\n         \"user_id\": \"5dfb0bf7-597a-4250-b7ad-63a43ff59c25\"\n      }\n   }'")
 		}
 		if body.Data == nil {
 			err = goa.MergeErrors(err, goa.MissingFieldError("data", "body"))

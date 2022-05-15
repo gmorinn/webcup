@@ -34,6 +34,12 @@ LIMIT $1 OFFSET $2;
 SELECT COUNT(*) FROM data
 WHERE deleted_at IS NULL;
 
+-- name: CountDataByUserID :one
+SELECT COUNT(*) FROM data
+WHERE user_id = $1 AND
+deleted_at IS NULL;
+
+
 -- name: ListData :many
 SELECT * FROM data
 WHERE deleted_at IS NULL

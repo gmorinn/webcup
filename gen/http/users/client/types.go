@@ -21,6 +21,13 @@ type UpdateAvatarRequestBody struct {
 	Avatar string `form:"avatar" json:"avatar" xml:"avatar"`
 }
 
+// UpdateNumberStockageRequestBody is the type of the "users" service
+// "updateNumberStockage" endpoint HTTP request body.
+type UpdateNumberStockageRequestBody struct {
+	ID     string `form:"id" json:"id" xml:"id"`
+	Number int64  `form:"number" json:"number" xml:"number"`
+}
+
 // UpdateDescriptionRequestBody is the type of the "users" service
 // "updateDescription" endpoint HTTP request body.
 type UpdateDescriptionRequestBody struct {
@@ -43,6 +50,12 @@ type UpdateAvatarResponseBody struct {
 	Success *bool `form:"success,omitempty" json:"success,omitempty" xml:"success,omitempty"`
 	// Result is an Object
 	User *ResUserResponseBody `form:"user,omitempty" json:"user,omitempty" xml:"user,omitempty"`
+}
+
+// UpdateNumberStockageResponseBody is the type of the "users" service
+// "updateNumberStockage" endpoint HTTP response body.
+type UpdateNumberStockageResponseBody struct {
+	Success *bool `form:"success,omitempty" json:"success,omitempty" xml:"success,omitempty"`
 }
 
 // GetUserByIDResponseBody is the type of the "users" service "getUserByID"
@@ -72,6 +85,15 @@ type DeleteUserUnknownErrorResponseBody struct {
 // UpdateAvatarUnknownErrorResponseBody is the type of the "users" service
 // "updateAvatar" endpoint HTTP response body for the "unknown_error" error.
 type UpdateAvatarUnknownErrorResponseBody struct {
+	Err       *string `form:"err,omitempty" json:"err,omitempty" xml:"err,omitempty"`
+	ErrorCode *string `form:"error_code,omitempty" json:"error_code,omitempty" xml:"error_code,omitempty"`
+	Success   *bool   `form:"success,omitempty" json:"success,omitempty" xml:"success,omitempty"`
+}
+
+// UpdateNumberStockageUnknownErrorResponseBody is the type of the "users"
+// service "updateNumberStockage" endpoint HTTP response body for the
+// "unknown_error" error.
+type UpdateNumberStockageUnknownErrorResponseBody struct {
 	Err       *string `form:"err,omitempty" json:"err,omitempty" xml:"err,omitempty"`
 	ErrorCode *string `form:"error_code,omitempty" json:"error_code,omitempty" xml:"error_code,omitempty"`
 	Success   *bool   `form:"success,omitempty" json:"success,omitempty" xml:"success,omitempty"`
@@ -112,6 +134,16 @@ func NewUpdateAvatarRequestBody(p *users.UpdateAvatarPayload) *UpdateAvatarReque
 	body := &UpdateAvatarRequestBody{
 		ID:     p.ID,
 		Avatar: p.Avatar,
+	}
+	return body
+}
+
+// NewUpdateNumberStockageRequestBody builds the HTTP request body from the
+// payload of the "updateNumberStockage" endpoint of the "users" service.
+func NewUpdateNumberStockageRequestBody(p *users.UpdateNumberStockagePayload) *UpdateNumberStockageRequestBody {
+	body := &UpdateNumberStockageRequestBody{
+		ID:     p.ID,
+		Number: p.Number,
 	}
 	return body
 }
@@ -167,6 +199,28 @@ func NewUpdateAvatarResultOK(body *UpdateAvatarResponseBody) *users.UpdateAvatar
 // NewUpdateAvatarUnknownError builds a users service updateAvatar endpoint
 // unknown_error error.
 func NewUpdateAvatarUnknownError(body *UpdateAvatarUnknownErrorResponseBody) *users.UnknownError {
+	v := &users.UnknownError{
+		Err:       *body.Err,
+		ErrorCode: *body.ErrorCode,
+		Success:   *body.Success,
+	}
+
+	return v
+}
+
+// NewUpdateNumberStockageResultOK builds a "users" service
+// "updateNumberStockage" endpoint result from a HTTP "OK" response.
+func NewUpdateNumberStockageResultOK(body *UpdateNumberStockageResponseBody) *users.UpdateNumberStockageResult {
+	v := &users.UpdateNumberStockageResult{
+		Success: *body.Success,
+	}
+
+	return v
+}
+
+// NewUpdateNumberStockageUnknownError builds a users service
+// updateNumberStockage endpoint unknown_error error.
+func NewUpdateNumberStockageUnknownError(body *UpdateNumberStockageUnknownErrorResponseBody) *users.UnknownError {
 	v := &users.UnknownError{
 		Err:       *body.Err,
 		ErrorCode: *body.ErrorCode,
@@ -247,6 +301,15 @@ func ValidateUpdateAvatarResponseBody(body *UpdateAvatarResponseBody) (err error
 	return
 }
 
+// ValidateUpdateNumberStockageResponseBody runs the validations defined on
+// UpdateNumberStockageResponseBody
+func ValidateUpdateNumberStockageResponseBody(body *UpdateNumberStockageResponseBody) (err error) {
+	if body.Success == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("success", "body"))
+	}
+	return
+}
+
 // ValidateGetUserByIDResponseBody runs the validations defined on
 // GetUserByIDResponseBody
 func ValidateGetUserByIDResponseBody(body *GetUserByIDResponseBody) (err error) {
@@ -296,6 +359,21 @@ func ValidateDeleteUserUnknownErrorResponseBody(body *DeleteUserUnknownErrorResp
 // ValidateUpdateAvatarUnknownErrorResponseBody runs the validations defined on
 // updateAvatar_unknown_error_response_body
 func ValidateUpdateAvatarUnknownErrorResponseBody(body *UpdateAvatarUnknownErrorResponseBody) (err error) {
+	if body.Err == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("err", "body"))
+	}
+	if body.Success == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("success", "body"))
+	}
+	if body.ErrorCode == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("error_code", "body"))
+	}
+	return
+}
+
+// ValidateUpdateNumberStockageUnknownErrorResponseBody runs the validations
+// defined on updateNumberStockage_unknown_error_response_body
+func ValidateUpdateNumberStockageUnknownErrorResponseBody(body *UpdateNumberStockageUnknownErrorResponseBody) (err error) {
 	if body.Err == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("err", "body"))
 	}
